@@ -197,139 +197,143 @@ tbody tr:last-child td{border-bottom:0}
   var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   var DPR=2.4, S=240;
 
-  // LOOK = the creature's identity. Survives every mood change.
   var LOOK=[
-    {k:'form',      label:'Fullness',    min:200,max:320,step:1},
-    {k:'taper',     label:'Taper',       min:-60,max:60, step:1},
-    {k:'innerFlat', label:'Inner edge',  min:0,  max:100,step:1},
-    {k:'asymSize',  label:'Size mismatch',min:0, max:100,step:1},
-    {k:'asymY',     label:'Height offset',min:0, max:100,step:1},
-    {k:'pupScale',  label:'Pupil size',  min:30, max:190,step:1},
-    {k:'pupTone',   label:'Pupil tone',  min:-100,max:100,step:1},
-    {k:'glow',      label:'Glow',        min:0,  max:100,step:1}
+    {k:'form',      label:'Fullness',     min:200,max:320,step:1},
+    {k:'taper',     label:'Taper',        min:-60,max:60, step:1},
+    {k:'innerFlat', label:'Inner edge',   min:0,  max:100,step:1},
+    {k:'asymSize',  label:'Size mismatch',min:0,  max:100,step:1},
+    {k:'asymY',     label:'Height offset',min:0,  max:100,step:1},
+    {k:'pupScale',  label:'Pupil size',   min:30, max:190,step:1},
+    {k:'pupTone',   label:'Pupil tone',   min:-100,max:100,step:1},
+    {k:'pupSplit',  label:'Pupil mismatch',min:0, max:100,step:1},
+    {k:'wander',    label:'Wander',       min:0,  max:100,step:1},
+    {k:'glow',      label:'Glow',         min:0,  max:100,step:1}
   ];
-  var look={form:216,taper:14,innerFlat:26,asymSize:34,asymY:30,pupScale:100,pupTone:74,glow:44};
+  var look={form:214,taper:6,innerFlat:26,asymSize:34,asymY:30,
+            pupScale:100,pupTone:74,pupSplit:38,wander:62,glow:44};
 
-  // MOOD = the expression layered on top.
   var MOOD=[
-    {k:'w',      label:'Width',      min:24,max:132,step:1},
-    {k:'h',      label:'Height',     min:8, max:136,step:1},
-    {k:'gap',    label:'Spacing',    min:8, max:74, step:1},
-    {k:'tilt',   label:'Tilt',       min:-28,max:28,step:1},
-    {k:'open',   label:'Openness',   min:0, max:100,step:1},
-    {k:'offY',   label:'Offset Y',   min:-40,max:40,step:1},
-    {k:'curve',  label:'Happy arc',  min:0, max:100,step:1},
-    {k:'pupW',   label:'Pupil width',min:0, max:96, step:1},
-    {k:'pupH',   label:'Pupil height',min:0,max:120,step:1},
-    {k:'pupX',   label:'Pupil X',    min:-40,max:40,step:1},
-    {k:'pupY',   label:'Pupil Y',    min:-40,max:40,step:1},
-    {k:'lidTop', label:'Upper lid',  min:0, max:100,step:1},
-    {k:'lidBot', label:'Lower lid',  min:0, max:100,step:1},
-    {k:'brow',   label:'Brow',       min:-42,max:42,step:1}
+    {k:'w',      label:'Width',       min:24,max:132,step:1},
+    {k:'h',      label:'Height',      min:8, max:140,step:1},
+    {k:'gap',    label:'Spacing',     min:8, max:74, step:1},
+    {k:'tilt',   label:'Tilt',        min:-28,max:28,step:1},
+    {k:'open',   label:'Openness',    min:0, max:100,step:1},
+    {k:'offY',   label:'Offset Y',    min:-40,max:40,step:1},
+    {k:'curve',  label:'Happy arc',   min:0, max:100,step:1},
+    {k:'pupW',   label:'Pupil width', min:0, max:96, step:1},
+    {k:'pupH',   label:'Pupil height',min:0, max:120,step:1},
+    {k:'pupX',   label:'Pupil X',     min:-40,max:40,step:1},
+    {k:'pupY',   label:'Pupil Y',     min:-40,max:40,step:1},
+    {k:'lidTop', label:'Upper lid',   min:0, max:100,step:1},
+    {k:'lidBot', label:'Lower lid',   min:0, max:100,step:1},
+    {k:'brow',   label:'Brow',        min:-42,max:42,step:1}
   ];
 
-  function M(w,h,gap,tilt,open,offY,curve,pw,ph,px,py,lt,lb,brow,pupForm,part){
+  // anim: 0 none · 1 rotate · 2 tremble · 3 bounce · 4 pulse · 6 frozen
+  function M(w,h,gap,tilt,open,offY,curve,pw,ph,px,py,lt,lb,brow,pupForm,part,anim){
     return {w:w,h:h,gap:gap,tilt:tilt,open:open,offY:offY,curve:curve,
             pupW:pw,pupH:ph,pupX:px,pupY:py,lidTop:lt,lidBot:lb,brow:brow,
-            pupForm:pupForm||0,part:part||0};
+            pupForm:pupForm||0,part:part||0,anim:anim||0};
   }
   var MOODS={
-    //            w    h  gap tilt open offY curv  pw  ph  px  py  lt  lb brow
-    'Neutral':   M(88, 94, 47,  0, 100,  0,   0, 26, 34,  7, -2,  0,  0,   0),
-    'Happy':     M(80, 84, 47,  0, 100,  2, 100, 26, 34,  7, -2,  0,  0,   0),
-    'Pleased':   M(88, 92, 47,  0, 100,  2,   0, 26, 34,  7,-12,  0, 40,   0),
-    'In love':   M(88, 94, 47,  0, 100,  0,   0, 46, 42,  4, -2,  0,  0,   0, 1, 1),
-    'Excited':   M(98,108, 48,  0, 100, -5,   0, 34, 44,  6, -6,  0,  0,  -8),
-    'Surprised': M(98,114, 49,  0, 100, -4,   0, 13, 17,  5,  0,  0,  0,   0),
-    'Curious':   M(88, 98, 47,  7, 100, -4,   0, 26, 34, 12,-11, 12,  0,   9),
-    'Angry':     M(88, 94, 45,  0, 100,  0,   0, 20, 26,  9,  5, 40,  0,  26),
-    'Skeptical': M(88, 92, 47,  0, 100,  0,   0, 24, 30, 14,  3, 46,  0,   6),
-    'Sad':       M(84, 92, 49,  0, 100,  6,   0, 32, 42,  5, 11, 30,  0, -24),
-    'Missing you':M(84,90, 49,  0, 100,  5,   0, 30, 40,  6,  9, 22,  0, -14),
-    'Scared':    M(66,116, 43,  0, 100, -3,   0, 11, 15,  4,  0,  0,  0,   0),
-    'Dizzy':     M(94, 94, 48,  0, 100,  0,   0, 34, 34,  0,  0,  0,  0,   0),
-    'Bored':     M(88, 92, 47,  0,  92,  5,   0, 26, 32,  8,  9, 54,  0,   0),
-    'Tired':     M(88, 92, 47,  0,  86,  5,   0, 28, 32,  7,  7, 50, 12,  -8),
-    'Asleep':    M(92, 96, 47,  0,   7,  6,   0, 26, 34,  7, -2,  0,  0,   0)
+    //             w    h  gap tilt open offY curv  pw  ph  px  py  lt  lb brow
+    'Neutral':   M( 76,106, 44,  0, 100,  0,   0, 22, 28,  6, -3,  0,  0,   0),
+    'Happy':     M( 74,  98,  54,   0, 100,   0, 100,  22,  28,   6,  -3,   0,   0,   0),
+    'Pleased':   M( 78,102, 45,  0, 100,  2,   0, 24, 30,  6,-13,  0, 42,   0),
+    'In love':   M( 84,114, 45,  0, 100,  0,   0, 54, 52,  3, -2,  0,  0,   0, 1, 1, 4),
+    'Excited':   M( 88,124, 46,  0, 100, -5,   0, 40, 50,  5, -9,  0,  0,  -9, 0, 0, 3),
+    'Surprised': M( 98, 126,  60,   0, 100,  -4,   0,  10,  13,   4,  -1,   0,   0,   0),
+    'Curious':   M( 78,108, 44,  7, 100, -4,   0, 24, 30, 12,-12, 12,  0,   9),
+    'Angry':     M( 80,104, 43,  0, 100,  0,   0, 18, 23,  8,  5, 40,  0,  26),
+    'Skeptical': M( 78,102, 45,  0, 100,  0,   0, 22, 27, 14,  3, 46,  0,   6),
+    'Sad':       M( 74,102, 47,  0, 100,  6,   0, 30, 38,  5, 11, 30,  0, -24),
+    'Missing you':M(74,100, 47,  0, 100,  5,   0, 28, 36,  6,  9, 22,  0, -14),
+    'Scared':    M( 56,126, 41,  0, 100, -3,   0,  9, 11,  3,-15,  0,  0,   0, 0, 0, 2),
+    'Dizzy':     M( 88, 96, 46,  0, 100,  0,   0, 30, 30,  0,  0,  0,  0,   0, 0, 0, 1),
+    'Bored':     M( 78,102, 45,  0,  92,  5,   0, 24, 29,  8,  9, 54,  0,   0),
+    'Tired':     M( 78,102, 45,  0,  86,  5,   0, 26, 30,  7,  7, 50, 12,  -8),
+    'Asleep':    M( 84,106, 45,  0,   7,  6,   0, 22, 28,  6, -3,  0,  0,   0, 0, 0, 6)
   };
   var NOTES={
-    'Neutral':'Resting pose. Note the two eyes are different sizes — that is the look, not a bug.',
-    'Happy':'Eyes close into upward arcs. The pupil is hidden: a happy squint has no visible pupil.',
-    'Pleased':'Lower lid pushed up, pupil nudged up over it. “Smiling with your eyes”.',
-    'In love':'Heart pupils plus hearts drifting up the screen, straight from the reference photo.',
-    'Excited':'Everything bigger — body and pupil both — with the inner brow raised.',
-    'Surprised':'Tall wide body with a TINY pupil. The size contrast is what reads as shock, not the lids.',
-    'Curious':'A tilt, one brow up, and the pupil pushed up and inward. Gaze does the work here.',
+    'Neutral':'Tall ellipses, not circles. The right eye is smaller and lower — that is the look, not a bug.',
+    'Happy':'Kawaii closed arcs: fat, wide, rounded caps, with a sparkle over each. No pupil — a happy squint has none.',
+    'Pleased':'Lower lid pushed up, pupil nudged up over it. Smiling with your eyes.',
+    'In love':'Oversized heart pupils that nearly fill the eye, and the whole face pulses like a heartbeat.',
+    'Excited':'Tall eyes, big pupils looking up, and a real vertical bounce.',
+    'Surprised':'The widest and tallest body of the set with the second-smallest pupil. Extreme contrast is what reads as shock.',
+    'Curious':'A tilt, one brow up, and the pupil pushed up and inward. Gaze does the work.',
     'Angry':'Upper lid down with the INNER corners lowest, plus a shrunken pupil.',
-    'Skeptical':'Heavier lid than angry but a much milder brow, and the pupil sits well off to one side.',
+    'Skeptical':'Heavier lid than angry but a much milder brow, pupil well off to one side.',
     'Sad':'Brow inverted from angry — inner corners UP — with a large pupil dropped low.',
-    'Missing you':'A softer sad. Less lid, gentler brow. Meant for the days-apart counter.',
-    'Scared':'Narrow, very tall body with the smallest pupil of all. Pair it with a shake.',
-    'Dizzy':'Perfectly round body and pupil, centred, and the whole screen rotates slowly.',
+    'Missing you':'A softer sad. Less lid, gentler brow. For the days-apart counter.',
+    'Scared':'The narrowest and tallest body, the smallest pupil, looking up, and a constant tremble.',
+    'Dizzy':'Round body and pupil, centred, and the whole screen rotates slowly.',
     'Bored':'Heavy lid and ZERO brow angle. Boredom is the absence of expression.',
     'Tired':'Both lids closing in, pupil low, body slightly squashed.',
-    'Asleep':'Openness near zero leaves two thin slits. Never use the happy arc here — an arc reads as smiling.'
+    'Asleep':'Two thin slits, and everything stops — no wandering, no gaze, no cursor. He is asleep.'
   };
   var AUDIT=[
-    ['Neutral','Upright blobs of <b>different sizes</b>, small off-centre pupil','Perfectly mirrored rounded rectangles — the “too perfect” problem'],
+    ['Neutral','Tall ellipses of <b>different sizes</b>, small off-centre pupil','Near-circles, perfectly mirrored — the “too perfect” problem'],
+    ['Happy','Fat kawaii arcs with rounded caps and a sparkle each','Thin arcs so wide they merged into one moustache'],
+    ['In love','Heart pupils that nearly fill the eye, whole face pulsing','Correct shape but static and flat'],
+    ['Excited','Tall body, big pupils looking up, vertical bounce','Just a scaled-up Neutral'],
+    ['Surprised','Widest+tallest body, near-smallest pupil','Not extreme enough to separate from Excited'],
+    ['Scared','Narrowest+tallest body, smallest pupil, looking up, trembling','Too close to Surprised'],
     ['Angry','Upper lid down, <b>inner</b> corners lowest, shrunken pupil','Brow rotated the wrong way, so it read as <b>sad</b>'],
-    ['Sad','Brow inverted from angry, big pupil looking down','Also inverted — read as mildly <b>angry</b>'],
-    ['Surprised','Tiny pupil in a tall wide eye','Had no pupil at all, so it just read as <b>big eyes</b>'],
-    ['Scared','Smallest pupil of the set, narrow tall body','Nearly identical to Surprised'],
-    ['Asleep','Openness ~7, two thin slits','Used the happy arc, so it read as <b>smiling</b>'],
+    ['Sad','Brow inverted from angry, big pupil low','Also inverted — read as mildly <b>angry</b>'],
+    ['Asleep','Two thin slits, and <b>all motion stops</b>','Kept wandering and tracking the cursor while asleep'],
     ['Pleased','Lower lid raised, pupil pushed up over it','A half-strength arc — read as a weak Happy'],
     ['Skeptical','Heavy lid, mild brow, pupil far to one side','Too close to Angry to tell apart'],
     ['Tired','Both lids in, pupil low, body squashed','Indistinguishable from Bored'],
     ['Bored','Heavy lid, <b>zero</b> brow angle','Had a brow angle, which made it read as an emotion'],
     ['Curious','Tilt, one brow up, pupil up and inward','Tilt only, no gaze shift — read as Neutral'],
-    ['Happy','Two separate upward arcs','The arcs were so wide they merged into one moustache'],
-    ['In love','Heart pupils + heart particles','Did not exist'],
     ['Missing you','Softer Sad, less lid','Inherited the same inverted brow as Sad'],
-    ['Dizzy','Round body and pupil, screen rotates','Correct'],
-    ['Excited','Body and pupil both enlarged','Correct']
+    ['Dizzy','Round body and pupil, screen rotates','Correct']
   ];
 
   var COLORS=[['Pink','#FF2E88'],['Cyan','#22D3E0']];
 
-  var cur={}, goal={}, vel={};
-  for(var kk in MOODS['Neutral']){ cur[kk]=MOODS['Neutral'][kk]; goal[kk]=MOODS['Neutral'][kk]; }
-  MOOD.forEach(function(p){vel[p.k]=0;});
-  var color='#FF2E88', moodName='Neutral', lookSeed=0;
+  var cur={}, fromM={}, toM={};
+  for(var kk in MOODS['Neutral']){ cur[kk]=MOODS['Neutral'][kk]; fromM[kk]=cur[kk]; toM[kk]=cur[kk]; }
+  var color='#FF2E88', moodName='Neutral';
 
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var auto=!reduced, follow=false;
-  var gx=0,gy=0,gx2=0,gy2=0,tgx=0,tgy=0,gvx=0,gvy=0,pgx=0,pgy=0;
+  var gx=0,gy=0,gx2=0,gy2=0,tgx=0,tgy=0,gvx=0,gvy=0,pgx=0,pgy=0;   // gaze (pupils)
+  var wx=0,wy=0,twx=0,twy=0,wvx=0,wvy=0,wNext=0;                   // wander (whole pair)
   var sqx=1,sqy=1,blink=1,blinkStart=-1e9,nextBlink=0,dbl=false;
-  var hearts=[];
+  var hearts=[], tStart=-1e9, DUR=430, fromForm=0;
 
   function hex2rgb(h){return [parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)];}
   function mix(a,b,k){return [Math.round(a[0]+(b[0]-a[0])*k),Math.round(a[1]+(b[1]-a[1])*k),Math.round(a[2]+(b[2]-a[2])*k)];}
   function rgbs(c){return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
-  function pupilRGB(){
-    var base=hex2rgb(color), t=look.pupTone/100;
+  function pupilRGB(side){
+    var base=hex2rgb(color);
+    // The two pupils are not the same tone. In CREATURE's own generator the
+    // left and right pupils are visibly different — it is a big part of why
+    // the pair reads as organic rather than stamped out.
+    var t=(look.pupTone + (side>0 ? -look.pupSplit*0.42 : 0))/100;
+    t=Math.max(-1,Math.min(1,t));
     return t>=0 ? mix(base,[255,255,255],t) : mix(base,[0,0,0],-t);
   }
 
-  /* ---------- the body: a SUPERELLIPSE, never a rounded rectangle ---------- */
-  // |x/a|^n + |y/b|^n = 1.  n=2 is a plain ellipse; higher n fills the corners
-  // out toward a soft square. There is no straight segment anywhere on it, so
-  // it can never read as rectangular the way a rounded rect does.
+  /* ---------- superellipse body: no straight segment, ever ---------- */
   function bodyPath(c,w,h,side){
     var n=look.form/100, N=76, tp=look.taper/100;
     var lim=(w/2)*(1-look.innerFlat/100*0.30);
-    var inner=-side;                     // +1 means "inner side is +x" (left eye)
+    var inner=-side;
     c.beginPath();
     for(var i=0;i<=N;i++){
       var t=i/N*Math.PI*2, ct=Math.cos(t), st=Math.sin(t);
       var x=(w/2)*(ct<0?-1:1)*Math.pow(Math.abs(ct),2/n);
       var y=(h/2)*(st<0?-1:1)*Math.pow(Math.abs(st),2/n);
-      x*=(1-tp*(y/(h/2))*0.42);          // taper: narrower at one end
+      x*=(1-tp*(y/(h/2))*0.42);
       if(inner>0){ if(x>lim)x=lim; } else { if(x<-lim)x=-lim; }
       i?c.lineTo(x,y):c.moveTo(x,y);
     }
     c.closePath();
   }
-  function ell(c,x,y,w,h){ c.beginPath(); c.ellipse(x,y,Math.max(w,0.5)/2,Math.max(h,0.5)/2,0,0,Math.PI*2); c.closePath(); }
+  function ell(c,x,y,w,h){ c.beginPath(); c.ellipse(x,y,Math.max(w,0.4)/2,Math.max(h,0.4)/2,0,0,Math.PI*2); c.closePath(); }
   function heartPath(c,x,y,w,h){
     var W=w/2,H=h/2;
     c.beginPath(); c.moveTo(x,y+H);
@@ -337,28 +341,45 @@ tbody tr:last-child td{border-bottom:0}
     c.bezierCurveTo(x+W*0.62,y-H*1.55, x+W*2.0,y-H*0.30, x,y+H);
     c.closePath();
   }
+  function sparkle(c,x,y,r){
+    c.beginPath(); c.moveTo(x,y-r);
+    c.quadraticCurveTo(x+r*0.20,y-r*0.20, x+r,y);
+    c.quadraticCurveTo(x+r*0.20,y+r*0.20, x,y+r);
+    c.quadraticCurveTo(x-r*0.20,y+r*0.20, x-r,y);
+    c.quadraticCurveTo(x-r*0.20,y-r*0.20, x,y-r);
+    c.closePath();
+  }
+
+  var animT={pulse:1,bounce:0,trem:0};
 
   function drawEye(c,p,side,t){
-    // ASYMMETRY: the right eye is smaller and sits lower. This single thing is
-    // the difference between "a face" and "a diagram".
     var small = side>0 ? (1-look.asymSize/100*0.20) : 1;
     var dy    = side>0 ? look.asymY/100*7 : 0;
-
     var myx=side>0?gx2:gx, myy=side>0?gy2:gy;
-    var cx=S/2+side*p.gap+myx*0.42, cy=S/2+p.offY+dy+myy*0.42;
-    var breathe=auto?Math.sin(t/900+(side>0?0.9:0))*1.3:0;
-    var h=p.h*small*(p.open/100)*blink+breathe; if(h<1.4)h=1.4;
-    var w=p.w*small*sqx; h*=sqy;
+
+    // The WHOLE PAIR travels (wx, wy). The gaze only nudges the body a little
+    // but moves the pupil a lot — that parallax is the effect.
+    var cx=S/2+side*p.gap+wx+myx*0.16;
+    var cy=S/2+p.offY+dy+wy+myy*0.16+animT.bounce;
+    // Asleep means asleep: no breathing either. Any residual motion reads as
+    // "powered on and idling", which is the opposite of the point.
+    var breathe=(auto&&p.anim!==6)?Math.sin(t/900+(side>0?0.9:0))*1.3:0;
+    var h=p.h*small*(p.open/100)*blink*animT.pulse+breathe; if(h<1.4)h=1.4;
+    var w=p.w*small*sqx*animT.pulse; h*=sqy;
 
     c.save();
     c.translate(cx,cy);
     c.rotate(side*p.tilt*Math.PI/180);
 
     if(p.curve>3){
-      var k=p.curve/100, th=Math.max(6,w*0.27), rad=w*0.46;
+      // Kawaii closed arc: fat, wide, rounded caps, sitting high, with a
+      // sparkle over it. Thin narrow arcs read as a moustache, not as joy.
+      var k=p.curve/100, th=Math.max(7,w*0.34), rad=w*0.44;
       c.save(); c.globalAlpha=k;
       c.strokeStyle=color; c.lineWidth=th; c.lineCap='round';
-      c.beginPath(); c.arc(0,rad*0.46,rad,Math.PI*1.25,Math.PI*1.75); c.stroke(); c.stroke();
+      c.beginPath(); c.arc(0,rad*0.58,rad,Math.PI*1.14,Math.PI*1.86); c.stroke(); c.stroke();
+      c.fillStyle=rgbs(pupilRGB(side));
+      sparkle(c,-w*0.42*side,-h*0.30,Math.max(3,w*0.10)); c.fill();
       c.restore();
       if(k<0.97){ c.save(); c.globalAlpha=1-k; c.fillStyle=color; bodyPath(c,w,h,side); c.fill(); c.restore(); }
       c.restore(); return;
@@ -366,22 +387,29 @@ tbody tr:last-child td{border-bottom:0}
 
     c.fillStyle=color; bodyPath(c,w,h,side); c.fill();
 
-    // Pupil: small, off-centre, and NOT clipped to the body. Letting it break
-    // the outline slightly is part of why the real ones look hand-made.
     var ps=look.pupScale/100;
-    if(p.pupW*ps>1 && p.pupH*ps>1 && h>8){
+    if(p.pupW*ps>1 && p.pupH*ps>1 && h>11){
       var scale=Math.min(1,h/(p.h*small||1));
-      var px=-side*p.pupX*ps+myx*0.85;          // +pupX always means "inward"
-      var py=p.pupY*scale+myy*0.85;
-      c.fillStyle=rgbs(pupilRGB());
-      if(p.pupForm===1) heartPath(c,px,py,p.pupW*ps*sqx,p.pupH*ps*scale*sqy);
-      else              ell(c,px,py,p.pupW*ps*sqx,p.pupH*ps*scale*sqy);
-      c.fill();
+      var px=-side*p.pupX*ps+myx*0.88;
+      var py=p.pupY*scale+myy*0.88;
+      var pw=p.pupW*ps*sqx, ph=p.pupH*ps*scale*sqy;
+      c.fillStyle=rgbs(pupilRGB(side));
+      // Cross-fade the pupil SHAPE instead of snapping it. Snapping between a
+      // heart and an ellipse mid-transition is the single ugliest frame here.
+      var mixF=Math.min(1,Math.max(0,(t-tStart)/DUR));
+      if(toM.pupForm===fromForm){
+        if(toM.pupForm===1) heartPath(c,px,py,pw,ph); else ell(c,px,py,pw,ph);
+        c.fill();
+      } else {
+        c.save(); c.globalAlpha=1-mixF;
+        if(fromForm===1) heartPath(c,px,py,pw,ph); else ell(c,px,py,pw,ph);
+        c.fill(); c.restore();
+        c.save(); c.globalAlpha=mixF;
+        if(toM.pupForm===1) heartPath(c,px,py,pw,ph); else ell(c,px,py,pw,ph);
+        c.fill(); c.restore();
+      }
     }
 
-    // Eyelids ERASE rather than paint black, and are clipped to a plain
-    // RECTANGLE around this eye: a curved clip is antialiased, and erasing
-    // through it leaves a ghost outline of the fully open eye in the dark.
     if(p.lidTop>0.5||p.lidBot>0.5){
       c.save();
       c.beginPath(); c.rect(-w/2-9,-h*2.4,w+18,h*4.8); c.clip();
@@ -389,8 +417,7 @@ tbody tr:last-child td{border-bottom:0}
       c.fillStyle='#000';
       if(p.lidTop>0.5){
         c.save(); c.translate(0,-h/2);
-        // NOTE the minus: +brow must drop the INNER corner, not the outer one.
-        c.rotate(-side*p.brow*Math.PI/180);
+        c.rotate(-side*p.brow*Math.PI/180);   // NOTE the minus: +brow drops the INNER corner
         c.fillRect(-w*1.6,-h*2.4,w*3.2,h*2.4+(p.lidTop/100)*h);
         c.restore();
       }
@@ -401,8 +428,8 @@ tbody tr:last-child td{border-bottom:0}
   }
 
   function stepHearts(active){
-    if(active&&Math.random()<0.055)
-      hearts.push({x:30+Math.random()*180,y:230+Math.random()*24,s:7+Math.random()*9,
+    if(active&&Math.random()<0.06)
+      hearts.push({x:30+Math.random()*180,y:230+Math.random()*24,s:7+Math.random()*10,
                    v:0.32+Math.random()*0.42,a:0,ph:Math.random()*6.28});
     for(var i=hearts.length-1;i>=0;i--){
       var hp=hearts[i]; hp.y-=hp.v; hp.a=Math.min(1,hp.a+0.04);
@@ -418,16 +445,16 @@ tbody tr:last-child td{border-bottom:0}
     }
   }
 
-  // The glow is a bloom of the FINAL silhouette, lids included. Glowing each
-  // eye before its lid leaks a halo out from under every closed eyelid.
   var off=document.createElement('canvas'); off.width=S; off.height=S;
   var octx=off.getContext('2d');
 
   function draw(t){
     octx.setTransform(1,0,0,1,0,0); octx.clearRect(0,0,S,S);
     octx.save();
-    if(moodName==='Dizzy'&&auto){ octx.translate(S/2,S/2); octx.rotate(Math.sin(t/300)*0.11); octx.translate(-S/2,-S/2); }
-    if(moodName==='Scared'&&auto){ octx.translate(Math.sin(t/42)*1.5,Math.cos(t/37)*1.1); }
+    if(cur.anim===1&&auto){ octx.translate(S/2,S/2); octx.rotate(Math.sin(t/300)*0.11); octx.translate(-S/2,-S/2); }
+    if(cur.anim===2&&auto){ octx.translate(animT.trem,Math.cos(t/37)*1.2); }
+    // the pair leans into its own movement
+    if(auto&&cur.anim!==6){ octx.translate(S/2,S/2); octx.rotate(wvx*0.010); octx.translate(-S/2,-S/2); }
     drawEye(octx,cur,-1,t); drawEye(octx,cur,1,t);
     octx.restore();
 
@@ -447,27 +474,86 @@ tbody tr:last-child td{border-bottom:0}
     ctx.restore();
   }
 
+  // Time-based easing, not a per-parameter spring. Fourteen independent
+  // springs all ringing at once is what made the mood change look wrong:
+  // the lid finished before the body, the brow overshot on its own, and the
+  // shape passed through poses that are not in any mood. One clock fixes it.
+  function easeInOutCubic(x){ return x<0.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2; }
+  function easeOutBack(x){ var c=1.22; return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2); }
+  var BACKY={w:1,h:1,pupW:1,pupH:1};
+
+  function setMood(n){
+    for(var q in cur) fromM[q]=cur[q];
+    fromForm=cur.pupForm;
+    for(var r in MOODS[n]) toM[r]=MOODS[n][r];
+    tStart=performance.now();
+    if(MOODS[n].part!==1) hearts.length=0;
+  }
+
   function tick(t){
+    var k=Math.min(1,(t-tStart)/DUR);
+    var e=easeInOutCubic(k), eb=easeOutBack(k);
     for(var i=0;i<MOOD.length;i++){
-      var k=MOOD[i].k;
-      vel[k]+=(goal[k]-cur[k])*0.20; vel[k]*=0.70; cur[k]+=vel[k];
+      var key=MOOD[i].k;
+      cur[key]=fromM[key]+(toM[key]-fromM[key])*(BACKY[key]?eb:e);
     }
-    cur.pupForm=goal.pupForm;
-    if(auto&&t>nextBlink){ nextBlink=t+1500+Math.random()*3900; blinkStart=t; dbl=Math.random()<0.16; }
+    cur.anim=k>=1?toM.anim:(k>0.5?toM.anim:fromM.anim);
+    cur.pupForm=toM.pupForm; cur.part=toM.part;
+
+    var asleep=(toM.anim===6);
+
+    // per-mood motion
+    animT.pulse += (((toM.anim===4)?1+Math.sin(t/430)*0.055:1)-animT.pulse)*0.14;
+    animT.bounce+= (((toM.anim===3)?Math.sin(t/300)*4.2:0)-animT.bounce)*0.14;
+    animT.trem  += (((toM.anim===2)?Math.sin(t/41)*1.8:0)-animT.trem)*0.30;
+
+    if(auto&&!asleep&&t>nextBlink){ nextBlink=t+1500+Math.random()*3900; blinkStart=t; dbl=Math.random()<0.16; }
     var d=t-blinkStart;
     if(dbl&&d>250&&d<270){ blinkStart=t; d=0; dbl=false; }
     if(d>=0&&d<60) blink=1-d/60; else if(d<180) blink=(d-60)/120; else blink=1;
     if(blink<0.035)blink=0.035;
-    if(auto&&!follow&&Math.random()<0.0065){ tgx=(Math.random()-0.5)*26; tgy=(Math.random()-0.5)*13; }
-    gvx+=(tgx-gx)*0.22; gvx*=0.70; gx+=gvx;
-    gvy+=(tgy-gy)*0.22; gvy*=0.70; gy+=gvy;
+    if(asleep) blink=1;
+
+    // WANDER: the whole pair drifts around the display. This is the piece that
+    // was missing - the creature looks around by moving its face, not just its
+    // pupils. Following the cursor moves the pair AND the pupils, at different
+    // rates, which is where the depth comes from.
+    if(asleep){ twx=0; twy=0; tgx=0; tgy=0; }
+    else if(follow){ twx=tgx*0.62; twy=tgy*0.62; }
+    else if(auto&&t>wNext){
+      wNext=t+1100+Math.random()*2500;
+      var amp=look.wander/100;
+      twx=(Math.random()-0.5)*52*amp; twy=(Math.random()-0.5)*32*amp;
+    }
+    wvx+=(twx-wx)*0.052; wvx*=0.87; wx+=wvx;
+    wvy+=(twy-wy)*0.052; wvy*=0.87; wy+=wvy;
+
+    if(auto&&!follow&&!asleep&&Math.random()<0.0075){ tgx=(Math.random()-0.5)*30; tgy=(Math.random()-0.5)*15; }
+    gvx+=(tgx-gx)*0.20; gvx*=0.72; gx+=gvx;
+    gvy+=(tgy-gy)*0.20; gvy*=0.72; gy+=gvy;
     gx2+=(gx-gx2)*0.42; gy2+=(gy-gy2)*0.42;
-    var vx=gx-pgx, vy=gy-pgy; pgx=gx; pgy=gy;
+
+    var vx=gx-pgx+wvx, vy=gy-pgy+wvy; pgx=gx; pgy=gy;
     var ax=Math.abs(vx), ay=Math.abs(vy), tx=1, ty=1;
-    if(ax>=ay){ var s=Math.min(ax/7,1)*0.7; tx=1+s*0.30; ty=1-s*0.21; }
-    else      { var s2=Math.min(ay/7,1)*0.7; ty=1+s2*0.30; tx=1-s2*0.21; }
-    sqx+=(tx-sqx)*0.35; sqy+=(ty-sqy)*0.35;
-    stepHearts(goal.part===1);
+    if(ax>=ay){ var s=Math.min(ax/7,1)*0.7; tx=1+s*0.28; ty=1-s*0.20; }
+    else      { var s2=Math.min(ay/7,1)*0.7; ty=1+s2*0.28; tx=1-s2*0.20; }
+    sqx+=(tx-sqx)*0.32; sqy+=(ty-sqy)*0.32;
+
+    // Asleep must settle to EXACTLY rest, not merely approach it. Springs
+    // converge asymptotically and never quite arrive, which leaves a permanent
+    // sub-pixel shimmer - and on the device it means never being able to stop
+    // redrawing. Snap the residue to zero and the frame becomes truly static.
+    if(asleep&&k>=1){
+      var snap=function(v,to){ return Math.abs(v-to)<0.25?to:v; };
+      wx=snap(wx,0); wy=snap(wy,0); wvx=snap(wvx,0); wvy=snap(wvy,0);
+      gx=snap(gx,0); gy=snap(gy,0); gx2=snap(gx2,0); gy2=snap(gy2,0);
+      gvx=snap(gvx,0); gvy=snap(gvy,0);
+      sqx=Math.abs(sqx-1)<0.004?1:sqx; sqy=Math.abs(sqy-1)<0.004?1:sqy;
+      animT.pulse=Math.abs(animT.pulse-1)<0.004?1:animT.pulse;
+      animT.bounce=snap(animT.bounce,0); animT.trem=snap(animT.trem,0);
+    }
+
+    stepHearts(toM.part===1);
     draw(t);
     requestAnimationFrame(tick);
   }
@@ -478,12 +564,10 @@ tbody tr:last-child td{border-bottom:0}
     var b=document.createElement('button');
     b.textContent=n; b.className='mood'+(n===moodName?' sel':'');
     b.addEventListener('click',function(){
-      moodName=n;
-      for(var q in MOODS[n]) goal[q]=MOODS[n][q];
+      moodName=n; setMood(n);
       document.querySelectorAll('.mood').forEach(function(x){x.classList.remove('sel');});
       b.classList.add('sel');
       noteEl.textContent=NOTES[n]||'';
-      if(MOODS[n].part!==1) hearts.length=0;
       syncMood(); emit();
     });
     moodsEl.appendChild(b);
@@ -505,11 +589,17 @@ tbody tr:last-child td{border-bottom:0}
   }
   function onMoodEdit(){
     document.querySelectorAll('.mood').forEach(function(x){x.classList.remove('sel');});
-    moodName='Custom'; noteEl.textContent=''; emit();
+    moodName='Custom'; noteEl.textContent='';
+    // editing a slider applies immediately - no transition to fight against
+    MOOD.forEach(function(p){ toM[p.k]=goalProxy[p.k]; fromM[p.k]=goalProxy[p.k]; cur[p.k]=goalProxy[p.k]; });
+    emit();
   }
+  // the mood sliders edit the live target directly
+  var goalProxy={};
+  MOOD.forEach(function(p){ goalProxy[p.k]=cur[p.k]; });
   mkSliders(document.getElementById('slLook'),LOOK,look,inLook,function(){ setLookId('custom'); emit(); });
-  mkSliders(document.getElementById('slMood'),MOOD,goal,inMood,onMoodEdit);
-  function syncMood(){ MOOD.forEach(function(p){ inMood[p.k].r.value=goal[p.k]; inMood[p.k].o.textContent=Math.round(goal[p.k]); }); }
+  mkSliders(document.getElementById('slMood'),MOOD,goalProxy,inMood,onMoodEdit);
+  function syncMood(){ MOOD.forEach(function(p){ goalProxy[p.k]=toM[p.k]; inMood[p.k].r.value=toM[p.k]; inMood[p.k].o.textContent=Math.round(toM[p.k]); }); }
   function syncLook(){ LOOK.forEach(function(p){ inLook[p.k].r.value=look[p.k]; inLook[p.k].o.textContent=Math.round(look[p.k]); }); }
 
   var colEl=document.getElementById('colors');
@@ -529,13 +619,13 @@ tbody tr:last-child td{border-bottom:0}
   function setLookId(v){ lookEl.textContent='look · '+v; }
   function rnd(a,b){ return Math.round(a+Math.random()*(b-a)); }
   document.getElementById('bShuffle').addEventListener('click',function(){
-    // Capped at 262: above that the superellipse starts filling out toward a
-    // soft square, which is the exact 'too perfect' look we are avoiding.
+    // Capped at 262: above that the superellipse fills out toward a soft
+    // square, which is the exact "too perfect" look we are avoiding.
     look.form=rnd(203,262); look.taper=rnd(-40,45); look.innerFlat=rnd(0,80);
-    look.asymSize=rnd(12,72); look.asymY=rnd(0,70);
-    look.pupScale=rnd(45,165); look.pupTone=rnd(-85,92);
-    lookSeed=rnd(0,0xFFFF);
-    setLookId('#'+lookSeed.toString(16).toUpperCase().padStart(4,'0'));
+    look.asymSize=rnd(14,72); look.asymY=rnd(0,70);
+    look.pupScale=rnd(45,165); look.pupTone=rnd(-85,92); look.pupSplit=rnd(0,86);
+    look.wander=rnd(30,100);
+    setLookId('#'+rnd(0,0xFFFF).toString(16).toUpperCase().padStart(4,'0'));
     syncLook(); emit();
   });
   setLookId('#0000 · default');
@@ -546,15 +636,17 @@ tbody tr:last-child td{border-bottom:0}
   var bFollow=document.getElementById('bFollow');
   bFollow.addEventListener('click',function(){
     follow=!follow; bFollow.classList.toggle('on',follow);
-    if(!follow){tgx=0;tgy=0;}
+    if(!follow){tgx=0;tgy=0;twx=0;twy=0;}
   });
   cv.addEventListener('pointermove',function(e){
-    if(!follow)return;
+    if(!follow||toM.anim===6)return;      // asleep ignores the cursor entirely
     var r=cv.getBoundingClientRect();
-    tgx=((e.clientX-r.left)/r.width-0.5)*54;
-    tgy=((e.clientY-r.top)/r.height-0.5)*30;
+    tgx=((e.clientX-r.left)/r.width-0.5)*62;
+    tgy=((e.clientY-r.top)/r.height-0.5)*36;
   });
-  document.getElementById('bBlink').addEventListener('click',function(){blinkStart=performance.now();dbl=false;});
+  document.getElementById('bBlink').addEventListener('click',function(){
+    if(toM.anim===6)return; blinkStart=performance.now(); dbl=false;
+  });
 
   var ab=document.getElementById('auditBody');
   AUDIT.forEach(function(row){
@@ -566,7 +658,8 @@ tbody tr:last-child td{border-bottom:0}
   /* ---------- export ---------- */
   function cname(n){ return 'MOOD_'+n.toUpperCase().replace(/[^A-Z0-9]+/g,'_'); }
   function fmt(p){
-    return '{ '+[p.w,p.h,p.gap,p.tilt,p.open,p.offY,p.curve,p.pupW,p.pupH,p.pupX,p.pupY,p.lidTop,p.lidBot,p.brow,p.pupForm]
+    return '{ '+[p.w,p.h,p.gap,p.tilt,p.open,p.offY,p.curve,p.pupW,p.pupH,p.pupX,p.pupY,
+                 p.lidTop,p.lidBot,p.brow,p.pupForm,p.anim]
       .map(function(v){return String(Math.round(v)).padStart(3,' ');}).join(', ')+' }';
   }
   function rgb565(c){ return ((c[0]&0xF8)<<8)|((c[1]&0xFC)<<3)|(c[2]>>3); }
@@ -576,7 +669,7 @@ tbody tr:last-child td{border-bottom:0}
     var L=[];
     L.push('// Generated by the Eye Editor');
     L.push('');
-    L.push('// --- LOOK: this creature\'s identity. One per device, never changes. ---');
+    L.push("// --- LOOK: this creature's identity. One per device, 10 bytes. ---");
     L.push('struct EyeLook {');
     L.push('  uint16_t form;      // superellipse exponent x100. 200 = plain ellipse.');
     L.push('  int16_t  taper;     // -60..60, narrows one end');
@@ -585,27 +678,32 @@ tbody tr:last-child td{border-bottom:0}
     L.push('  uint8_t  asymY;     // 0-100, how much lower it sits');
     L.push('  uint8_t  pupScale;  // 30-190 %');
     L.push('  int8_t   pupTone;   // -100 dark .. +100 light');
+    L.push('  uint8_t  pupSplit;  // 0-100, how differently toned the two pupils are');
+    L.push('  uint8_t  wander;    // 0-100, how far the pair roams the display');
     L.push('  uint8_t  glow;      // 0-100');
     L.push('};');
-    L.push('const EyeLook LOOK = { '+[look.form,look.taper,look.innerFlat,look.asymSize,
-            look.asymY,look.pupScale,look.pupTone,look.glow].map(function(v){return Math.round(v);}).join(', ')+' };');
+    L.push('const EyeLook LOOK = { '+[look.form,look.taper,look.innerFlat,look.asymSize,look.asymY,
+            look.pupScale,look.pupTone,look.pupSplit,look.wander,look.glow]
+            .map(function(v){return Math.round(v);}).join(', ')+' };');
     L.push('');
-    L.push('const uint16_t EYE_COLOR   = '+h565(hex2rgb(color))+';   // '+color);
-    L.push('const uint16_t PUPIL_COLOR = '+h565(pupilRGB())+';');
+    L.push('const uint16_t EYE_COLOR    = '+h565(hex2rgb(color))+';   // '+color);
+    L.push('const uint16_t PUPIL_LEFT   = '+h565(pupilRGB(-1))+';');
+    L.push('const uint16_t PUPIL_RIGHT  = '+h565(pupilRGB(1))+';   // deliberately not the same');
     L.push('');
     L.push('// --- MOODS: the expression layered on top of the look. ---');
+    L.push('// anim: 0 none · 1 rotate · 2 tremble · 3 bounce · 4 pulse · 6 frozen');
     L.push('struct EyeState {');
     L.push('  int16_t w, h, gap, tilt, open, offY, curve;');
     L.push('  int16_t pupW, pupH, pupX, pupY;   // pupX is always INWARD');
     L.push('  int16_t lidTop, lidBot, brow;     // brow: + angry, - sad');
-    L.push('  int16_t pupForm;                  // 0 ellipse · 1 heart');
+    L.push('  int16_t pupForm, anim;');
     L.push('};');
     L.push('');
-    L.push('//                          w    h  gap tilt open offY  crv  pupW pupH pupX pupY  lidT lidB brow  frm');
+    L.push('//                          w    h  gap tilt open offY  crv  pupW pupH pupX pupY  lidT lidB brow  frm anim');
     Object.keys(MOODS).forEach(function(n){
       L.push('const EyeState '+(cname(n)+' ').padEnd(20,' ')+' = '+fmt(MOODS[n])+';');
     });
-    if(moodName==='Custom'){ L.push(''); L.push('const EyeState MOOD_CUSTOM = '+fmt(goal)+';'); }
+    if(moodName==='Custom'){ L.push(''); L.push('const EyeState MOOD_CUSTOM = '+fmt(toM)+';'); }
     codeEl.textContent=L.join('\n');
   }
   document.getElementById('bCopy').addEventListener('click',function(){
@@ -616,82 +714,100 @@ tbody tr:last-child td{border-bottom:0}
   });
 
   document.getElementById('fullcode').textContent=[
-    '// A superellipse has no straight segment, so it can never read as a',
-    '// rounded rectangle. Solving it per scanline is exact and cheap: one',
-    '// powf per row, about 100 rows per eye.',
+    '// ---- 1. ONE CLOCK FOR THE WHOLE TRANSITION ----------------------------',
+    '// Do NOT give each parameter its own spring. Fourteen springs ringing at',
+    '// once means the lid arrives before the body and the brow overshoots on',
+    '// its own, and the face passes through poses that belong to no mood. One',
+    '// eased clock over ~430 ms keeps every parameter in step.',
+    '',
+    'uint32_t tStart; EyeState fromM, toM, cur;',
+    '',
+    'static inline float easeInOutCubic(float x){',
+    '  return x < 0.5f ? 4*x*x*x : 1 - powf(-2*x + 2, 3) / 2;',
+    '}',
+    'static inline float easeOutBack(float x){        // a little overshoot',
+    '  const float c = 1.22f;',
+    '  return 1 + (c+1)*powf(x-1,3) + c*powf(x-1,2);',
+    '}',
+    '',
+    'void setMood(const EyeState &m) { fromM = cur; toM = m; tStart = millis(); }',
+    '',
+    'void stepMood() {',
+    '  float k = min(1.0f, (millis() - tStart) / 430.0f);',
+    '  float e = easeInOutCubic(k), eb = easeOutBack(k);',
+    '  // only the four size parameters are allowed to overshoot',
+    '  cur.w    = fromM.w    + (toM.w    - fromM.w   ) * eb;',
+    '  cur.h    = fromM.h    + (toM.h    - fromM.h   ) * eb;',
+    '  cur.pupW = fromM.pupW + (toM.pupW - fromM.pupW) * eb;',
+    '  cur.pupH = fromM.pupH + (toM.pupH - fromM.pupH) * eb;',
+    '  cur.gap  = fromM.gap  + (toM.gap  - fromM.gap ) * e;',
+    '  cur.open = fromM.open + (toM.open - fromM.open) * e;',
+    '  cur.lidTop = fromM.lidTop + (toM.lidTop - fromM.lidTop) * e;',
+    '  cur.brow   = fromM.brow   + (toM.brow   - fromM.brow  ) * e;',
+    '  /* ...and the rest with e... */',
+    '}',
+    '',
+    '// ---- 2. THE PAIR WANDERS, THE PUPILS TRAVEL FURTHER --------------------',
+    '// The creature looks around by moving its whole face across the display,',
+    '// not only its pupils. Two separate systems, at two different speeds:',
     '//',
-    '//     |x/a|^n + |y/b|^n = 1   ->   x = a * (1 - |y/b|^n)^(1/n)',
+    '//   wx, wy  slow, large, moves BOTH eye bodies together',
+    '//   gx, gy  faster, moves the body 0.16x and the pupil 0.88x',
+    '//',
+    '// Run them at the same rate and the whole thing looks like a slider.',
+    '',
+    'float wx, wy, twx, twy, wvx, wvy;   uint32_t wNext;',
+    'float gx, gy, tgx, tgy, gvx, gvy;',
+    '',
+    'void stepMotion() {',
+    '  uint32_t now = millis();',
+    '  if (cur.anim == 6) {                 // ASLEEP: everything stops.',
+    '    twx = twy = tgx = tgy = 0;',
+    '  } else if (faceSeen) {               // from esp-dl',
+    '    tgx = (faceCx - 120) * 0.42f;',
+    '    tgy = (faceCy - 120) * 0.28f;',
+    '    twx = tgx * 0.62f;  twy = tgy * 0.62f;   // the face follows too',
+    '  } else if (now > wNext) {            // idle: pick somewhere new to look',
+    '    wNext = now + 1100 + random(2500);',
+    '    float amp = LOOK.wander / 100.0f;',
+    '    twx = (randomf() - 0.5f) * 52 * amp;',
+    '    twy = (randomf() - 0.5f) * 32 * amp;',
+    '  }',
+    '  wvx += (twx - wx) * 0.052f; wvx *= 0.87f; wx += wvx;   // slow, heavy',
+    '  wvy += (twy - wy) * 0.052f; wvy *= 0.87f; wy += wvy;',
+    '  gvx += (tgx - gx) * 0.20f;  gvx *= 0.72f; gx += gvx;   // quick, light',
+    '  gvy += (tgy - gy) * 0.20f;  gvy *= 0.72f; gy += gvy;',
+    '}',
+    '',
+    '// ---- 3. THE SUPERELLIPSE BODY -----------------------------------------',
+    '// |x/a|^n + |y/b|^n = 1  ->  x = a * (1 - |y/b|^n)^(1/n)',
+    '// No straight segment anywhere, so it can never read as a rounded rect.',
     '',
     'void fillSuperellipse(int16_t cx, int16_t cy, int16_t w, int16_t h,',
     '                      float n, float taper, uint8_t innerFlat,',
     '                      int8_t side, uint16_t colour) {',
-    '  float a = w * 0.5f, b = h * 0.5f;',
+    '  float a = w * 0.5f, b = h * 0.5f, inv = 1.0f / n;',
     '  float lim = a * (1.0f - innerFlat / 100.0f * 0.30f);',
-    '  float inv = 1.0f / n;',
-    '',
     '  for (int16_t dy = -b; dy <= b; dy++) {',
-    '    float ny = fabsf(dy / b);',
-    '    if (ny > 1.0f) continue;',
+    '    float ny = fabsf(dy / b);  if (ny > 1.0f) continue;',
     '    float half = a * powf(1.0f - powf(ny, n), inv);',
-    '',
-    '    half *= (1.0f - taper * (dy / b) * 0.42f);   // narrow one end',
-    '',
-    '    float left = -half, right = half;           // flatten the inner edge',
-    '    if (side < 0) { if (right >  lim) right =  lim; }   // left eye',
-    '    else          { if (left  < -lim) left  = -lim; }   // right eye',
-    '',
-    '    // Antialias the two end pixels by their fractional coverage. Without',
-    '    // this the silhouette staircases and the whole effect falls apart.',
-    '    int16_t xa = (int16_t)ceilf(left), xb = (int16_t)floorf(right);',
+    '    half *= (1.0f - taper * (dy / b) * 0.42f);',
+    '    float left = -half, right = half;',
+    '    if (side < 0) { if (right >  lim) right =  lim; }',
+    '    else          { if (left  < -lim) left  = -lim; }',
+    '    int16_t xa = ceilf(left), xb = floorf(right);',
     '    if (xb >= xa) fb.drawFastHLine(cx + xa, cy + dy, xb - xa + 1, colour);',
-    '    uint8_t la = (uint8_t)((xa - left) * 255);',
-    '    uint8_t lb = (uint8_t)((right - xb) * 255);',
-    '    if (la) fb.drawPixel(cx + xa - 1, cy + dy, tft.alphaBlend(la, colour, TFT_BLACK));',
-    '    if (lb) fb.drawPixel(cx + xb + 1, cy + dy, tft.alphaBlend(lb, colour, TFT_BLACK));',
+    '    // antialias the two end pixels by fractional coverage, or the',
+    '    // silhouette staircases and the whole effect falls apart',
+    '    uint8_t la = (xa - left) * 255, lb = (right - xb) * 255;',
+    '    if (la) fb.drawPixel(cx+xa-1, cy+dy, tft.alphaBlend(la, colour, TFT_BLACK));',
+    '    if (lb) fb.drawPixel(cx+xb+1, cy+dy, tft.alphaBlend(lb, colour, TFT_BLACK));',
     '  }',
     '}',
     '',
-    'void drawEye(int8_t side, const EyeState &m, const EyeLook &L) {',
-    '  // ASYMMETRY. This is the single most important line in the file: the',
-    '  // right eye is smaller and lower. Perfectly mirrored eyes look drawn by',
-    '  // a machine, which is exactly what we are trying not to look like.',
-    '  float small = (side > 0) ? 1.0f - L.asymSize / 100.0f * 0.20f : 1.0f;',
-    '  int16_t dy  = (side > 0) ? L.asymY / 100.0f * 7 : 0;',
-    '',
-    '  int16_t cx = 120 + side * m.gap + (int16_t)(gx * 0.42f);',
-    '  int16_t cy = 120 + m.offY + dy  + (int16_t)(gy * 0.42f);',
-    '  int16_t w  = m.w * small;',
-    '  int16_t h  = m.h * small * (m.open / 100.0f) * blink;',
-    '',
-    '  fillSuperellipse(cx, cy, w, h, L.form / 100.0f, L.taper / 100.0f,',
-    '                   L.innerFlat, side, EYE_COLOR);',
-    '',
-    '  // Pupil: small, off-centre, INWARD, and deliberately not clipped to the',
-    '  // body. Letting it break the outline is part of the hand-made look.',
-    '  float ps = L.pupScale / 100.0f;',
-    '  int16_t px = cx - side * m.pupX * ps + (int16_t)(gx * 0.85f);',
-    '  int16_t py = cy + m.pupY          + (int16_t)(gy * 0.85f);',
-    '  fillSuperellipse(px, py, m.pupW * ps, m.pupH * ps, 2.0f, 0, 0, 0, PUPIL_COLOR);',
-    '',
-    '  // Lids: draw last, in black, clipped to this eye\'s own box. A lid wide',
-    '  // enough to cover one eye is wide enough to swallow the other.',
-    '  if (m.lidTop > 0) {',
-    '    int16_t lid = h * m.lidTop / 100;',
-    '    float   sl  = tanf(-side * m.brow * PI / 180.0f);   // NOTE the minus',
-    '    for (int16_t i = -w/2 - 6; i <= w/2 + 6; i++) {',
-    '      int16_t yy = cy - h/2 + lid + (int16_t)(i * sl);',
-    '      fb.drawFastVLine(cx + i, cy - h/2 - 18, (yy - (cy - h/2)) + 18, TFT_BLACK);',
-    '    }',
-    '  }',
-    '  if (m.lidBot > 0) {',
-    '    int16_t lid = h * m.lidBot / 100;',
-    '    fb.fillRect(cx - w/2 - 6, cy + h/2 - lid, w + 12, lid + 18, TFT_BLACK);',
-    '  }',
-    '}',
-    '',
-    '// The look is 8 bytes. Two devices that meet can trade EyeLook structs over',
-    '// ESP-NOW and each will be wearing a little of the other\'s face - which is',
-    '// exactly what CREATURE says the real ones do when they run into each other.'
+    '// The LOOK is 10 bytes. Two devices that meet can trade EyeLook structs',
+    '// over ESP-NOW and each ends up wearing a little of the other\'s face -',
+    '// which is exactly what CREATURE says the real ones do in the wild.'
   ].join('\n');
 
   syncLook(); syncMood(); emit();
