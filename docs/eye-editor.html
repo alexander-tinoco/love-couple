@@ -237,51 +237,51 @@ tbody tr:last-child td{border-bottom:0}
   }
   var MOODS={
     //             w    h  gap tilt open offY curv  pw  ph  px  py  lt  lb brow
-    'Neutral':   M( 76,106, 44,  0, 100,  0,   0, 22, 28,  6, -3,  0,  0,   0),
-    'Happy':     M( 74,  98,  54,   0, 100,   0, 100,  22,  28,   6,  -3,   0,   0,   0),
-    'Pleased':   M( 78,102, 45,  0, 100,  2,   0, 24, 30,  6,-13,  0, 42,   0),
-    'In love':   M( 84,114, 45,  0, 100,  0,   0, 54, 52,  3, -2,  0,  0,   0, 1, 1, 4),
-    'Excited':   M( 88,124, 46,  0, 100, -5,   0, 40, 50,  5, -9,  0,  0,  -9, 0, 0, 3),
-    'Surprised': M( 98, 126,  60,   0, 100,  -4,   0,  10,  13,   4,  -1,   0,   0,   0),
-    'Curious':   M( 78,108, 44,  7, 100, -4,   0, 24, 30, 12,-12, 12,  0,   9),
-    'Angry':     M( 80,104, 43,  0, 100,  0,   0, 18, 23,  8,  5, 40,  0,  26),
-    'Skeptical': M( 78,102, 45,  0, 100,  0,   0, 22, 27, 14,  3, 46,  0,   6),
-    'Sad':       M( 74,102, 47,  0, 100,  6,   0, 30, 38,  5, 11, 30,  0, -24),
-    'Missing you':M(74,100, 47,  0, 100,  5,   0, 28, 36,  6,  9, 22,  0, -14),
-    'Scared':    M( 56,126, 41,  0, 100, -3,   0,  9, 11,  3,-15,  0,  0,   0, 0, 0, 2),
-    'Dizzy':     M( 88, 96, 46,  0, 100,  0,   0, 30, 30,  0,  0,  0,  0,   0, 0, 0, 1),
-    'Bored':     M( 78,102, 45,  0,  92,  5,   0, 24, 29,  8,  9, 54,  0,   0),
-    'Tired':     M( 78,102, 45,  0,  86,  5,   0, 26, 30,  7,  7, 50, 12,  -8),
-    'Asleep':    M( 84,106, 45,  0,   7,  6,   0, 22, 28,  6, -3,  0,  0,   0, 0, 0, 6)
+    'Neutral':   M( 76, 106,  40,   0, 100,   0,   0,  22,  28,   6,  -3,   0,   0,   0),
+    'Happy':     M( 74,  98,  50,   0, 100,   0, 100,  22,  28,   6,  -3,   0,   0,   0),
+    'Pleased':   M( 78, 102,  41,   0, 100,   2,   0,  24,  30,   6, -13,   0,  42,   0),
+    'In love':   M( 84, 114,  41,   0, 100,   0,   0,  54,  52,   3,  -2,   0,   0,   0,   1,   1,   4),
+    'Excited':   M( 88, 124,  42,   0, 100,  -5,   0,  40,  50,   5,  -9,   0,   0,  -9,   0,   0,   3),
+    'Surprised': M( 98, 126,  52,   0, 100,  -4,   0,  26,  32,   4,  -1,   0,   0,   0),
+    'Curious':   M( 78, 108,  40,   7, 100,  -4,   0,  24,  30,  12, -12,  12,   0,   9),
+    'Angry':     M( 80, 104,  39,   0, 100,   0,   0,  18,  23,   8,   5,  40,   0,  26),
+    'Skeptical': M( 78, 102,  41,   0, 100,   0,   0,  22,  27,  14,   3,  46,   0,   6),
+    'Sad':       M( 74, 102,  43,   0, 100,   6,   0,  30,  38,   5,  11,  30,   0, -24),
+    'Missing you':M( 74, 100,  43,   0, 100,   5,   0,  28,  36,   6,   9,  22,   0, -14),
+    'Scared':    M( 56, 126,  37,   0, 100,  -3,   0,  20,  26,   3, -15,   0,   0,   0,   0,   0,   2),
+    'Dizzy':     M( 88,  96,  42,   0, 100,   0,   0,  30,  30,   0,   0,   0,   0,   0,   0,   0,   1),
+    'Bored':     M( 78, 102,  41,   0,  92,   5,   0,  24,  29,   8,   9,  54,   0,   0),
+    'Tired':     M( 78, 102,  41,   0,  86,   5,   0,  26,  30,   7,   7,  50,  12,  -8),
+    'Asleep':    M( 84, 106,  41,   0,   7,   6,   0,  22,  28,   6,  -3,   0,   0,   0,   0,   0,   6)
   };
   var NOTES={
     'Neutral':'Tall ellipses, not circles. The right eye is smaller and lower — that is the look, not a bug.',
-    'Happy':'Kawaii closed arcs: fat, wide, rounded caps, with a sparkle over each. No pupil — a happy squint has none.',
+    'Happy':'Two clearly separate closed arcs with rounded caps. No pupil, no decoration — a happy squint has neither.',
     'Pleased':'Lower lid pushed up, pupil nudged up over it. Smiling with your eyes.',
     'In love':'Oversized heart pupils that nearly fill the eye, and the whole face pulses like a heartbeat.',
     'Excited':'Tall eyes, big pupils looking up, and a real vertical bounce.',
-    'Surprised':'The widest and tallest body of the set with the second-smallest pupil. Extreme contrast is what reads as shock.',
+    'Surprised':'The widest and tallest body of the set, with a pupil small enough to read as shock but still clearly a pupil.',
     'Curious':'A tilt, one brow up, and the pupil pushed up and inward. Gaze does the work.',
     'Angry':'Upper lid down with the INNER corners lowest, plus a shrunken pupil.',
     'Skeptical':'Heavier lid than angry but a much milder brow, pupil well off to one side.',
     'Sad':'Brow inverted from angry — inner corners UP — with a large pupil dropped low.',
     'Missing you':'A softer sad. Less lid, gentler brow. For the days-apart counter.',
-    'Scared':'The narrowest and tallest body, the smallest pupil, looking up, and a constant tremble.',
+    'Scared':'The narrowest and tallest body, pupil looking up, and a constant tremble. The proportions carry it, not a shrunken pupil.',
     'Dizzy':'Round body and pupil, centred, and the whole screen rotates slowly.',
     'Bored':'Heavy lid and ZERO brow angle. Boredom is the absence of expression.',
     'Tired':'Both lids closing in, pupil low, body slightly squashed.',
-    'Asleep':'Two thin slits, and everything stops — no wandering, no gaze, no cursor. He is asleep.'
+    'Asleep':'Two thin slits and a drifting zzz. The eyes stop completely — no wandering, no gaze, no cursor, no breathing.'
   };
   var AUDIT=[
-    ['Neutral','Tall ellipses of <b>different sizes</b>, small off-centre pupil','Near-circles, perfectly mirrored — the “too perfect” problem'],
-    ['Happy','Fat kawaii arcs with rounded caps and a sparkle each','Thin arcs so wide they merged into one moustache'],
+    ['Neutral','Tall ellipses of <b>different sizes</b>, set close together','Near-circles, perfectly mirrored, and spaced too far apart'],
+    ['Happy','Two separate arcs with rounded caps, nothing else','Arcs so wide they merged into one moustache; the sparkles read as clip art'],
     ['In love','Heart pupils that nearly fill the eye, whole face pulsing','Correct shape but static and flat'],
     ['Excited','Tall body, big pupils looking up, vertical bounce','Just a scaled-up Neutral'],
-    ['Surprised','Widest+tallest body, near-smallest pupil','Not extreme enough to separate from Excited'],
-    ['Scared','Narrowest+tallest body, smallest pupil, looking up, trembling','Too close to Surprised'],
+    ['Surprised','Widest+tallest body, pupil small but still legible','Pupil too small, and the pair sat too far apart'],
+    ['Scared','Narrowest+tallest body, pupil up, trembling','Pupil shrunk so far it stopped reading as an eye'],
     ['Angry','Upper lid down, <b>inner</b> corners lowest, shrunken pupil','Brow rotated the wrong way, so it read as <b>sad</b>'],
     ['Sad','Brow inverted from angry, big pupil low','Also inverted — read as mildly <b>angry</b>'],
-    ['Asleep','Two thin slits, and <b>all motion stops</b>','Kept wandering and tracking the cursor while asleep'],
+    ['Asleep','Two thin slits, a drifting zzz, and the eyes <b>completely still</b>','Kept wandering, tracking the cursor and breathing while asleep'],
     ['Pleased','Lower lid raised, pupil pushed up over it','A half-strength arc — read as a weak Happy'],
     ['Skeptical','Heavy lid, mild brow, pupil far to one side','Too close to Angry to tell apart'],
     ['Tired','Both lids in, pupil low, body squashed','Indistinguishable from Bored'],
@@ -341,14 +341,6 @@ tbody tr:last-child td{border-bottom:0}
     c.bezierCurveTo(x+W*0.62,y-H*1.55, x+W*2.0,y-H*0.30, x,y+H);
     c.closePath();
   }
-  function sparkle(c,x,y,r){
-    c.beginPath(); c.moveTo(x,y-r);
-    c.quadraticCurveTo(x+r*0.20,y-r*0.20, x+r,y);
-    c.quadraticCurveTo(x+r*0.20,y+r*0.20, x,y+r);
-    c.quadraticCurveTo(x-r*0.20,y+r*0.20, x-r,y);
-    c.quadraticCurveTo(x-r*0.20,y-r*0.20, x,y-r);
-    c.closePath();
-  }
 
   var animT={pulse:1,bounce:0,trem:0};
 
@@ -372,14 +364,12 @@ tbody tr:last-child td{border-bottom:0}
     c.rotate(side*p.tilt*Math.PI/180);
 
     if(p.curve>3){
-      // Kawaii closed arc: fat, wide, rounded caps, sitting high, with a
-      // sparkle over it. Thin narrow arcs read as a moustache, not as joy.
-      var k=p.curve/100, th=Math.max(7,w*0.34), rad=w*0.44;
+      // Closed happy arc. Two clearly separate curves, rounded caps, no
+      // decoration - a sparkle on top read as clip art, not as the product.
+      var k=p.curve/100, th=Math.max(6,w*0.27), rad=w*0.46;
       c.save(); c.globalAlpha=k;
       c.strokeStyle=color; c.lineWidth=th; c.lineCap='round';
-      c.beginPath(); c.arc(0,rad*0.58,rad,Math.PI*1.14,Math.PI*1.86); c.stroke(); c.stroke();
-      c.fillStyle=rgbs(pupilRGB(side));
-      sparkle(c,-w*0.42*side,-h*0.30,Math.max(3,w*0.10)); c.fill();
+      c.beginPath(); c.arc(0,rad*0.46,rad,Math.PI*1.25,Math.PI*1.75); c.stroke(); c.stroke();
       c.restore();
       if(k<0.97){ c.save(); c.globalAlpha=1-k; c.fillStyle=color; bodyPath(c,w,h,side); c.fill(); c.restore(); }
       c.restore(); return;
@@ -393,6 +383,19 @@ tbody tr:last-child td{border-bottom:0}
       var px=-side*p.pupX*ps+myx*0.88;
       var py=p.pupY*scale+myy*0.88;
       var pw=p.pupW*ps*sqx, ph=p.pupH*ps*scale*sqy;
+
+      // KEEP THE PUPIL INSIDE THE BODY. Clamp its centre into the largest
+      // ellipse the pupil still fits within; the superellipse body is always
+      // fatter than that ellipse, so this can never leave it poking out.
+      var ax=Math.max(1,w/2-pw/2-1.5), ay=Math.max(1,h/2-ph/2-1.5);
+      var dd=Math.sqrt((px/ax)*(px/ax)+(py/ay)*(py/ay));
+      if(dd>1){ px/=dd; py/=dd; }
+      // the inner edge is flat, so it needs a limit of its own
+      var flat=(w/2)*(1-look.innerFlat/100*0.30)-pw/2-1;
+      if(-side>0){ if(px>flat)px=flat; } else { if(px<-flat)px=-flat; }
+
+      c.save();
+      bodyPath(c,w,h,side); c.clip();   // safety net for mid-blink frames
       c.fillStyle=rgbs(pupilRGB(side));
       // Cross-fade the pupil SHAPE instead of snapping it. Snapping between a
       // heart and an ellipse mid-transition is the single ugliest frame here.
@@ -408,6 +411,7 @@ tbody tr:last-child td{border-bottom:0}
         if(toM.pupForm===1) heartPath(c,px,py,pw,ph); else ell(c,px,py,pw,ph);
         c.fill(); c.restore();
       }
+      c.restore();
     }
 
     if(p.lidTop>0.5||p.lidBot>0.5){
@@ -425,6 +429,29 @@ tbody tr:last-child td{border-bottom:0}
       c.restore();
     }
     c.restore();
+  }
+
+  // zzz while asleep. The EYES stay perfectly still - only these move - so the
+  // device still gets to skip redrawing everything but this little corner.
+  var zzz=[], zNext=0;
+  function stepZ(active,t){
+    if(!active){ if(zzz.length) zzz.length=0; return; }
+    if(t>zNext){ zNext=t+1050; zzz.push({t0:t}); }
+    for(var i=zzz.length-1;i>=0;i--) if(t-zzz[i].t0>3150) zzz.splice(i,1);
+  }
+  function drawZ(c,t){
+    for(var i=0;i<zzz.length;i++){
+      var k=(t-zzz[i].t0)/3150;
+      var a=k<0.16?k/0.16:(k>0.72?(1-k)/0.28:1);
+      if(a<=0) continue;
+      var sz=10+k*15;
+      c.save();
+      c.globalAlpha=a*0.92; c.fillStyle=color;
+      c.font='700 '+sz.toFixed(1)+'px "Instrument Sans",system-ui,sans-serif';
+      c.textAlign='center'; c.textBaseline='middle';
+      c.fillText('z', 156+k*40+Math.sin(t/620+zzz[i].t0)*4, 104-k*66);
+      c.restore();
+    }
   }
 
   function stepHearts(active){
@@ -456,6 +483,7 @@ tbody tr:last-child td{border-bottom:0}
     // the pair leans into its own movement
     if(auto&&cur.anim!==6){ octx.translate(S/2,S/2); octx.rotate(wvx*0.010); octx.translate(-S/2,-S/2); }
     drawEye(octx,cur,-1,t); drawEye(octx,cur,1,t);
+    drawZ(octx,t);
     octx.restore();
 
     ctx.setTransform(DPR,0,0,DPR,0,0);
@@ -539,10 +567,10 @@ tbody tr:last-child td{border-bottom:0}
     else      { var s2=Math.min(ay/7,1)*0.7; ty=1+s2*0.28; tx=1-s2*0.20; }
     sqx+=(tx-sqx)*0.32; sqy+=(ty-sqy)*0.32;
 
-    // Asleep must settle to EXACTLY rest, not merely approach it. Springs
-    // converge asymptotically and never quite arrive, which leaves a permanent
-    // sub-pixel shimmer - and on the device it means never being able to stop
-    // redrawing. Snap the residue to zero and the frame becomes truly static.
+    // Asleep must settle the EYES to exactly rest, not merely approach it.
+    // Springs converge asymptotically and never quite arrive, which leaves a
+    // permanent sub-pixel shimmer. Snapping the residue to zero means the eyes
+    // are genuinely static and only the zzz corner needs repainting.
     if(asleep&&k>=1){
       var snap=function(v,to){ return Math.abs(v-to)<0.25?to:v; };
       wx=snap(wx,0); wy=snap(wy,0); wvx=snap(wvx,0); wvy=snap(wvy,0);
@@ -554,6 +582,7 @@ tbody tr:last-child td{border-bottom:0}
     }
 
     stepHearts(toM.part===1);
+    stepZ(asleep&&k>=1,t);
     draw(t);
     requestAnimationFrame(tick);
   }
