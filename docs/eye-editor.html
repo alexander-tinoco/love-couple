@@ -316,20 +316,14 @@ tbody tr:last-child td{border-bottom:0}
     ['Bored','Heavy lid, zero brow angle','Look tuned; expression unchanged']
   ];
 
-  // A palette is a BODY and, optionally, its own PUPIL. Deriving the pupil only
-  // by lightening or darkening the body was always an approximation - the real
-  // device uses a different hue for it (green body / deeper green pupil,
-  // orange body / yellow pupil). When a palette names its pupil, that colour is
-  // the neutral centre and pupTone only nudges it; when it does not, the old
-  // body-derived behaviour is kept exactly.
-  var COLORS=[['Pink','#FF2E5F',null],['Green','#A9F88A','#2F7A2C']];
+  var COLORS=[['Pink','#FF2E5F'],['Green','#A9F88A']];
   var LOOKS={}, curLook={}, fromLook={}, toLook={};
   for(var n0 in BASE_LOOKS){ LOOKS[n0]={}; for(var k0 in BASE_LOOKS[n0]) LOOKS[n0][k0]=BASE_LOOKS[n0][k0]; }
   for(var k1 in LOOKS['Neutral']){ curLook[k1]=LOOKS['Neutral'][k1]; fromLook[k1]=curLook[k1]; toLook[k1]=curLook[k1]; }
 
   var cur={}, fromM={}, toM={};
   for(var kk in MOODS['Neutral']){ cur[kk]=MOODS['Neutral'][kk]; fromM[kk]=cur[kk]; toM[kk]=cur[kk]; }
-  var color='#FF2E5F', pupBase=null, moodName='Neutral';
+  var color='#FF2E5F', moodName='Neutral';
 
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var auto=!reduced, follow=false, coverBlink=true, decay=false;
@@ -374,14 +368,9 @@ tbody tr:last-child td{border-bottom:0}
   function mix(a,b,k){return [Math.round(a[0]+(b[0]-a[0])*k),Math.round(a[1]+(b[1]-a[1])*k),Math.round(a[2]+(b[2]-a[2])*k)];}
   function rgbs(c){return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
   function pupilRGB(side){
-    var base=hex2rgb(pupBase||color);
+    var base=hex2rgb(color);
     var t=(curLook.pupTone + (side>0 ? -curLook.pupSplit*0.42 : 0))/100;
     t=Math.max(-1,Math.min(1,t));
-    // A named pupil already carries the contrast, so damp the per-mood shift;
-    // otherwise it washes straight back out to white or black. Damp the light
-    // side harder than the dark one: mixing toward white also desaturates, and
-    // a pale pupil turns grey long before a dark one stops looking like itself.
-    if(pupBase) t*= t>0 ? 0.38 : 0.62;
     return t>=0 ? mix(base,[255,255,255],t) : mix(base,[0,0,0],-t);
   }
 
@@ -773,7 +762,7 @@ tbody tr:last-child td{border-bottom:0}
     b.innerHTML='<span class="sw" style="background:'+c[1]+'"></span>'+c[0];
     if(i===0)b.classList.add('on');
     b.addEventListener('click',function(){
-      color=c[1]; pupBase=c[2]||null;
+      color=c[1];
       colEl.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});
       b.classList.add('on'); emit();
     });
