@@ -542,7 +542,8 @@ tbody tr:last-child td{border-bottom:0}
   function drawHearts(c,t){
     for(var i=0;i<hearts.length;i++){
       var hp=hearts[i];
-      c.save(); c.globalAlpha=hp.a*0.95; c.fillStyle='#FF2547';
+      // The hearts take the eye colour, the same way the zzz do.
+      c.save(); c.globalAlpha=hp.a*0.95; c.fillStyle=color;
       heartPath(c,hp.x+Math.sin(t/620+hp.ph)*7,hp.y,hp.s,hp.s); c.fill(); c.restore();
     }
   }
