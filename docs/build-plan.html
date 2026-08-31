@@ -499,6 +499,18 @@ hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
       <p style="font-size:.93rem;color:var(--muted);margin-bottom:0">The PDM microphone is already on board. Read only the <strong>RMS level</strong> ten times a second — no FFT, no speech. Sudden noise → it startles. Loud sustained noise → it gets overwhelmed. Silence plus stillness → it falls asleep. Thirty lines.</p>
     </div>
   </div>
+
+  <div class="card" style="margin-top:16px;border-color:var(--accent);border-width:1.5px">
+    <h3>They swap eyes when they meet</h3>
+    <p style="font-size:.93rem;color:var(--muted)">CREATURE's own copy says starboys &ldquo;<strong>swap eyes, spread behaviours, and play with each other</strong>&rdquo; when they come into contact in the wild. That is worth stealing, and it is the good version of the hand-off you cut earlier.</p>
+    <p style="font-size:.93rem;color:var(--muted)">What travels is not the creature &mdash; it is <strong>the look</strong>: eye shape, asymmetry, pupil size and tone. In the editor that is a struct of <strong>ten bytes</strong>. Two keychains inside ESP-NOW range trade looks, and each keeps a blend of what it received.</p>
+    <ul class="tight" style="font-size:.9rem;color:var(--muted);margin-bottom:0">
+      <li><strong>No two-phase commit, no rescue timers, nothing that can be lost.</strong> A look is copied, never moved, so a dropped packet costs nothing and the worst case is &ldquo;nothing happened&rdquo;.</li>
+      <li>Each device is born with its own look, seeded from its MAC address. Hers and yours start visibly different.</li>
+      <li>On every meeting, blend about 15&nbsp;% of the other's look into your own. After a weekend together they start to resemble each other; apart, they slowly drift back.</li>
+      <li><strong>That drift is the whole gift.</strong> The keychains end up carrying a visible record of how much time you have actually spent together &mdash; for about thirty lines on top of the ESP-NOW layer you are already building.</li>
+    </ul>
+  </div>
 </section>
 
 <section>
@@ -510,11 +522,11 @@ hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
 
   <div class="note">
     <span class="lbl">Eye Editor</span>
-    <p style="margin-bottom:0"><a href="https://claude.ai/code/artifact/532c1a24-ca0d-444f-903d-7083c9b656f2"><strong>Open it here →</strong></a> A round display at true size, 16 moods, shape, pupil and style sliders, spring physics, and <strong>C++ export</strong> with the complete <code>drawEyes()</code> function. <strong>It needs no hardware</strong>: you can design all 15 moods today, while the boards are still in the post.</p>
+    <p style="margin-bottom:0"><a href="https://claude.ai/code/artifact/532c1a24-ca0d-444f-903d-7083c9b656f2"><strong>Open it here →</strong></a> A round display at true size, 16 moods, shape, pupil and style sliders, spring physics, and <strong>C++ export</strong> with the complete <code>drawEyes()</code> function. <strong>It needs no hardware</strong>: you can design all 16 moods today, while the boards are still in the post.</p>
   </div>
 
   <div class="col" style="margin-top:20px">
-    <p>I compared it frame by frame against the STARBOY video. The gap with my first version wasn't "more animations" — it was six specific things, and all of them are in the editor now:</p>
+    <p>I compared it frame by frame against the STARBOY video. The gap with my first version wasn't "more animations" — it was a short list of specific things, and all of them are in the editor now:</p>
   </div>
 
   <div class="tw" style="margin-top:16px">
@@ -528,6 +540,9 @@ hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
         <tr><td><strong>4. Anti-aliasing</strong></td><td>The most important item here and the easiest to skip. Without it, a curve at 240×240 looks like a staircase and the whole effect collapses. Use <code>fillSmoothRoundRect()</code> from TFT_eSPI 2.5+, <strong>never</strong> <code>fillRoundRect()</code>.</td></tr>
         <tr><td><strong>5. Spring, not lerp</strong></td><td>A <code>lerp</code> reaches the target and stops: it reads as mechanical. A spring <strong>overshoots slightly and settles</strong>. Three lines: <code>vel += (target−cur)*0.20; vel *= 0.70; cur += vel;</code></td></tr>
         <tr><td><strong>6. Squash and stretch</strong></td><td>Moving fast, the eye lengthens along the direction of travel and thins perpendicular to it, preserving area. It's the oldest principle in Disney animation — and the STARBOY people came from exactly there.</td></tr>
+        <tr><td><strong>7. The pair wanders</strong></td><td>The creature looks around by moving its <strong>whole face</strong> across the display, not just its pupils. Two systems at two speeds: a slow, heavy drift that carries both bodies together, and a faster, lighter one that nudges the body a little and the pupil a lot. Run them at the same rate and it reads as a slider being dragged.</td></tr>
+        <tr><td><strong>8. One clock per transition</strong></td><td>Do not give each parameter its own spring. Fourteen springs ringing at once means the eyelid arrives before the body and the brow overshoots alone, and the face passes through poses that belong to no mood — it reads as broken. One eased clock over ~430 ms, with only the four size parameters allowed to overshoot.</td></tr>
+        <tr><td><strong>9. Asleep means asleep</strong></td><td>No wandering, no gaze, no cursor, no breathing. And snap the residual motion to <em>exactly</em> zero instead of letting the springs approach it: springs never quite arrive, which leaves a permanent shimmer and means the device can never stop redrawing. A genuinely static frame is also a battery decision.</td></tr>
       </tbody>
     </table>
   </div>
