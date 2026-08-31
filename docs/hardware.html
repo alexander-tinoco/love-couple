@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Hardware Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEF1;
+  --surface:#FFFFFF;
+  --surface-2:#F5F6F8;
+  --ink:#16151C;
+  --muted:#5C6272;
+  --faint:#868C9C;
+  --rule:#D4D7DF;
+  --rule-soft:#E3E5EB;
+  --accent:#C1105F;
+  --accent-soft:#FBE9F1;
+  --risk:#C2451C;
+  --risk-soft:#FBEBE4;
+  --ok:#0B7E5B;
+  --ok-soft:#E3F4EE;
+  --sheen:linear-gradient(168deg,#FFFFFF 0%,#E7E9EE 38%,#F7F8FA 55%,#D9DCE4 78%,#FFFFFF 100%);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E0D13;
+    --surface:#17161F;
+    --surface-2:#1E1D28;
+    --ink:#ECECF2;
+    --muted:#9198A8;
+    --faint:#6E7484;
+    --rule:#2B2A37;
+    --rule-soft:#232231;
+    --accent:#FF4C99;
+    --accent-soft:#2A1220;
+    --risk:#FF8156;
+    --risk-soft:#2C1710;
+    --ok:#33D6A0;
+    --ok-soft:#0E2620;
+    --sheen:linear-gradient(168deg,#2A2936 0%,#141320 38%,#32313F 55%,#111019 78%,#26252F 100%);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E0D13;
+  --surface:#17161F;
+  --surface-2:#1E1D28;
+  --ink:#ECECF2;
+  --muted:#9198A8;
+  --faint:#6E7484;
+  --rule:#2B2A37;
+  --rule-soft:#232231;
+  --accent:#FF4C99;
+  --accent-soft:#2A1220;
+  --risk:#FF8156;
+  --risk-soft:#2C1710;
+  --ok:#33D6A0;
+  --ok-soft:#0E2620;
+  --sheen:linear-gradient(168deg,#2A2936 0%,#141320 38%,#32313F 55%,#111019 78%,#26252F 100%);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px 96px}
+.col{max-width:640px}
+
+h1,h2,h3,.disp{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;text-wrap:balance;letter-spacing:-0.02em}
+h2{font-size:1.7rem;font-weight:800;line-height:1.15;margin:0 0 10px}
+h3{font-size:1.06rem;font-weight:700;line-height:1.3;margin:0 0 6px;letter-spacing:-0.01em}
+p{margin:0 0 14px}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+strong{font-weight:600}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:0.855em}
+code{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:4px;padding:1px 5px}
+
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;font-size:.685rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 12px;
+}
+
+/* ---------- header ---------- */
+header{
+  background:var(--sheen);
+  border-bottom:1px solid var(--rule);
+  padding:56px 0 0;
+  margin-bottom:56px;
+}
+.hd{max-width:1080px;margin:0 auto;padding:0 24px}
+.hd h1{
+  font-size:clamp(2.5rem,7vw,4.4rem);font-weight:800;line-height:.96;
+  margin:0 0 18px;letter-spacing:-0.045em;
+}
+.hd .lede{font-size:1.12rem;color:var(--muted);max-width:47ch;margin:0 0 34px}
+.hd .lede b{color:var(--ink);font-weight:600}
+.countbar{
+  display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);
+  margin-top:8px;
+}
+.cnt{
+  flex:1 1 140px;padding:16px 20px 20px;border-right:1px solid var(--rule);
+}
+.cnt:last-child{border-right:0}
+.cnt .k{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:4px}
+.cnt .v{font-family:"Bricolage Grotesque",sans-serif;font-size:1.55rem;font-weight:700;line-height:1.1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.cnt .v.hot{color:var(--accent)}
+
+/* ---------- sections ---------- */
+section{margin:0 0 64px;scroll-margin-top:24px}
+.secnum{
+  font-family:"JetBrains Mono",monospace;font-size:.7rem;font-weight:500;
+  color:var(--accent);letter-spacing:.1em;display:block;margin-bottom:6px;
+}
+
+.card{
+  background:var(--surface);border:1px solid var(--rule);border-radius:10px;
+  padding:22px 24px;
+}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+.note{
+  border-left:3px solid var(--accent);background:var(--accent-soft);
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:20px 0;
+}
+.note.risk{border-left-color:var(--risk);background:var(--risk-soft)}
+.note p:last-child{margin-bottom:0}
+.note .lbl{
+  font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px;font-weight:700;
+}
+.note.risk .lbl{color:var(--risk)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.9rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{
+  font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--faint);font-weight:500;
+  background:var(--surface-2);border-bottom:1px solid var(--rule);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+td .sub{display:block;color:var(--muted);font-size:.83rem;line-height:1.45;margin-top:2px}
+tfoot td{background:var(--surface-2);font-weight:600;border-top:1px solid var(--rule)}
+
+/* ---------- scope chips ---------- */
+.scope{border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:18px 20px}
+.scope h3{display:flex;align-items:baseline;gap:9px;margin-bottom:12px}
+.tag{
+  font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:3px 7px;border-radius:4px;font-weight:700;
+}
+.tag.must{background:var(--accent);color:var(--surface)}
+.tag.should{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok)}
+.tag.nice{background:var(--surface-2);color:var(--muted);border:1px solid var(--rule)}
+.tag.cut{background:var(--risk-soft);color:var(--risk);border:1px solid var(--risk)}
+.scope ul{margin:0;padding-left:18px;font-size:.91rem;line-height:1.55}
+.scope li{margin-bottom:7px}
+.scope li:last-child{margin-bottom:0}
+.scope.is-cut li{text-decoration:line-through;text-decoration-color:var(--faint);color:var(--muted)}
+
+/* ---------- figures ---------- */
+figure{margin:24px 0;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:22px 20px 16px}
+figure .svgbox{overflow-x:auto}
+figure svg{display:block;max-width:100%;height:auto;min-width:520px;margin:0 auto;color:var(--ink)}
+figcaption{
+  font-size:.855rem;color:var(--muted);margin-top:16px;padding-top:13px;
+  border-top:1px solid var(--rule-soft);line-height:1.5;
+}
+figcaption b{color:var(--ink);font-weight:600}
+
+/* ---------- gantt ---------- */
+.gwrap{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:18px 18px 14px}
+.gantt{min-width:760px}
+.grow{display:grid;grid-template-columns:180px 1fr;gap:12px;align-items:center;margin-bottom:7px}
+.glab{font-size:.83rem;line-height:1.25}
+.glab .gn{font-family:"JetBrains Mono",monospace;color:var(--faint);font-size:.72rem;margin-right:6px}
+.gtrack{display:grid;grid-template-columns:repeat(28,1fr);gap:2px;height:26px;align-items:stretch}
+.gtrack::before{content:"";grid-column:1/-1;grid-row:1;background:var(--surface-2);border-radius:4px}
+.gbar{
+  grid-row:1;border-radius:4px;background:var(--ink);color:var(--surface);
+  font-family:"JetBrains Mono",monospace;font-size:.66rem;font-weight:500;
+  display:flex;align-items:center;padding:0 8px;overflow:hidden;white-space:nowrap;
+}
+.gbar.a{background:var(--accent);color:#fff}
+.gbar.o{background:var(--muted)}
+.gbar.b{background:transparent;border:1px dashed var(--rule);color:var(--muted)}
+.gbar.d{background:var(--risk);color:#fff;justify-content:center;padding:0 2px}
+.gaxis{display:grid;grid-template-columns:repeat(28,1fr);gap:2px;margin-top:6px}
+.gaxis span{
+  font-family:"JetBrains Mono",monospace;font-size:.6rem;color:var(--faint);
+  text-align:left;grid-row:1;
+}
+
+/* ---------- phase list ---------- */
+.ph{display:grid;grid-template-columns:64px 1fr;gap:0;border-top:1px solid var(--rule)}
+.ph:last-of-type{border-bottom:1px solid var(--rule)}
+.ph .pn{
+  padding:18px 0 18px 0;font-family:"Bricolage Grotesque",sans-serif;
+  font-size:1.5rem;font-weight:700;color:var(--rule);letter-spacing:-0.03em;line-height:1;
+}
+.ph.hot .pn{color:var(--accent)}
+.ph .pb{padding:18px 0 20px}
+.ph .pd{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--faint);letter-spacing:.06em;margin-bottom:3px}
+.ph p{margin:0 0 8px;font-size:.93rem;color:var(--muted)}
+.ph p:last-child{margin-bottom:0}
+.ph .out{font-size:.86rem;color:var(--ink)}
+.ph .out b{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);font-weight:500}
+
+ul.tight{margin:0 0 14px;padding-left:19px}
+ul.tight li{margin-bottom:6px}
+hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
+
+.lead{font-size:1.05rem;color:var(--muted);max-width:60ch}
+.kicker{font-size:1.15rem;line-height:1.5;font-weight:500;max-width:52ch;font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-0.015em}
+
+@media (prefers-reduced-motion: no-preference){
+  .gbar{transition:transform .18s ease}
+}
+@media (max-width:640px){
+  .hd h1{font-size:2.3rem}
+  .ph{grid-template-columns:44px 1fr}
+  .cnt{flex-basis:50%;border-bottom:1px solid var(--rule)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <p class="eyebrow">Hardware review · before the order goes in · 31 Aug 2026</p>
+    <h1>What we're<br>actually building</h1>
+    <p class="lede">Pinouts, voltages, current, charge time, and how a 21 mm board, a 37 mm display and a 35 mm battery fit inside a star. <b>Four findings here change the shopping list</b> — which is exactly why this came before the order.</p>
+    <div class="countbar">
+      <div class="cnt"><span class="k">Board</span><span class="v">XIAO S3 Sense</span></div>
+      <div class="cnt"><span class="k">Logic</span><span class="v">3.3 V only</span></div>
+      <div class="cnt"><span class="k">Runtime</span><span class="v">~5 days</span></div>
+      <div class="cnt"><span class="k">Charge</span><span class="v hot">9 h</span></div>
+      <div class="cnt"><span class="k">Thickness</span><span class="v">~18 mm</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <span class="secnum">01</span>
+  <h2>Findings that change the order</h2>
+  <p class="lead" style="margin-bottom:20px">You were right to do this first. Each of these would have cost days if it had surfaced with the parts already soldered.</p>
+
+  <div class="note risk">
+    <span class="lbl">1 · The accelerometer may not run on 3.3 V</span>
+    <p>The common <strong>GY-521</strong> breakout of the MPU6050 carries an LDO regulator that wants <strong>4.3–9 V in</strong>. Our only rail is <strong>3.3 V</strong>. The XIAO does have a 5 V pin, but it is USB VBUS — <strong>on battery it is dead</strong>, so an IMU wired to it would work on the bench and stop working the moment you unplug. That is the worst kind of bug: it passes every test you would think to run.</p>
+    <p style="margin-bottom:0"><strong>What to do:</strong> it often works anyway — an LDO in dropout passes roughly 3.1–3.2 V through, and the MPU6050 die is rated 2.375–3.46 V. So <strong>test it in five minutes</strong> before designing around it: 3.3 V on VCC, read register <code>0x75</code> (<code>WHO_AM_I</code>) over I²C. If it answers <code>0x68</code> and stays stable while you shake it, ship it. If not, bridge the LDO's input to its output — it is a 3-pin SOT-23 — or buy a module without one. An <strong>LIS3DH or ADXL345</strong> is 3.3 V native and, for shake, tilt and stillness, an accelerometer alone is all we ever use. We never needed the gyroscope.</p>
+  </div>
+
+  <div class="note risk">
+    <span class="lbl">2 · Charging takes nine hours, not four</span>
+    <p style="margin-bottom:0">The XIAO's charger is a <strong>BQ25101</strong> set to <strong>50 mA fast charge</strong> (3.8 mA trickle) — not the 100 mA I assumed in the build plan. A 400 mAh cell at 50 mA is <strong>8 hours of constant current plus the top-off phase, so about 9</strong>. That is fine for something you drop on a nightstand, and it is gentle on the cell, but it is not "plug it in for an hour before you leave". The rate is set by a resistor on the board; changing it means reworking an 0402, which is not worth it.</p>
+  </div>
+
+  <div class="note risk">
+    <span class="lbl">3 · The display's pin header has to come off</span>
+    <p style="margin-bottom:0">The GC9A01 modules ship with a 2.54 mm header soldered on. That header is <strong>about 8 mm tall</strong> — taller than the display, the XIAO and the battery combined would need. Desolder it and run wires flat into the pads. This single step is roughly <strong>40 % of the finished thickness</strong>, and it is far easier to do before anything else is attached.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">02</span>
+  <h2>The XIAO: what's taken, what's free</h2>
+  <div class="col">
+    <p>The Sense expansion board does not steal any of the eleven exposed pads — the camera and microphone are wired internally, on GPIOs that never reach the edge. What it <em>does</em> claim is the <strong>microSD slot, which sits on the SPI bus</strong>. Seeed's own wiki is blunt about it: use the card and you cannot use SPI. We are not using the card, so the bus is ours.</p>
+  </div>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 860 340" role="img" aria-label="Pin allocation on the XIAO ESP32-S3 Sense: eleven exposed pads, of which six drive the display, three the accelerometer, and two stay free; camera and microphone are internal.">
+      <defs><marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+
+      <rect x="330" y="52" width="200" height="236" rx="10" fill="none" stroke="currentColor" stroke-width="2"/>
+      <text x="430" y="152" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="currentColor">XIAO ESP32-S3</text>
+      <text x="430" y="172" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="currentColor">Sense</text>
+      <text x="430" y="194" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".6">21 x 17.8 mm</text>
+      <text x="430" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".6">3.3 V logic</text>
+
+      <text x="430" y="308" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="currentColor" opacity=".5">internal: camera GPIO10-18, 38-40, 47-48 · mic GPIO41/42</text>
+      <text x="430" y="324" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor" opacity=".55">none of these reach the exposed pads</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor">
+        <text x="316" y="76"  text-anchor="end">D0 · GPIO1</text>
+        <text x="316" y="100" text-anchor="end">D1 · GPIO2</text>
+        <text x="316" y="124" text-anchor="end">D2 · GPIO3</text>
+        <text x="316" y="148" text-anchor="end">D3 · GPIO4</text>
+        <text x="316" y="172" text-anchor="end">D4 · GPIO5</text>
+        <text x="316" y="196" text-anchor="end">D5 · GPIO6</text>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor">
+        <text x="544" y="76">D6 · GPIO43</text>
+        <text x="544" y="100">D7 · GPIO44</text>
+        <text x="544" y="124">D8 · GPIO7</text>
+        <text x="544" y="148">D9 · GPIO8</text>
+        <text x="544" y="172">D10 · GPIO9</text>
+        <text x="544" y="200">BAT pads</text>
+      </g>
+
+      <g font-family="Instrument Sans, sans-serif" font-size="11.5">
+        <text x="30" y="76"  fill="var(--accent)">display backlight (PWM)</text>
+        <text x="30" y="100" fill="var(--accent)">display CS</text>
+        <text x="30" y="124" fill="currentColor" opacity=".55">free — but see note</text>
+        <text x="30" y="148" fill="var(--accent)">display DC</text>
+        <text x="30" y="172" fill="var(--ok)">IMU SDA</text>
+        <text x="30" y="196" fill="var(--ok)">IMU SCL</text>
+      </g>
+      <g font-family="Instrument Sans, sans-serif" font-size="11.5">
+        <text x="650" y="76"  fill="var(--accent)">display RST</text>
+        <text x="650" y="100" fill="var(--ok)">IMU INT — wake</text>
+        <text x="650" y="124" fill="var(--accent)">display SCK</text>
+        <text x="650" y="148" fill="currentColor" opacity=".55">free (MISO, unused)</text>
+        <text x="650" y="172" fill="var(--accent)">display MOSI</text>
+        <text x="650" y="200" fill="var(--risk)">battery + / −</text>
+      </g>
+
+      <g stroke="currentColor" stroke-width="1.1" opacity=".35">
+        <line x1="320" y1="72" x2="330" y2="72"/><line x1="320" y1="96" x2="330" y2="96"/>
+        <line x1="320" y1="120" x2="330" y2="120"/><line x1="320" y1="144" x2="330" y2="144"/>
+        <line x1="320" y1="168" x2="330" y2="168"/><line x1="320" y1="192" x2="330" y2="192"/>
+        <line x1="530" y1="72" x2="540" y2="72"/><line x1="530" y1="96" x2="540" y2="96"/>
+        <line x1="530" y1="120" x2="540" y2="120"/><line x1="530" y1="144" x2="540" y2="144"/>
+        <line x1="530" y1="168" x2="540" y2="168"/><line x1="530" y1="196" x2="540" y2="196"/>
+      </g>
+
+      <rect x="596" y="236" width="248" height="48" rx="7" fill="none" stroke="var(--risk)" stroke-width="1.3" stroke-dasharray="5 4"/>
+      <text x="608" y="254" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--risk)" font-weight="700">microSD SHARES D8 / D9 / D10</text>
+      <text x="608" y="270" font-family="Instrument Sans, sans-serif" font-size="11" fill="var(--risk)">never call SD.begin() — and D2 may be its CS</text>
+    </svg>
+    </div>
+    <figcaption>Six pads drive the display, three the accelerometer, two stay spare. <b>The one to verify with a meter is D2</b>: one Seeed source lists it as the microSD chip select, another lists GPIO21. It does not matter while the card is unused, but do not build anything onto D2 until you have checked your board.</figcaption>
+  </figure>
+</section>
+<section>
+  <span class="secnum">03</span>
+  <h2>The voltage map</h2>
+  <div class="col">
+    <p>This is the section to read twice. There are <strong>two voltage domains and one of them disappears on battery</strong> — every hardware mistake available in this project lives in that sentence.</p>
+  </div>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 860 400" role="img" aria-label="Power tree: USB 5 V feeds the BQ25101 charger and the 3.3 V regulator; the battery feeds the same regulator; everything downstream runs at 3.3 volts and nothing tolerates 5 volts.">
+      <defs>
+        <marker id="pw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+        <marker id="pwR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--risk)"/></marker>
+      </defs>
+
+      <rect x="24" y="34" width="150" height="56" rx="8" fill="none" stroke="var(--risk)" stroke-width="1.6"/>
+      <text x="99" y="58" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="700" fill="var(--risk)">USB-C  5 V</text>
+      <text x="99" y="76" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="10.5" fill="var(--risk)">only while plugged in</text>
+
+      <rect x="24" y="188" width="150" height="56" rx="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <text x="99" y="212" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="700" fill="currentColor">LiPo  3.7 V</text>
+      <text x="99" y="230" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="10.5" fill="currentColor" opacity=".62">400 mAh · 3.0–4.2 V</text>
+
+      <rect x="232" y="34" width="164" height="56" rx="8" fill="none" stroke="currentColor" stroke-width="1.4"/>
+      <text x="314" y="57" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="12.5" font-weight="700" fill="currentColor">BQ25101 charger</text>
+      <text x="314" y="75" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.2" fill="currentColor" opacity=".62">50 mA fast · 3.8 mA trickle</text>
+
+      <rect x="232" y="188" width="164" height="56" rx="8" fill="none" stroke="var(--ok)" stroke-width="1.8"/>
+      <text x="314" y="211" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="12.5" font-weight="700" fill="var(--ok)">3V3 regulator</text>
+      <text x="314" y="229" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="var(--ok)" opacity=".85">700 mA available</text>
+
+      <line x1="180" y1="62" x2="226" y2="62" stroke="var(--risk)" stroke-width="1.5" marker-end="url(#pwR)"/>
+      <path d="M99 96 V150 H314 V182" fill="none" stroke="var(--risk)" stroke-width="1.5" marker-end="url(#pwR)"/>
+      <line x1="180" y1="216" x2="226" y2="216" stroke="currentColor" stroke-width="1.5" marker-end="url(#pw)"/>
+      <path d="M314 96 V128 H180 V206" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#pw)" opacity=".7"/>
+      <text x="252" y="124" font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor" opacity=".6">charges</text>
+
+      <g fill="none" stroke="var(--ok)" stroke-width="1.4">
+        <rect x="470" y="26" width="200" height="52" rx="7"/>
+        <rect x="470" y="96" width="200" height="52" rx="7"/>
+        <rect x="470" y="166" width="200" height="52" rx="7"/>
+        <rect x="470" y="236" width="200" height="52" rx="7"/>
+      </g>
+      <g font-family="Instrument Sans, sans-serif" font-size="12.5" fill="currentColor">
+        <text x="486" y="48">ESP32-S3 core</text>
+        <text x="486" y="118">GC9A01 display</text>
+        <text x="486" y="188">OV2640 + microphone</text>
+        <text x="486" y="258">Accelerometer</text>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".62">
+        <text x="486" y="66">40 mA idle · 110 mA on WiFi</text>
+        <text x="486" y="136">~20 mA · 3.3 V ONLY</text>
+        <text x="486" y="206">~40 mA while capturing</text>
+        <text x="486" y="276">3.9 mA · 10 µA asleep</text>
+      </g>
+
+      <g stroke="var(--ok)" stroke-width="1.5" marker-end="url(#pw)" opacity=".85">
+        <path d="M402 210 H436 V52 H464" fill="none"/>
+        <path d="M436 122 H464" fill="none"/>
+        <path d="M436 192 H464" fill="none"/>
+        <path d="M436 262 H464" fill="none"/>
+      </g>
+      <text x="700" y="158" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="700" fill="var(--ok)">3.3 V</text>
+      <text x="700" y="176" font-family="Instrument Sans, sans-serif" font-size="11" fill="var(--ok)">everything</text>
+
+      <rect x="24" y="304" width="646" height="72" rx="8" fill="none" stroke="var(--risk)" stroke-width="1.4" stroke-dasharray="6 4"/>
+      <text x="42" y="326" font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="1.3" fill="var(--risk)" font-weight="700">THE TRAP</text>
+      <text x="42" y="346" font-family="Instrument Sans, sans-serif" font-size="12" fill="currentColor">The 5 V pin is USB VBUS, not a rail. Anything wired to it works on the bench and dies the moment</text>
+      <text x="42" y="364" font-family="Instrument Sans, sans-serif" font-size="12" fill="currentColor">you unplug — and nothing downstream is 5 V tolerant anyway. Every peripheral takes 3V3.</text>
+    </svg>
+    </div>
+    <figcaption>One rule covers the whole board: <b>every peripheral is powered from 3V3, never from 5 V</b>. The GC9A01 has no regulator and no level shifting — 5 V on its VCC destroys it. The 3V3 pin is an <b>output</b> with 700 mA to give, which is roughly ten times what this build draws.</figcaption>
+  </figure>
+
+  <div class="tw" style="margin-top:20px">
+    <table>
+      <thead><tr><th>Part</th><th>Supply</th><th>Logic</th><th>5 V tolerant?</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>XIAO ESP32-S3</td><td class="mono">USB 5 V or LiPo</td><td class="mono">3.3 V</td><td>—</td><td>Regulates internally; 3V3 pin is an output</td></tr>
+        <tr><td><strong>GC9A01 display</strong></td><td class="mono">3V3</td><td class="mono">3.3 V</td><td style="color:var(--risk);font-weight:600">No</td><td>No regulator, no level shifter. 5 V kills it.</td></tr>
+        <tr><td><strong>Accelerometer</strong></td><td class="mono">3V3</td><td class="mono">3.3 V</td><td>Module-dependent</td><td>GY-521's LDO wants 4.3 V+. Test at 3.3 V first — see finding 1.</td></tr>
+        <tr><td>OV2640 camera</td><td colspan="3" class="mono">internal to the Sense board</td><td>Nothing to wire</td></tr>
+        <tr><td>PDM microphone</td><td colspan="3" class="mono">internal to the Sense board</td><td>Nothing to wire</td></tr>
+        <tr><td>LiPo 400 mAh</td><td class="mono">B+ / B− pads</td><td>—</td><td>—</td><td style="color:var(--risk)">Reversing it destroys the board. Negative sits toward the USB connector.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">04</span>
+  <h2>Every wire</h2>
+  <div class="col">
+    <p>Eleven wires in total, plus the battery. Nothing needs a resistor, a level shifter or a pull-up: the display is push-pull SPI and the accelerometer breakout carries its own I²C pull-ups.</p>
+  </div>
+  <div class="tw" style="margin-top:18px">
+    <table>
+      <thead><tr><th>From</th><th>To</th><th>Pad</th><th>GPIO</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="8"><strong>GC9A01</strong><br><span class="sub">header removed, wires flat</span></td><td>VCC</td><td class="mono">3V3</td><td>—</td><td style="color:var(--risk)">Never 5 V</td></tr>
+        <tr><td>GND</td><td class="mono">GND</td><td>—</td><td></td></tr>
+        <tr><td>SCL / SCK</td><td class="mono">D8</td><td class="mono">7</td><td>SPI clock, up to 40 MHz</td></tr>
+        <tr><td>SDA / MOSI</td><td class="mono">D10</td><td class="mono">9</td><td>Data. MISO is unused — the panel is write-only.</td></tr>
+        <tr><td>CS</td><td class="mono">D1</td><td class="mono">2</td><td></td></tr>
+        <tr><td>DC</td><td class="mono">D3</td><td class="mono">4</td><td>Command / data select</td></tr>
+        <tr><td>RST</td><td class="mono">D6</td><td class="mono">43</td><td></td></tr>
+        <tr><td>BLK</td><td class="mono">D0</td><td class="mono">1</td><td>PWM. Hold it at 60 % — full brightness buys little and costs a lot.</td></tr>
+        <tr><td rowspan="4"><strong>Accelerometer</strong></td><td>VCC</td><td class="mono">3V3</td><td>—</td><td style="color:var(--risk)">See finding 1 before you trust this</td></tr>
+        <tr><td>GND</td><td class="mono">GND</td><td>—</td><td></td></tr>
+        <tr><td>SDA</td><td class="mono">D4</td><td class="mono">5</td><td rowspan="2">I²C at 400 kHz. Address 0x68 (0x69 if AD0 is pulled high).</td></tr>
+        <tr><td>SCL</td><td class="mono">D5</td><td class="mono">6</td></tr>
+        <tr><td></td><td>INT</td><td class="mono">D7</td><td class="mono">44</td><td>Wake-on-motion. This is what lets the board sleep at microamps instead of milliamps.</td></tr>
+        <tr style="background:var(--risk-soft)"><td><strong>Battery</strong></td><td>+ / −</td><td class="mono">B+ / B−</td><td>—</td><td><strong>Underside of the XIAO. Negative toward the USB connector. Check twice.</strong></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="5" style="font-weight:400;color:var(--muted)">Free afterwards: <code>D2</code> (verify it is not the SD chip select) and <code>D9</code>. Use AWG30 silicone wire — it is thin enough to fold flat and does not fight you inside a 13 mm cavity.</td></tr></tfoot>
+    </table>
+  </div>
+</section>
+<section>
+  <span class="secnum">05</span>
+  <h2>How long the battery lasts</h2>
+  <p class="lead" style="margin-bottom:20px">400 mAh, of which about <strong>340 mAh is usable</strong> before the regulator drops out. Every figure below is that budget divided by the draw.</p>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>What it's doing</th><th>Draw</th><th style="text-align:right">Lasts</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Showing off</strong><span class="sub">display on, camera at 10 fps, eyes tracking you</span></td><td class="mono">~104 mA</td><td class="num">3.3 h</td></tr>
+        <tr><td><strong>Normal play</strong><span class="sub">display on, camera in one-second bursts every four</span></td><td class="mono">~74 mA</td><td class="num">4.6 h</td></tr>
+        <tr><td><strong>Display only</strong><span class="sub">no camera, no WiFi — the cheapest way to look alive</span></td><td class="mono">~64 mA</td><td class="num">5.3 h</td></tr>
+        <tr><td>One WiFi check-in</td><td class="mono">110 mA for ~4 s</td><td class="num">0.12 mAh each</td></tr>
+        <tr style="background:var(--ok-soft)"><td><strong>Pocketed and asleep</strong><span class="sub">deep sleep, display off, accelerometer watching for motion</span></td><td class="mono">~1.5 mA</td><td class="num">9 days</td></tr>
+        <tr style="background:var(--accent-soft)"><td><strong>A realistic day</strong><span class="sub">20 min of handling, the rest asleep, checking in every 30 min</span></td><td class="mono">~60 mAh/day</td><td class="num"><strong>5–6 days</strong></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3" style="font-weight:400;color:var(--muted)">Recharge: <strong>~9 hours</strong> at the BQ25101's 50 mA. Overnight, every five days or so.</td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="card">
+      <h3>Where the sleep figure is soft</h3>
+      <p style="font-size:.93rem;color:var(--muted)">Seeed quote 14 µA deep sleep for the bare XIAO, and forum measurements broadly agree. But <strong>our 1.5 mA estimate is dominated by things that are not the ESP32</strong>: the display module keeps its regulator and backlight driver powered even with the panel asleep, and there is no way to cut it without adding a MOSFET on the 3V3 line.</p>
+      <p style="font-size:.93rem;color:var(--muted);margin-bottom:0"><strong>Measure it in phase 2</strong>, with a meter in series with the battery. If it comes back above 3 mA, a single P-channel MOSFET switching the display's supply pays for itself several times over — and that is a change you want to make while the wires are still loose.</p>
+    </div>
+    <div class="card">
+      <h3>What actually eats the charge</h3>
+      <ul class="tight" style="font-size:.92rem;color:var(--muted);margin-bottom:0">
+        <li><strong>The backlight, always.</strong> It is on whenever the display is, and PWM is the only lever. 60 % looks identical indoors and saves a third.</li>
+        <li><strong>The camera, in bursts.</strong> Running it continuously roughly halves your runtime for an effect nobody can see faster than 10 fps.</li>
+        <li><strong>WiFi, barely.</strong> A check-in every 30 minutes costs about 6 mAh a day — a tenth of the budget. Do not contort the design to avoid it.</li>
+        <li><strong>Sleeping properly is worth more than all of it.</strong> The difference between light sleep at 5 mA and deep sleep at microamps is the difference between two days and nine.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">06</span>
+  <h2>How it all fits in a star</h2>
+  <div class="col">
+    <p>I ran the geometry before drawing anything, and it produced <strong>the one finding that changes a line item in the order</strong>. Two constraints collide:</p>
+    <p>The display module is <strong>37.5 mm across and sits in the middle</strong>, so the star's waist — the concave points between the arms — has to clear it. That forces a very fat star: a normal five-point star has an inner radius around 45 % of its outer one, and we need <strong>67 %</strong> at Ø 62 mm. That is fine, and it is exactly why the real STARBOY is such a chunky, rounded star rather than a spiky one.</p>
+    <p>But the second constraint has no such escape. Laying the board and the battery <strong>side by side</strong> takes a 41 × 35 mm footprint, which needs a <strong>Ø 54 mm clear circle</strong>. A Ø 60 mm star only offers Ø 41.5 mm between its waist and its walls. <strong>They do not fit in one layer.</strong> The battery has to go behind the board — and that is where the thickness comes from.</p>
+  </div>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 860 400" role="img" aria-label="Front view of the star with the display in the centre, camera in the upper-left arm and split ring at the top; side view showing six stacked layers totalling about twenty millimetres, with the battery layer highlighted as the one worth attacking.">
+      <defs><marker id="dm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+
+      <text x="30" y="26" font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="1.4" fill="currentColor" opacity=".55">FRONT — Ø 60 mm</text>
+
+      <path d="M200 64 L247 111 L307 141 L276 201 L266 267 L200 256 L134 267 L124 201 L93 141 L153 111 Z"
+            fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="200" cy="176" r="70" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+      <circle cx="200" cy="176" r="60" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 3" opacity=".55"/>
+      <text x="200" y="180" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="12" fill="var(--accent)" font-weight="600">display</text>
+      <text x="200" y="197" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--accent)" opacity=".85">Ø37.5 · glass Ø32</text>
+
+      <circle cx="122" cy="146" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="122" cy="146" r="3.5" fill="currentColor" opacity=".6"/>
+      <line x1="112" y1="138" x2="76" y2="112" stroke="currentColor" stroke-width="1" opacity=".5"/>
+      <text x="70" y="108" text-anchor="end" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor">camera</text>
+
+      <circle cx="200" cy="80" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="210" y1="74" x2="256" y2="60" stroke="currentColor" stroke-width="1" opacity=".5"/>
+      <text x="262" y="58" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor">split ring</text>
+
+      <line x1="272" y1="228" x2="322" y2="248" stroke="currentColor" stroke-width="1" opacity=".5"/>
+      <text x="328" y="246" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor">board and battery,</text>
+      <text x="328" y="262" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor">stacked behind — not beside</text>
+      <text x="328" y="282" font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor" opacity=".55">side by side would need Ø54, there is Ø41.5</text>
+
+      <text x="506" y="26" font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="1.4" fill="currentColor" opacity=".55">SIDE — the thickness budget</text>
+
+      <g stroke="currentColor" stroke-width="1.3" fill="none">
+        <rect x="524" y="48"  width="180" height="13"/>
+        <rect x="524" y="61"  width="180" height="1.5" opacity=".45"/>
+        <rect x="524" y="62.5" width="180" height="12"/>
+        <rect x="524" y="74.5" width="180" height="7.5" opacity=".55"/>
+        <rect x="524" y="82"  width="180" height="27.5"/>
+      </g>
+      <rect x="524" y="109.5" width="180" height="30" fill="none" stroke="var(--risk)" stroke-width="2"/>
+      <rect x="524" y="139.5" width="180" height="8" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".55"/>
+
+      <g stroke="currentColor" stroke-width="0.9" opacity=".38">
+        <path d="M708 54.5  L730 56"  fill="none"/>
+        <path d="M708 61.8  L730 76"  fill="none"/>
+        <path d="M708 68.5  L730 96"  fill="none"/>
+        <path d="M708 78.3  L730 116" fill="none"/>
+        <path d="M708 95.8  L730 136" fill="none"/>
+        <path d="M708 143.5 L730 176" fill="none"/>
+      </g>
+      <path d="M708 124.5 L730 156" fill="none" stroke="var(--risk)" stroke-width="1"/>
+
+      <g font-family="Instrument Sans, sans-serif" font-size="11.5" fill="currentColor">
+        <text x="736" y="60">bezel + crystal</text>
+        <text x="736" y="80">air gap</text>
+        <text x="736" y="100">display module</text>
+        <text x="736" y="120">wiring room</text>
+        <text x="736" y="140">XIAO + Sense</text>
+        <text x="736" y="180" opacity=".65">back wall</text>
+      </g>
+      <text x="736" y="160" font-family="Instrument Sans, sans-serif" font-size="11.5" fill="var(--risk)" font-weight="600">battery</text>
+
+      <g font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor" opacity=".55">
+        <text x="852" y="60"  text-anchor="end">2.6</text>
+        <text x="852" y="80"  text-anchor="end">0.3</text>
+        <text x="852" y="100" text-anchor="end">2.4</text>
+        <text x="852" y="120" text-anchor="end">1.5</text>
+        <text x="852" y="140" text-anchor="end">5.5</text>
+        <text x="852" y="180" text-anchor="end">1.6</text>
+      </g>
+      <text x="852" y="160" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--risk)" font-weight="700">6.0</text>
+
+      <line x1="506" y1="48" x2="506" y2="147.5" stroke="var(--accent)" stroke-width="1.4" marker-start="url(#dm)" marker-end="url(#dm)"/>
+
+      <text x="506" y="306" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="700" fill="var(--accent)">19.9 mm</text>
+      <text x="506" y="326" font-family="Instrument Sans, sans-serif" font-size="11.5" fill="currentColor" opacity=".7">with the 6 mm cell from the build plan</text>
+      <text x="506" y="352" font-family="Instrument Sans, sans-serif" font-size="12" fill="var(--risk)">The battery layer is the only one worth attacking.</text>
+      <text x="506" y="370" font-family="Instrument Sans, sans-serif" font-size="12" fill="var(--risk)">Everything above it is already at its minimum.</text>
+    </svg>
+    </div>
+    <figcaption>Seven layers, and six of them are already as thin as they go: the crystal, the panel, the board and the walls are all fixed. <b>The battery is the only variable left</b> — and it is 30 % of the total.</figcaption>
+  </figure>
+
+  <div class="tw" style="margin-top:20px">
+    <table>
+      <thead><tr><th>Cell</th><th>Size</th><th style="text-align:right">Capacity</th><th style="text-align:right">Thickness</th><th style="text-align:right">Runtime</th></tr></thead>
+      <tbody>
+        <tr><td><code>602035</code> <span class="sub">what the build plan ordered</span></td><td class="mono">6 × 20 × 35</td><td class="num">400 mAh</td><td class="num">19.9 mm</td><td class="num">5–6 days</td></tr>
+        <tr style="background:var(--accent-soft)"><td><strong><code>402535</code></strong> <span class="sub">the one I would buy</span></td><td class="mono">4 × 25 × 35</td><td class="num">~350 mAh</td><td class="num"><strong>17.9 mm</strong></td><td class="num">4–5 days</td></tr>
+        <tr><td><code>302535</code></td><td class="mono">3 × 25 × 35</td><td class="num">~250 mAh</td><td class="num">16.9 mm</td><td class="num">3–4 days</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="5" style="font-weight:400;color:var(--muted)">Two millimetres for 50 mAh is a good trade on something that hangs off a pocket. Going to 3 mm costs a full day of runtime for one more millimetre — not worth it.</td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="note risk">
+    <span class="lbl">Why the real one is 12 mm and ours will not be</span>
+    <p style="margin-bottom:0">STARBOY is about 12 mm thick because CREATURE had a custom PCB with the panel bonded straight to it and a cell shaped to the cavity. With off-the-shelf modules you are carrying a second PCB under the display, a 2.54 mm-pitch board under that, and a rectangular pouch cell — <strong>roughly 6 mm of packaging that a custom design simply does not have</strong>. Around 18 mm is the honest floor for this approach. It is still a keychain, and it is thinner than most car fobs.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Assembly order — it only works in this sequence</span>
+    <ol class="tight" style="font-size:.92rem;color:var(--muted);margin:0;padding-left:19px">
+      <li><strong>Desolder the display header first.</strong> Impossible once anything else is attached, and it is 8 mm of your budget.</li>
+      <li>Solder all eleven wires to the display and the accelerometer while the boards are loose on the bench, and <strong>test the whole thing working flat</strong> before it goes anywhere near a printed part.</li>
+      <li>Battery last, and only after every other joint is verified. Once the cell is on you cannot use a hot iron near it safely.</li>
+      <li>Glue the crystal into the bezel, and only then close the case. Adhesive over a mounted display is a mistake you cannot undo.</li>
+    </ol>
+  </div>
+
+  <div class="note risk">
+    <span class="lbl">Measure, don't trust this drawing</span>
+    <p style="margin-bottom:0">Every figure above comes from datasheets and vendor listings, not from calipers on your parts. Module thicknesses vary by supplier by a millimetre or more, and 1 mm out of 18 is 6 % of the object. <strong>Do not finalise the CAD until the parts are in your hands</strong> — model the cavity from measurements, and print the bezel alone three times before you commit to a full enclosure.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">07</span>
+  <h2>Getting on WiFi once it's sealed</h2>
+  <div class="col">
+    <p>You asked the right question. Once the case is closed there is no keyboard, no screen you can type on, and no USB port you want to open up at her house. Hard-coding the networks works until she takes it somewhere new, and then the link is simply dead.</p>
+  </div>
+
+  <div class="grid3" style="margin-top:18px">
+    <div class="card" style="border-color:var(--accent);border-width:1.5px">
+      <p class="eyebrow" style="margin-bottom:8px;color:var(--accent)">Do this</p>
+      <h3>Captive portal</h3>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:0">Hold BOOT through the pinhole at power-on and the keychain becomes a WiFi access point called <code>starboy-setup</code>. Connect a phone to it, a page opens by itself, pick the network, type the password, done. The <strong>WiFiManager</strong> library is about fifteen lines and stores the credentials in flash. <strong>No app, no cable, works from anyone's phone</strong>, and it is the same flow every smart plug on the market uses — she will already know how.</p>
+    </div>
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:8px">Also good</p>
+      <h3>Ask its twin</h3>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:0">Both keychains already speak ESP-NOW. Once yours knows a network, it can hand the credentials to hers the next time they are close. Lovely, and genuinely useful when they meet somewhere new — but it needs the portal to exist first for the very first setup, so it is an addition, not a replacement.</p>
+    </div>
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:8px">Skip</p>
+      <h3>BLE provisioning</h3>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:0">The S3 has Bluetooth and Espressif ship a provisioning stack for it, but it wants a companion app or WebBluetooth, which is Chrome-on-Android only. More moving parts than the portal for an identical result.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Two details that will bite otherwise</span>
+    <p><strong>Reaching the Worker over HTTPS.</strong> The ESP32 has to validate Cloudflare's certificate. Either pin the root CA in flash, or call <code>setInsecure()</code> on the <code>WiFiClientSecure</code>. Pinning is correct but the certificate expires and then your keychain silently stops syncing; <code>setInsecure()</code> is fine here because the payload is a mood and a timestamp, and a Worker endpoint with a random path is not worth attacking. <strong>Take the pragmatic one and write down why.</strong></p>
+    <p style="margin-bottom:0"><strong>Never block on the network.</strong> If the WiFi is gone the connect attempt can hang for seconds, and a keychain whose eyes freeze while it looks for a router is broken as far as anyone watching is concerned. Give it a hard timeout, run it between frames, and let the animation keep going regardless.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">08</span>
+  <h2>The app</h2>
+  <div class="col">
+    <p>You floated a mobile app for the counters and the connection status. It is a good idea and I would build it — but <strong>not as an app</strong>.</p>
+    <p>The Worker in the build plan already holds everything an app would show: last seen, days apart, mood, battery, whether either one is online. Serving a page from that same Worker gets you all of it for <strong>an afternoon of work and zero new infrastructure</strong>. Add it to the phone's home screen and it has an icon and opens full-screen with no browser chrome. She will not be able to tell it from an app, and you will not have spent a week on build tooling and store accounts three weeks before her birthday.</p>
+  </div>
+  <div class="tw" style="margin-top:18px">
+    <table>
+      <thead><tr><th></th><th>Page served by the Worker</th><th>Native app</th></tr></thead>
+      <tbody>
+        <tr><td>Work</td><td>An afternoon</td><td>A week, minimum</td></tr>
+        <tr><td>New infrastructure</td><td><strong>None</strong> — the Worker already exists for the link</td><td>Toolchain, signing, store or sideloading</td></tr>
+        <tr><td>Updating it</td><td>Redeploy the Worker</td><td>Rebuild and reinstall on both phones</td></tr>
+        <tr><td>Works on her phone</td><td>Any phone with a browser</td><td>Whatever you built for</td></tr>
+        <tr><td>Push notifications</td><td>Possible but fiddly</td><td>Native</td></tr>
+        <tr><td>Feels like an app</td><td>Yes, once added to the home screen</td><td>Yes</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3" style="font-weight:400;color:var(--muted)">The only real argument for native is push notifications. Nothing in this project needs one — the notification <em>is</em> the keychain.</td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">09</span>
+  <h2>Safety</h2>
+  <p class="lead" style="margin-bottom:20px">Short list. Most of it is the battery, because most of it is always the battery.</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Rule</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Never reverse the LiPo</strong></td><td>Destroys the XIAO instantly and can vent the cell. Negative sits toward the USB connector. Check with a meter before the first connection, not after.</td></tr>
+        <tr><td><strong>Never compress the cell</strong></td><td>A pouch cell under pressure from a screw boss or a tight wall is the one genuine fire risk in this build. 1 mm of air on every face, and nothing rigid pressing on it.</td></tr>
+        <tr><td><strong>Never solder near a connected cell</strong></td><td>Battery goes on last, comes off first if you need to rework anything.</td></tr>
+        <tr><td><strong>Nothing above 3.3 V downstream</strong></td><td>The display has no regulator and no level shifting. 5 V on its VCC is instant and permanent.</td></tr>
+        <tr><td>Don't charge it below 0 °C</td><td>Lithium plating. The BQ25101 here has no temperature sense, so it will happily do the wrong thing.</td></tr>
+        <tr><td>Don't leave the first charge unattended</td><td>Watch the first full cycle. If the cell warms noticeably above room temperature, stop and check your wiring.</td></tr>
+        <tr><td>Keep the crystal off the panel</td><td>0.3 mm of air. Pressure on an LCD leaves permanent marks, and you will not notice until it is glued shut.</td></tr>
+        <tr><td>Strain-relieve every wire</td><td>Eleven AWG30 wires in a pocket-sized object flex every time it is handled. A wire that breaks inside a sealed case is a full teardown.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr>
+
+<section style="margin-bottom:32px">
+  <span class="secnum">10</span>
+  <h2>What to do before ordering</h2>
+  <p class="kicker" style="margin-bottom:18px">Nothing here blocks the order except one line item — and that one is worth the ten minutes.</p>
+  <div class="col">
+    <p><strong>Order unchanged:</strong> 3× XIAO ESP32-S3 Sense, 3× GC9A01 display, the crystals and the hardware. All of it verified against the datasheets above.</p>
+    <p><strong>Change one — the battery.</strong> Swap the <code>602035</code> for a <strong><code>402535</code></strong>, about 350 mAh. Two millimetres thinner for 50 mAh less, on the only layer of the stack that is still negotiable. It takes the object from 20 mm to 18 mm, which is the difference between "chunky" and "fine". Same price bracket, same JST connector.</p>
+    <p><strong>Change two — the accelerometer.</strong> Either add a note to test the MPU6050 at 3.3 V the day it arrives and rework the LDO if it fails, or spend the same money on a 3.3 V-native <strong>LIS3DH or ADXL345</strong> and skip the risk entirely. UNIT did not list either when I searched, so MercadoLibre is the place to look. We only ever use the accelerometer — the gyroscope in the MPU6050 has no job in this design.</p>
+    <p style="margin-bottom:0"><strong>And add one thing that is not on the list:</strong> a cheap <strong>USB power meter or a multimeter that can read microamps</strong>. Every battery figure in section 05 is an estimate, the sleep current is the one that decides whether this lasts nine days or two, and it is the only number you cannot look up — it depends on your exact display module. Measuring it in phase 2 is what turns this document from a plan into a fact.</p>
+  </div>
+</section>
+
+<p style="font-size:.82rem;color:var(--faint);border-top:1px solid var(--rule);padding-top:16px">
+Sources, checked 31 August 2026 —
+<a href="https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/">Seeed XIAO ESP32-S3 wiki</a> (pinout, power, charging, dimensions) ·
+<a href="https://wiki.seeedstudio.com/xiao_esp32s3_sense_mic/">Sense microphone pins</a> ·
+<a href="https://wiki.seeedstudio.com/xiao_esp32s3_sense_filesystem/">microSD / SPI conflict</a> ·
+<a href="https://forum.mysensors.org/topic/10880/serious-hardware-issues-with-gy-521-modules">GY-521 regulator issue</a> ·
+<a href="https://www.studiopieters.nl/gc9a01/">GC9A01 module guide</a>.
+Companion documents: <a href="build-plan.html">build plan</a> · <a href="eye-editor.html">eye editor</a>.
+</p>
+
+</div>
+</body>
+</html>

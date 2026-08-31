@@ -13,6 +13,7 @@ have: **there are two of them, and they miss each other**.
 |---|---|
 | [`docs/build-plan.html`](docs/build-plan.html) | The full build plan: bill of materials with Mexican prices, pin-by-pin wiring, architecture, schedule and risks. |
 | [`docs/eye-editor.html`](docs/eye-editor.html) | Interactive tool to design the eyes and export them to C++. **No hardware required** — open it in a browser. |
+| [`docs/hardware.html`](docs/hardware.html) | Pinouts, voltage map, every wire, battery runtime, how it fits in the star, WiFi setup once sealed, and safety. Read before ordering. |
 | [`reference/`](reference/) | Reference shots of the real device: `starboy-reference.jpg` plus `starboy-01..07.png`. |
 
 Both HTML files are self-contained: open them with a double click, no server, no dependencies.
@@ -33,8 +34,8 @@ Both HTML files are self-contained: open them with a double click, no server, no
 | Part | Where | Price | Qty |
 |---|---|---|---|
 | XIAO ESP32-S3 Sense | UNIT Electronics | $325 MXN | 3 |
-| MPU6050 IMU | UNIT Electronics | $80 MXN | 3 |
-| LiPo 3.7 V 400 mAh `602035` | UNIT Electronics | $67 MXN | 3 |
+| Accelerometer, 3.3 V native | see `docs/hardware.html` | ~$80 MXN | 3 |
+| LiPo 3.7 V ~350 mAh `402535` | MercadoLibre | ~$70 MXN | 3 |
 | GC9A01 1.28" 240×240 SPI display | MercadoLibre | $93–169 MXN | 3 |
 | Flat mineral watch crystal Ø34–36 mm | Local watch-repair shop | $30–60 MXN | 4 |
 | Split rings, M2 screws, AWG30 wire, tape | Local | ~$230 MXN | — |
@@ -44,8 +45,13 @@ Both HTML files are self-contained: open them with a double click, no server, no
 > UNIT does **not** stock the round display in any variant — verified. Neither do HeTPro,
 > Sandorobotics or 330ohms. It has to come from MercadoLibre.
 >
-> Don't buy batteries on Amazon Mexico: the same 400 mAh LiPo costs $255–298 there
-> against $67 at UNIT.
+> Don't buy batteries on Amazon Mexico: the same LiPo costs $255–298 there against
+> around $70 elsewhere.
+>
+> Two parts changed after the hardware review: a **4 mm** cell instead of 6 mm (two
+> millimetres off a 20 mm object for 50 mAh), and the accelerometer needs checking —
+> the common GY-521 breakout's regulator wants more than 3.3 V and there is no 5 V
+> rail on battery. Both are explained in `docs/hardware.html`.
 
 ## Wiring
 
