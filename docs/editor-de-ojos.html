@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Editor de Ojos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEF1; --surface:#FFFFFF; --surface-2:#F5F6F8;
+  --ink:#16151C; --muted:#5C6272; --faint:#868C9C;
+  --rule:#D4D7DF; --rule-soft:#E3E5EB;
+  --accent:#C1105F; --accent-soft:#FBE9F1;
+  --ok:#0B7E5B; --ok-soft:#E3F4EE; --risk:#C2451C;
+  --body:#1B1A22;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ground:#0E0D13; --surface:#17161F; --surface-2:#1E1D28;
+  --ink:#ECECF2; --muted:#9198A8; --faint:#6E7484;
+  --rule:#2B2A37; --rule-soft:#232231;
+  --accent:#FF4C99; --accent-soft:#2A1220;
+  --ok:#33D6A0; --ok-soft:#0E2620; --risk:#FF8156;
+  --body:#08080C;
+}}
+:root[data-theme="dark"]{
+  --ground:#0E0D13; --surface:#17161F; --surface-2:#1E1D28;
+  --ink:#ECECF2; --muted:#9198A8; --faint:#6E7484;
+  --rule:#2B2A37; --rule-soft:#232231;
+  --accent:#FF4C99; --accent-soft:#2A1220;
+  --ok:#33D6A0; --ok-soft:#0E2620; --risk:#FF8156;
+  --body:#08080C;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 22px 80px}
+h1{font-family:"Bricolage Grotesque",sans-serif;font-size:2rem;font-weight:800;letter-spacing:-0.035em;margin:0 0 6px;line-height:1}
+h2{font-family:"Bricolage Grotesque",sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;margin:0 0 12px}
+h3{font-family:"Bricolage Grotesque",sans-serif;font-size:1rem;font-weight:700;margin:0 0 6px}
+p{margin:0 0 12px}
+a{color:var(--accent)}
+.eyebrow{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+.sub{color:var(--muted);max-width:64ch;margin:0 0 26px;font-size:.97rem}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+
+.layout{display:grid;grid-template-columns:minmax(320px,392px) 1fr;gap:22px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:20px}
+.stage{position:sticky;top:18px}
+
+.device{background:var(--body);border-radius:26px;padding:26px;display:flex;flex-direction:column;align-items:center;gap:14px;
+  box-shadow:0 10px 34px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06)}
+.screen{position:relative;width:280px;height:280px;border-radius:50%;background:#000;overflow:hidden;
+  box-shadow:0 0 0 6px #26262e, 0 0 0 7px #43434d, inset 0 0 26px rgba(0,0,0,.9)}
+.screen canvas{display:block;width:280px;height:280px;cursor:crosshair}
+.glass{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:linear-gradient(148deg,rgba(255,255,255,.13) 0%,rgba(255,255,255,.03) 27%,rgba(255,255,255,0) 50%)}
+.devlabel{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.2em;color:#5b5b66;text-transform:uppercase}
+
+.row{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+button{font-family:"Instrument Sans",sans-serif;font-size:.82rem;cursor:pointer;background:var(--surface-2);color:var(--ink);
+  border:1px solid var(--rule);border-radius:7px;padding:7px 11px;transition:background .13s,border-color .13s}
+button:hover{border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.on,button.mood.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.moods{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px}
+
+.sliders{display:grid;gap:10px}
+.sl{display:grid;grid-template-columns:104px 1fr 48px;align-items:center;gap:11px}
+.sl label{font-size:.81rem;color:var(--muted)}
+.sl output{font-family:"JetBrains Mono",monospace;font-size:.75rem;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:20px}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 15px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.88rem}
+.note.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.note .lbl{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;font-weight:700}
+.note.ok .lbl{color:var(--ok)}
+.note p:last-child{margin-bottom:0}
+
+pre{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:9px;padding:14px;overflow-x:auto;
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;line-height:1.55;margin:0;color:var(--ink)}
+.codehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.hint{font-size:.81rem;color:var(--faint);margin-top:9px}
+hr{border:0;border-top:1px solid var(--rule);margin:30px 0}
+ul{margin:0 0 12px;padding-left:19px;color:var(--muted);font-size:.9rem}
+li{margin-bottom:6px}
+.divider{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--rule-soft)}
+.divider:first-child{border-top:0;padding-top:0;margin-top:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:620px){.two{grid-template-columns:1fr}}
+.tick{color:var(--ok);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Herramienta de diseño · llavero ESP32-S3 · pantalla GC9A01 240×240</p>
+  <h1>Editor de ojos</h1>
+  <p class="sub">Los ojos se dibujan con diez números, no con animaciones exportadas. Ajústalos aquí, míralos en una pantalla del tamaño real, y copia el C++ al firmware. Está afinado para parecerse al STARBOY original: formas grandes y casi elípticas, inclinadas hacia dentro, con degradado, resplandor y física de muelle.</p>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="panel">
+        <div class="device">
+          <div class="screen"><canvas id="cv" width="480" height="480"></canvas><div class="glass"></div></div>
+          <div class="devlabel">240 × 240 · GC9A01</div>
+        </div>
+        <div class="row">
+          <button id="bAuto" class="on">Vida propia</button>
+          <button id="bFollow">Seguir el cursor</button>
+          <button id="bBlink">Parpadear</button>
+          <button id="bSpring" class="on">Muelle</button>
+        </div>
+        <p class="hint">Mueve el cursor rápido con «Seguir el cursor» activado: los ojos se estiran en la dirección del movimiento y rebotan al frenar. Eso es lo que separa «pantalla» de «criatura».</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <p class="divider">Estados de ánimo</p>
+        <div class="moods" id="moods"></div>
+
+        <p class="divider">Forma</p>
+        <div class="sliders" id="sliders"></div>
+
+        <p class="divider">Estilo · se aplica a todos los ánimos</p>
+        <div class="sliders" id="styleSliders"></div>
+        <div class="row" id="colors"></div>
+      </div>
+
+      <div class="panel" style="margin-top:18px">
+        <div class="codehead"><h2 style="margin:0">Tabla de ánimos para el firmware</h2><button id="bCopy">Copiar</button></div>
+        <pre id="code"></pre>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2 style="font-size:1.4rem">Qué hace que se parezca al original</h2>
+  <p class="sub">Comparé cuadro a cuadro con el video. Son seis cosas, y ninguna es «más animaciones».</p>
+
+  <div class="two">
+    <div class="panel">
+      <h3><span class="tick">1.</span> La forma, no el dibujo</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">En el original los ojos son <strong>grandes y casi elípticos</strong>, ocupan más de la mitad del ancho de la pantalla, y están <strong>inclinados hacia dentro</strong> unos 12°. Mi primera versión eran rectángulos verticales pequeños y rectos — por eso se veía a juguete barato. Sube «Ancho» y «Redondeo» hasta que casi sean óvalos: el cambio es inmediato.</p>
+    </div>
+    <div class="panel">
+      <h3><span class="tick">2.</span> Degradado, no color plano</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Un relleno plano se lee como un LED. Un degradado vertical — más claro arriba, más oscuro abajo — se lee como un volumen. En el firmware no hace falta un degradado real: pinta el cuerpo del color base y superpón una forma más clara en el 45 % superior. A este tamaño el ojo no distingue.</p>
+    </div>
+    <div class="panel">
+      <h3><span class="tick">3.</span> Resplandor sobre negro</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">El halo alrededor de la forma es lo que hace que parezca emitir luz en vez de estar pintada. En el ESP32 son <strong>tres rectángulos redondeados concéntricos</strong> dibujados antes de la forma principal, cada uno 4 px mayor y más mezclado con el negro. Cuesta microsegundos.</p>
+    </div>
+    <div class="panel">
+      <h3><span class="tick">4.</span> Bordes suavizados</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Esto es lo más importante de la lista y lo más fácil de saltarse. Sin antialiasing, una curva a 240×240 se ve escalonada y todo el efecto se cae. TFT_eSPI trae <code>fillSmoothRoundRect()</code> desde la versión 2.5 — <strong>úsala siempre</strong>, nunca <code>fillRoundRect()</code>.</p>
+    </div>
+    <div class="panel">
+      <h3><span class="tick">5.</span> Muelle, no interpolación lineal</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Un <code>lerp</code> normal llega al destino y se para: se ve mecánico. Un muelle <strong>se pasa un poco y vuelve</strong>. Son tres líneas y es la diferencia entre parecer una interfaz y parecer un bicho. Apaga y enciende el botón «Muelle» mientras cambias de ánimo y lo verás.</p>
+    </div>
+    <div class="panel">
+      <h3><span class="tick">6.</span> Estirar y aplastar</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Al moverse rápido, el ojo se alarga en la dirección del movimiento y se adelgaza en la perpendicular; al frenar, rebota. Es el principio más viejo de la animación de Disney — y los que hicieron STARBOY vienen justo de ahí. El área se conserva, así que nunca parece que crece.</p>
+    </div>
+  </div>
+
+  <div class="note ok" style="margin-top:20px">
+    <span class="lbl">Y el detalle que nadie mira pero todos notan</span>
+    <p style="margin-bottom:0">El <strong>parpadeo es asimétrico</strong>: cierra en 60 ms y abre en 120 ms, porque así parpadean los ojos de verdad. Y el segundo ojo va <strong>un par de fotogramas por detrás</strong> del primero al mover la mirada. Ninguna de las dos cosas se percibe conscientemente, pero si las quitas todo el mundo dice que «se ve raro» sin saber por qué. Las dos están activas aquí.</p>
+  </div>
+
+  <hr>
+  <div class="panel">
+    <h2>drawEyes() — la función completa para TFT_eSPI</h2>
+    <pre id="fullcode"></pre>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  var DPR=2, S=240;
+
+  var PARAMS=[
+    {k:'w',      label:'Ancho',       min:24,max:132,step:1},
+    {k:'h',      label:'Alto',        min:8, max:132,step:1},
+    {k:'radius', label:'Redondeo',    min:0, max:66, step:1},
+    {k:'gap',    label:'Separación',  min:8, max:74, step:1},
+    {k:'tilt',   label:'Inclinación', min:-28,max:28,step:1},
+    {k:'open',   label:'Apertura',    min:0, max:100,step:1},
+    {k:'lidTop', label:'Párpado',     min:0, max:100,step:1},
+    {k:'angle',  label:'Ceja',        min:-42,max:42,step:1},
+    {k:'curve',  label:'Curvatura',   min:0, max:100,step:1},
+    {k:'offY',   label:'Altura',      min:-40,max:40,step:1}
+  ];
+  var STYLE=[
+    {k:'glow',   label:'Resplandor', min:0,max:100,step:1},
+    {k:'grad',   label:'Degradado',  min:0,max:100,step:1},
+    {k:'shine',  label:'Brillo',     min:0,max:100,step:1},
+    {k:'squash', label:'Estirar',    min:0,max:100,step:1}
+  ];
+  var style={glow:62,grad:78,shine:34,squash:70};
+
+  var MOODS={
+    'Normal':      {w:78,h:88,radius:40,gap:44,tilt:12,open:100,lidTop:0, angle:0,  curve:0,  offY:-4},
+    'Feliz':       {w:84,h:80,radius:40,gap:44,tilt:10,open:100,lidTop:0, angle:0,  curve:100,offY:2},
+    'Contento':    {w:80,h:62,radius:31,gap:44,tilt:14,open:100,lidTop:0, angle:0,  curve:46, offY:0},
+    'Enojado':     {w:78,h:88,radius:34,gap:42,tilt:6, open:100,lidTop:44,angle:27, curve:0,  offY:-2},
+    'Triste':      {w:74,h:84,radius:38,gap:46,tilt:16,open:100,lidTop:34,angle:-25,curve:0,  offY:8},
+    'Te extraña':  {w:74,h:82,radius:39,gap:46,tilt:15,open:100,lidTop:26,angle:-16,curve:0,  offY:6},
+    'Sorprendido': {w:88,h:106,radius:46,gap:47,tilt:4, open:100,lidTop:0, angle:0,  curve:0,  offY:-6},
+    'Curioso':     {w:78,h:90,radius:41,gap:44,tilt:19,open:100,lidTop:14,angle:9,  curve:0,  offY:-6},
+    'Escéptico':   {w:78,h:84,radius:36,gap:44,tilt:9, open:100,lidTop:50,angle:14, curve:0,  offY:-2},
+    'Cansado':     {w:78,h:84,radius:38,gap:44,tilt:12,open:80, lidTop:54,angle:-8, curve:0,  offY:5},
+    'Dormido':     {w:84,h:62,radius:31,gap:44,tilt:10,open:100,lidTop:0, angle:0,  curve:84, offY:6},
+    'Aburrido':    {w:78,h:84,radius:38,gap:44,tilt:11,open:90, lidTop:58,angle:0,  curve:0,  offY:6},
+    'Asustado':    {w:62,h:114,radius:31,gap:40,tilt:5, open:100,lidTop:0, angle:0,  curve:0,  offY:-4},
+    'Mareado':     {w:86,h:86,radius:43,gap:46,tilt:0, open:100,lidTop:0, angle:0,  curve:0,  offY:0},
+    'Emocionado':  {w:90,h:102,radius:45,gap:46,tilt:9, open:100,lidTop:0, angle:-9, curve:0,  offY:-6}
+  };
+  var COLORS=[['Rosa','#FF2E88'],['Cian','#28E0D8'],['Ámbar','#FFB020'],['Verde','#3BE08A'],['Violeta','#9B6BFF'],['Blanco','#F2F2F7']];
+
+  var cur=Object.assign({},MOODS['Normal']);
+  var goal=Object.assign({},MOODS['Normal']);
+  var vel={}; PARAMS.forEach(function(p){vel[p.k]=0;});
+  var color='#FF2E88', moodName='Normal';
+
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var auto=!reduced, follow=false, spring=true;
+  var gx=0,gy=0,gx2=0,gy2=0,tgx=0,tgy=0,gvx=0,gvy=0,pgx=0,pgy=0;
+  var sqx=1,sqy=1, blink=1, blinkStart=-1e9, nextBlink=0, dbl=false;
+
+  /* ---------- color ---------- */
+  function hex2rgb(h){return [parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)];}
+  function mix(a,b,k){return [Math.round(a[0]+(b[0]-a[0])*k),Math.round(a[1]+(b[1]-a[1])*k),Math.round(a[2]+(b[2]-a[2])*k)];}
+  function rgbs(c){return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
+
+  /* ---------- forma ---------- */
+  function rr(c,x,y,w,h,r){
+    r=Math.max(0,Math.min(r,w/2,h/2));
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.lineTo(x+w-r,y); c.quadraticCurveTo(x+w,y,x+w,y+r);
+    c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r);
+    c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y);
+    c.closePath();
+  }
+
+  function drawEye(c,p,side,t){
+    var base=hex2rgb(color);
+    var light=mix(base,[255,255,255],0.46);
+    var dark =mix(base,[0,0,0],0.34);
+    var myx = side>0 ? gx2 : gx, myy = side>0 ? gy2 : gy;
+    var cx=S/2+side*p.gap+myx, cy=S/2+p.offY+myy;
+    var breathe = auto ? Math.sin(t/900+(side>0?0.9:0))*1.3 : 0;
+    var h=p.h*(p.open/100)*blink+breathe; if(h<1.5)h=1.5;
+    var w=p.w;
+    w*=sqx; h*=sqy;
+    var r=Math.min(p.radius,w/2,h/2);
+
+    c.save();
+    c.translate(cx,cy);
+    c.rotate(side*p.tilt*Math.PI/180);
+
+    if(p.curve>3){
+      var k=p.curve/100, th=Math.max(6,w*0.30), rad=w*0.62;
+      c.save();
+      c.globalAlpha=k;
+      if(style.glow>0){c.shadowColor=color;c.shadowBlur=style.glow*0.34;}
+      c.strokeStyle=color; c.lineWidth=th; c.lineCap='round';
+      c.beginPath(); c.arc(0,rad*0.5,rad,Math.PI*1.14,Math.PI*1.86); c.stroke();
+      c.stroke();
+      c.restore();
+      if(k<0.97){ c.save(); c.globalAlpha=1-k; c.fillStyle=color; rr(c,-w/2,-h/2,w,h,r); c.fill(); c.restore(); }
+      c.restore(); return;
+    }
+
+    // resplandor
+    if(style.glow>0){
+      c.save();
+      c.shadowColor=color; c.shadowBlur=style.glow*0.44; c.fillStyle=color;
+      rr(c,-w/2,-h/2,w,h,r); c.fill(); c.fill();
+      c.restore();
+    }
+    // cuerpo
+    var g=c.createLinearGradient(0,-h/2,0,h/2);
+    var gk=style.grad/100;
+    g.addColorStop(0,   rgbs(mix(base,light,gk)));
+    g.addColorStop(0.52,color);
+    g.addColorStop(1,   rgbs(mix(base,dark,gk)));
+    c.fillStyle=g;
+    rr(c,-w/2,-h/2,w,h,r); c.fill();
+
+    // brillo especular
+    if(style.shine>0&&h>10){
+      c.save(); c.globalAlpha=(style.shine/100)*0.45; c.fillStyle='#fff';
+      c.beginPath(); c.ellipse(-w*0.16,-h*0.27,w*0.19,h*0.115,-0.35,0,Math.PI*2); c.fill(); c.restore();
+    }
+    // párpado
+    if(p.lidTop>0.5){
+      c.save();
+      c.translate(0,-h/2);
+      c.rotate(side*p.angle*Math.PI/180);
+      c.fillStyle='#000';
+      c.fillRect(-w*1.8,-p.h*2.2,w*3.6,p.h*2.2+(p.lidTop/100)*h);
+      c.restore();
+    }
+    c.restore();
+  }
+
+  function draw(t){
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,S,S);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(S/2,S/2,S/2,0,Math.PI*2); ctx.clip();
+    if(moodName==='Mareado'&&auto){ ctx.translate(S/2,S/2); ctx.rotate(Math.sin(t/260)*0.10); ctx.translate(-S/2,-S/2); }
+    drawEye(ctx,cur,-1,t); drawEye(ctx,cur,1,t);
+    ctx.restore();
+  }
+
+  function tick(t){
+    // 1. muelle o lineal hacia el ánimo objetivo
+    for(var i=0;i<PARAMS.length;i++){
+      var k=PARAMS[i].k;
+      if(spring){ vel[k]+=(goal[k]-cur[k])*0.20; vel[k]*=0.70; cur[k]+=vel[k]; }
+      else { cur[k]+=(goal[k]-cur[k])*0.14; vel[k]=0; }
+    }
+    // 2. parpadeo asimétrico e irregular
+    if(auto&&t>nextBlink){
+      nextBlink=t+1500+Math.random()*3900; blinkStart=t;
+      dbl=Math.random()<0.16;
+    }
+    var d=t-blinkStart;
+    if(dbl&&d>250&&d<270){ blinkStart=t; d=0; dbl=false; }
+    if(d>=0&&d<60)      blink=1-d/60;
+    else if(d<180)      blink=(d-60)/120;
+    else                blink=1;
+    if(blink<0.035)blink=0.035;
+    // 3. mirada
+    if(auto&&!follow&&Math.random()<0.0065){ tgx=(Math.random()-0.5)*24; tgy=(Math.random()-0.5)*12; }
+    if(spring){
+      gvx+=(tgx-gx)*0.22; gvx*=0.70; gx+=gvx;
+      gvy+=(tgy-gy)*0.22; gvy*=0.70; gy+=gvy;
+    } else { gx+=(tgx-gx)*0.13; gy+=(tgy-gy)*0.13; }
+    // 4. el segundo ojo va detrás — nadie lo ve, todos lo notan
+    gx2+=(gx-gx2)*0.42; gy2+=(gy-gy2)*0.42;
+    // 5. estirar y aplastar segun velocidad, conservando area
+    var vx=gx-pgx, vy=gy-pgy; pgx=gx; pgy=gy;
+    var kk=style.squash/100, ax=Math.abs(vx), ay=Math.abs(vy);
+    var tx=1,ty=1;
+    if(ax>=ay){ var s=Math.min(ax/7,1)*kk; tx=1+s*0.30; ty=1-s*0.21; }
+    else      { var s2=Math.min(ay/7,1)*kk; ty=1+s2*0.30; tx=1-s2*0.21; }
+    sqx+=(tx-sqx)*0.35; sqy+=(ty-sqy)*0.35;
+
+    draw(t);
+    requestAnimationFrame(tick);
+  }
+
+  /* ---------- interfaz ---------- */
+  var moodsEl=document.getElementById('moods');
+  Object.keys(MOODS).forEach(function(n){
+    var b=document.createElement('button');
+    b.textContent=n; b.className='mood'+(n===moodName?' sel':'');
+    b.addEventListener('click',function(){
+      moodName=n; goal=Object.assign({},MOODS[n]);
+      document.querySelectorAll('.mood').forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel'); syncSliders(); emit();
+    });
+    moodsEl.appendChild(b);
+  });
+
+  function mkSliders(host,list,target,after){
+    var inputs={};
+    list.forEach(function(p){
+      var d=document.createElement('div'); d.className='sl';
+      var l=document.createElement('label'); l.textContent=p.label; l.htmlFor='s_'+p.k;
+      var r=document.createElement('input');
+      r.type='range'; r.id='s_'+p.k; r.min=p.min; r.max=p.max; r.step=p.step; r.value=target[p.k];
+      var o=document.createElement('output'); o.textContent=target[p.k];
+      r.addEventListener('input',function(){ target[p.k]=parseFloat(r.value); o.textContent=r.value; after&&after(); });
+      inputs[p.k]={r:r,o:o};
+      d.appendChild(l); d.appendChild(r); d.appendChild(o); host.appendChild(d);
+    });
+    return inputs;
+  }
+  var inputs=mkSliders(document.getElementById('sliders'),PARAMS,goal,function(){
+    document.querySelectorAll('.mood').forEach(function(x){x.classList.remove('sel');});
+    moodName='Personalizado'; emit();
+  });
+  mkSliders(document.getElementById('styleSliders'),STYLE,style,emit);
+  function syncSliders(){ PARAMS.forEach(function(p){ inputs[p.k].r.value=goal[p.k]; inputs[p.k].o.textContent=goal[p.k]; }); }
+
+  var colEl=document.getElementById('colors');
+  COLORS.forEach(function(c,i){
+    var b=document.createElement('button'); b.textContent=c[0]; b.style.borderLeft='10px solid '+c[1];
+    if(i===0)b.classList.add('on');
+    b.addEventListener('click',function(){
+      color=c[1];
+      colEl.querySelectorAll('button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); emit();
+    });
+    colEl.appendChild(b);
+  });
+
+  var bAuto=document.getElementById('bAuto');
+  bAuto.classList.toggle('on',auto);
+  bAuto.addEventListener('click',function(){auto=!auto;bAuto.classList.toggle('on',auto);});
+  var bFollow=document.getElementById('bFollow');
+  bFollow.addEventListener('click',function(){
+    follow=!follow; bFollow.classList.toggle('on',follow);
+    if(!follow){tgx=0;tgy=0;}
+  });
+  var bSpring=document.getElementById('bSpring');
+  bSpring.addEventListener('click',function(){spring=!spring;bSpring.classList.toggle('on',spring);});
+  cv.addEventListener('pointermove',function(e){
+    if(!follow)return;
+    var r=cv.getBoundingClientRect();
+    tgx=((e.clientX-r.left)/r.width-0.5)*54;
+    tgy=((e.clientY-r.top)/r.height-0.5)*30;
+  });
+  document.getElementById('bBlink').addEventListener('click',function(){blinkStart=performance.now();dbl=false;});
+
+  /* ---------- exportación ---------- */
+  function cname(n){
+    return 'MOOD_'+n.toUpperCase().replace(/Á/g,'A').replace(/É/g,'E').replace(/Í/g,'I')
+      .replace(/Ó/g,'O').replace(/Ú/g,'U').replace(/[^A-Z0-9]+/g,'_');
+  }
+  function fmt(p){
+    return '{ '+[p.w,p.h,p.radius,p.gap,p.tilt,p.open,p.lidTop,p.angle,p.curve,p.offY]
+      .map(function(v){return String(Math.round(v)).padStart(3,' ');}).join(', ')+' }';
+  }
+  function rgb565(hex){
+    var c=hex2rgb(hex);
+    return ((c[0]&0xF8)<<8)|((c[1]&0xFC)<<3)|(c[2]>>3);
+  }
+  var codeEl=document.getElementById('code');
+  function emit(){
+    var L=[];
+    L.push('// Generado por el Editor de Ojos');
+    L.push('struct EyeState {');
+    L.push('  int16_t w, h, radius, gap;  // px');
+    L.push('  int16_t tilt;               // grados, hacia dentro');
+    L.push('  int16_t open, lidTop;       // 0-100');
+    L.push('  int16_t angle;              // ceja: + enojado, - triste');
+    L.push('  int16_t curve;              // 0-100, 100 = arco feliz');
+    L.push('  int16_t offY;               // px');
+    L.push('};');
+    L.push('');
+    L.push('const uint16_t EYE_COLOR = 0x'+rgb565(color).toString(16).toUpperCase().padStart(4,'0')+';   // '+color);
+    L.push('const uint8_t  GLOW   = '+Math.round(style.glow)+';   // resplandor 0-100');
+    L.push('const uint8_t  GRAD   = '+Math.round(style.grad)+';   // degradado 0-100');
+    L.push('const uint8_t  SHINE  = '+Math.round(style.shine)+';   // brillo especular 0-100');
+    L.push('const uint8_t  SQUASH = '+Math.round(style.squash)+';   // estirar/aplastar 0-100');
+    L.push('');
+    L.push('//                        w    h  rad  gap tilt open  lid  ceja  crv  offY');
+    Object.keys(MOODS).forEach(function(n){
+      L.push('const EyeState '+(cname(n)+' ').padEnd(19,' ')+' = '+fmt(MOODS[n])+';');
+    });
+    if(moodName==='Personalizado'){
+      L.push('');
+      L.push('const EyeState MOOD_PERSONALIZADO = '+fmt(goal)+';');
+    }
+    codeEl.textContent=L.join('\n');
+  }
+  document.getElementById('bCopy').addEventListener('click',function(){
+    var b=this;
+    navigator.clipboard.writeText(codeEl.textContent).then(
+      function(){b.textContent='Copiado';setTimeout(function(){b.textContent='Copiar';},1400);},
+      function(){b.textContent='No se pudo';setTimeout(function(){b.textContent='Copiar';},1400);});
+  });
+
+  document.getElementById('fullcode').textContent=[
+    '#include <TFT_eSPI.h>       // v2.5 o superior: hace falta fillSmoothRoundRect()',
+    '',
+    'TFT_eSPI    tft = TFT_eSPI();',
+    'TFT_eSprite fb  = TFT_eSprite(&tft);   // buffer 240x240 en PSRAM',
+    '',
+    'EyeState cur = MOOD_NORMAL, tgt = MOOD_NORMAL;',
+    'float velP[10] = {0};                  // velocidad del muelle por parámetro',
+    'float gx=0, gy=0, gx2=0, gy2=0;        // mirada; gx2 va un poco por detrás',
+    'float gvx=0, gvy=0, sqx=1, sqy=1, pgx=0, pgy=0, blink=1;',
+    'uint32_t nextBlink=0, blinkStart=0;',
+    '',
+    '// --- muelle: se pasa un poco y vuelve. NO uses un lerp normal aquí ---',
+    'static inline void springTo(int16_t &v, int16_t target, float &vel) {',
+    '  vel += (target - v) * 0.20f;',
+    '  vel *= 0.70f;',
+    '  v   += (int16_t)vel;',
+    '}',
+    '',
+    '// --- un ojo ---',
+    'void drawEye(int8_t side) {',
+    '  float myx = (side > 0) ? gx2 : gx;',
+    '  float myy = (side > 0) ? gy2 : gy;',
+    '  int16_t cx = 120 + side * cur.gap + (int16_t)myx;',
+    '  int16_t cy = 120 + cur.offY + (int16_t)myy;',
+    '',
+    '  int16_t w = cur.w * sqx;',
+    '  int16_t h = cur.h * (cur.open / 100.0f) * blink * sqy;',
+    '  if (h < 2) h = 2;',
+    '  int16_t r = min((int)cur.radius, min(w/2, h/2));',
+    '',
+    '  int16_t x = cx - w/2, y = cy - h/2;',
+    '',
+    '  // 1. RESPLANDOR: tres capas concéntricas mezcladas hacia el negro.',
+    '  //    Es lo que hace que parezca emitir luz en vez de estar pintado.',
+    '  if (GLOW > 0) {',
+    '    for (int8_t i = 3; i >= 1; i--) {',
+    '      uint8_t a = (GLOW * (4 - i)) / 14;             // 0-28 %',
+    '      uint16_t g = tft.alphaBlend(a, EYE_COLOR, TFT_BLACK);',
+    '      fb.fillSmoothRoundRect(x - i*3, y - i*3, w + i*6, h + i*6, r + i*3, g, TFT_BLACK);',
+    '    }',
+    '  }',
+    '',
+    '  // 2. CUERPO con bordes suavizados. fillSmoothRoundRect, nunca fillRoundRect:',
+    '  //    sin antialiasing las curvas se escalonan y se cae todo el efecto.',
+    '  fb.fillSmoothRoundRect(x, y, w, h, r, EYE_COLOR, TFT_BLACK);',
+    '',
+    '  // 3. DEGRADADO barato: una forma más clara sobre el 45 % superior.',
+    '  //    A este tamaño no se distingue de un degradado real.',
+    '  if (GRAD > 0 && h > 14) {',
+    '    uint16_t lightC = tft.alphaBlend(GRAD / 3, TFT_WHITE, EYE_COLOR);',
+    '    int16_t  hh = h * 0.45f;',
+    '    fb.fillSmoothRoundRect(x + 2, y + 2, w - 4, hh, min((int)r, (int)(hh/2)), lightC, EYE_COLOR);',
+    '  }',
+    '',
+    '  // 4. BRILLO especular arriba a la izquierda.',
+    '  if (SHINE > 0 && h > 20) {',
+    '    uint16_t s = tft.alphaBlend(SHINE * 2 / 3, TFT_WHITE, EYE_COLOR);',
+    '    fb.fillSmoothCircle(cx - w/5, cy - h/4, max(2, w/9), s, EYE_COLOR);',
+    '  }',
+    '',
+    '  // 5. PÁRPADO: tapa con el fondo, inclinado según la "ceja".',
+    '  if (cur.lidTop > 0) {',
+    '    int16_t lid = h * cur.lidTop / 100;',
+    '    float   sl  = tanf(side * cur.angle * PI / 180.0f);',
+    '    for (int16_t i = -w/2 - 4; i <= w/2 + 4; i++) {',
+    '      int16_t yy = y + lid + (int16_t)(i * sl);',
+    '      fb.drawFastVLine(cx + i, y - 14, (yy - y) + 14, TFT_BLACK);',
+    '    }',
+    '  }',
+    '}',
+    '',
+    'void loop() {',
+    '  uint32_t now = millis();',
+    '',
+    '  // muelle sobre cada parámetro del ánimo',
+    '  springTo(cur.w, tgt.w, velP[0]);   springTo(cur.h,      tgt.h,      velP[1]);',
+    '  springTo(cur.radius, tgt.radius, velP[2]); springTo(cur.gap, tgt.gap, velP[3]);',
+    '  springTo(cur.tilt, tgt.tilt, velP[4]);     springTo(cur.open, tgt.open, velP[5]);',
+    '  springTo(cur.lidTop, tgt.lidTop, velP[6]); springTo(cur.angle, tgt.angle, velP[7]);',
+    '  springTo(cur.curve, tgt.curve, velP[8]);   springTo(cur.offY, tgt.offY, velP[9]);',
+    '',
+    '  // parpadeo ASIMÉTRICO (cierra rápido, abre lento) e IRREGULAR.',
+    '  // Un intervalo fijo se detecta en segundos y mata la ilusión.',
+    '  if (now > nextBlink) { nextBlink = now + 1500 + random(3900); blinkStart = now; }',
+    '  uint32_t d = now - blinkStart;',
+    '  if      (d <  60) blink = 1.0f - d / 60.0f;',
+    '  else if (d < 180) blink = (d - 60) / 120.0f;',
+    '  else              blink = 1.0f;',
+    '  if (blink < 0.035f) blink = 0.035f;',
+    '',
+    '  // mirada: la da la detección de caras. Sin cara, micro-saltos al azar.',
+    '  // gxTarget = (faceCx - 120) * 0.35f;',
+    '  gvx += (gxTarget - gx) * 0.22f; gvx *= 0.70f; gx += gvx;',
+    '  gvy += (gyTarget - gy) * 0.22f; gvy *= 0.70f; gy += gvy;',
+    '  gx2 += (gx - gx2) * 0.42f;  gy2 += (gy - gy2) * 0.42f;   // el 2º ojo, detrás',
+    '',
+    '  // estirar y aplastar según la velocidad, conservando el área',
+    '  float vx = gx - pgx, vy = gy - pgy; pgx = gx; pgy = gy;',
+    '  float k = SQUASH / 100.0f, ax = fabsf(vx), ay = fabsf(vy), tx = 1, ty = 1;',
+    '  if (ax >= ay) { float s = min(ax/7.0f, 1.0f)*k; tx = 1+s*0.30f; ty = 1-s*0.21f; }',
+    '  else          { float s = min(ay/7.0f, 1.0f)*k; ty = 1+s*0.30f; tx = 1-s*0.21f; }',
+    '  sqx += (tx - sqx) * 0.35f;  sqy += (ty - sqy) * 0.35f;',
+    '',
+    '  fb.fillSprite(TFT_BLACK);',
+    '  drawEye(-1);',
+    '  drawEye(+1);',
+    '  fb.pushSprite(0, 0);',
+    '}',
+    '',
+    '// NOTA sobre la inclinación (tilt): TFT_eSPI no rota primitivas.',
+    '// Dibuja cada ojo en su propio TFT_eSprite pequeño y súbelo con',
+    '// pushRotated(angulo). Rehaz ese sprite solo cuando cambie la forma,',
+    '// no en cada fotograma, o te comes el presupuesto de CPU.'
+  ].join('\n');
+
+  syncSliders(); emit();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
