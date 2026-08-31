@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Two Living Keychains</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#EDEEF1;
+  --surface:#FFFFFF;
+  --surface-2:#F5F6F8;
+  --ink:#16151C;
+  --muted:#5C6272;
+  --faint:#868C9C;
+  --rule:#D4D7DF;
+  --rule-soft:#E3E5EB;
+  --accent:#C1105F;
+  --accent-soft:#FBE9F1;
+  --risk:#C2451C;
+  --risk-soft:#FBEBE4;
+  --ok:#0B7E5B;
+  --ok-soft:#E3F4EE;
+  --sheen:linear-gradient(168deg,#FFFFFF 0%,#E7E9EE 38%,#F7F8FA 55%,#D9DCE4 78%,#FFFFFF 100%);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E0D13;
+    --surface:#17161F;
+    --surface-2:#1E1D28;
+    --ink:#ECECF2;
+    --muted:#9198A8;
+    --faint:#6E7484;
+    --rule:#2B2A37;
+    --rule-soft:#232231;
+    --accent:#FF4C99;
+    --accent-soft:#2A1220;
+    --risk:#FF8156;
+    --risk-soft:#2C1710;
+    --ok:#33D6A0;
+    --ok-soft:#0E2620;
+    --sheen:linear-gradient(168deg,#2A2936 0%,#141320 38%,#32313F 55%,#111019 78%,#26252F 100%);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E0D13;
+  --surface:#17161F;
+  --surface-2:#1E1D28;
+  --ink:#ECECF2;
+  --muted:#9198A8;
+  --faint:#6E7484;
+  --rule:#2B2A37;
+  --rule-soft:#232231;
+  --accent:#FF4C99;
+  --accent-soft:#2A1220;
+  --risk:#FF8156;
+  --risk-soft:#2C1710;
+  --ok:#33D6A0;
+  --ok-soft:#0E2620;
+  --sheen:linear-gradient(168deg,#2A2936 0%,#141320 38%,#32313F 55%,#111019 78%,#26252F 100%);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px 96px}
+.col{max-width:640px}
+
+h1,h2,h3,.disp{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;text-wrap:balance;letter-spacing:-0.02em}
+h2{font-size:1.7rem;font-weight:800;line-height:1.15;margin:0 0 10px}
+h3{font-size:1.06rem;font-weight:700;line-height:1.3;margin:0 0 6px;letter-spacing:-0.01em}
+p{margin:0 0 14px}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+strong{font-weight:600}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:0.855em}
+code{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:4px;padding:1px 5px}
+
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;font-size:.685rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin:0 0 12px;
+}
+
+/* ---------- header ---------- */
+header{
+  background:var(--sheen);
+  border-bottom:1px solid var(--rule);
+  padding:56px 0 0;
+  margin-bottom:56px;
+}
+.hd{max-width:1080px;margin:0 auto;padding:0 24px}
+.hd h1{
+  font-size:clamp(2.5rem,7vw,4.4rem);font-weight:800;line-height:.96;
+  margin:0 0 18px;letter-spacing:-0.045em;
+}
+.hd .lede{font-size:1.12rem;color:var(--muted);max-width:47ch;margin:0 0 34px}
+.hd .lede b{color:var(--ink);font-weight:600}
+.countbar{
+  display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);
+  margin-top:8px;
+}
+.cnt{
+  flex:1 1 140px;padding:16px 20px 20px;border-right:1px solid var(--rule);
+}
+.cnt:last-child{border-right:0}
+.cnt .k{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:4px}
+.cnt .v{font-family:"Bricolage Grotesque",sans-serif;font-size:1.55rem;font-weight:700;line-height:1.1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.cnt .v.hot{color:var(--accent)}
+
+/* ---------- sections ---------- */
+section{margin:0 0 64px;scroll-margin-top:24px}
+.secnum{
+  font-family:"JetBrains Mono",monospace;font-size:.7rem;font-weight:500;
+  color:var(--accent);letter-spacing:.1em;display:block;margin-bottom:6px;
+}
+
+.card{
+  background:var(--surface);border:1px solid var(--rule);border-radius:10px;
+  padding:22px 24px;
+}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+.note{
+  border-left:3px solid var(--accent);background:var(--accent-soft);
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:20px 0;
+}
+.note.risk{border-left-color:var(--risk);background:var(--risk-soft)}
+.note p:last-child{margin-bottom:0}
+.note .lbl{
+  font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:5px;font-weight:700;
+}
+.note.risk .lbl{color:var(--risk)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.9rem}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{
+  font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--faint);font-weight:500;
+  background:var(--surface-2);border-bottom:1px solid var(--rule);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+td .sub{display:block;color:var(--muted);font-size:.83rem;line-height:1.45;margin-top:2px}
+tfoot td{background:var(--surface-2);font-weight:600;border-top:1px solid var(--rule)}
+
+/* ---------- scope chips ---------- */
+.scope{border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:18px 20px}
+.scope h3{display:flex;align-items:baseline;gap:9px;margin-bottom:12px}
+.tag{
+  font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:3px 7px;border-radius:4px;font-weight:700;
+}
+.tag.must{background:var(--accent);color:var(--surface)}
+.tag.should{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok)}
+.tag.nice{background:var(--surface-2);color:var(--muted);border:1px solid var(--rule)}
+.tag.cut{background:var(--risk-soft);color:var(--risk);border:1px solid var(--risk)}
+.scope ul{margin:0;padding-left:18px;font-size:.91rem;line-height:1.55}
+.scope li{margin-bottom:7px}
+.scope li:last-child{margin-bottom:0}
+.scope.is-cut li{text-decoration:line-through;text-decoration-color:var(--faint);color:var(--muted)}
+
+/* ---------- figures ---------- */
+figure{margin:24px 0;background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:22px 20px 16px}
+figure .svgbox{overflow-x:auto}
+figure svg{display:block;max-width:100%;height:auto;min-width:520px;margin:0 auto;color:var(--ink)}
+figcaption{
+  font-size:.855rem;color:var(--muted);margin-top:16px;padding-top:13px;
+  border-top:1px solid var(--rule-soft);line-height:1.5;
+}
+figcaption b{color:var(--ink);font-weight:600}
+
+/* ---------- gantt ---------- */
+.gwrap{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:18px 18px 14px}
+.gantt{min-width:760px}
+.grow{display:grid;grid-template-columns:180px 1fr;gap:12px;align-items:center;margin-bottom:7px}
+.glab{font-size:.83rem;line-height:1.25}
+.glab .gn{font-family:"JetBrains Mono",monospace;color:var(--faint);font-size:.72rem;margin-right:6px}
+.gtrack{display:grid;grid-template-columns:repeat(28,1fr);gap:2px;height:26px;align-items:stretch}
+.gtrack::before{content:"";grid-column:1/-1;grid-row:1;background:var(--surface-2);border-radius:4px}
+.gbar{
+  grid-row:1;border-radius:4px;background:var(--ink);color:var(--surface);
+  font-family:"JetBrains Mono",monospace;font-size:.66rem;font-weight:500;
+  display:flex;align-items:center;padding:0 8px;overflow:hidden;white-space:nowrap;
+}
+.gbar.a{background:var(--accent);color:#fff}
+.gbar.o{background:var(--muted)}
+.gbar.b{background:transparent;border:1px dashed var(--rule);color:var(--muted)}
+.gbar.d{background:var(--risk);color:#fff;justify-content:center;padding:0 2px}
+.gaxis{display:grid;grid-template-columns:repeat(28,1fr);gap:2px;margin-top:6px}
+.gaxis span{
+  font-family:"JetBrains Mono",monospace;font-size:.6rem;color:var(--faint);
+  text-align:left;grid-row:1;
+}
+
+/* ---------- phase list ---------- */
+.ph{display:grid;grid-template-columns:64px 1fr;gap:0;border-top:1px solid var(--rule)}
+.ph:last-of-type{border-bottom:1px solid var(--rule)}
+.ph .pn{
+  padding:18px 0 18px 0;font-family:"Bricolage Grotesque",sans-serif;
+  font-size:1.5rem;font-weight:700;color:var(--rule);letter-spacing:-0.03em;line-height:1;
+}
+.ph.hot .pn{color:var(--accent)}
+.ph .pb{padding:18px 0 20px}
+.ph .pd{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--faint);letter-spacing:.06em;margin-bottom:3px}
+.ph p{margin:0 0 8px;font-size:.93rem;color:var(--muted)}
+.ph p:last-child{margin-bottom:0}
+.ph .out{font-size:.86rem;color:var(--ink)}
+.ph .out b{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);font-weight:500}
+
+ul.tight{margin:0 0 14px;padding-left:19px}
+ul.tight li{margin-bottom:6px}
+hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
+
+.lead{font-size:1.05rem;color:var(--muted);max-width:60ch}
+.kicker{font-size:1.15rem;line-height:1.5;font-weight:500;max-width:52ch;font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-0.015em}
+
+@media (prefers-reduced-motion: no-preference){
+  .gbar{transition:transform .18s ease}
+}
+@media (max-width:640px){
+  .hd h1{font-size:2.3rem}
+  .ph{grid-template-columns:44px 1fr}
+  .cnt{flex-basis:50%;border-bottom:1px solid var(--rule)}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <p class="eyebrow">Build plan v5 · Mexico · prices verified 30 Aug 2026</p>
+    <h1>Two living<br>keychains</h1>
+    <p class="lede">Two black keychains with round displays and animated eyes. The camera <b>makes them look at you</b>. When they're close they find each other; when they're apart <b>they miss each other over WiFi</b> — and both keep count of how long it's been.</p>
+    <div class="countbar">
+      <div class="cnt"><span class="k">Today</span><span class="v">30 Aug</span></div>
+      <div class="cnt"><span class="k">Due</span><span class="v">26 Sep</span></div>
+      <div class="cnt"><span class="k">Days</span><span class="v hot">27</span></div>
+      <div class="cnt"><span class="k">With spares</span><span class="v">$2,270 MXN</span></div>
+      <div class="cnt"><span class="k">Order</span><span class="v hot">today</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <span class="secnum">01</span>
+  <h2>Shopping list, with real prices</h2>
+  <p class="lead" style="margin-bottom:20px">I scraped the Mexican suppliers one by one. <strong>Almost everything comes from a single UNIT Electronics order</strong> — with one exception.</p>
+
+  <div class="note risk">
+    <span class="lbl">About the display at UNIT — I checked</span>
+    <p style="margin-bottom:0">I searched UNIT for "gc9a01", "pantalla redonda", "display redondo", "lcd 1.28", "round display", "pantalla 240x240" and "pantalla circular". <strong>They don't carry it in any variant.</strong> Neither do HeTPro, Sandorobotics or 330ohms. The display has to come from MercadoLibre — where it's actually cheaper than a specialist shop would charge, so you lose nothing. It's two orders, not one.</p>
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>Part</th><th>Where</th><th style="text-align:right">Price</th><th style="text-align:right">Qty</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>
+        <tr style="background:var(--accent-soft)"><td colspan="5" style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;padding:9px 14px">Order 1 — UNIT Electronics · uelectronics.com</td></tr>
+        <tr><td><strong>XIAO ESP32-S3 Sense</strong><span class="sub">Listed as "Mini ESP-CAM con Micrófono". OV2640 camera, microphone and LiPo charger all built in.</span></td><td>UNIT</td><td class="num">$325</td><td class="num">3</td><td class="num">$975</td></tr>
+        <tr><td><strong>MPU6050 6-DOF IMU</strong><span class="sub">Motion, orientation and stillness for sleep mode.</span></td><td>UNIT</td><td class="num">$80</td><td class="num">3</td><td class="num">$240</td></tr>
+        <tr><td><strong>LiPo battery 3.7 V 400 mAh</strong><span class="sub">Form factor 602035 — 6 × 20 × 35 mm.</span></td><td>UNIT</td><td class="num">$67</td><td class="num">3</td><td class="num">$201</td></tr>
+        <tr style="background:var(--surface-2)"><td colspan="4" style="font-weight:600">UNIT subtotal</td><td class="num" style="font-weight:600">$1,416</td></tr>
+        <tr style="background:var(--accent-soft)"><td colspan="5" style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;padding:9px 14px">Order 2 — MercadoLibre · only source</td></tr>
+        <tr><td><strong>Round TFT display 1.28" GC9A01</strong><span class="sub">240×240 SPI. Search the exact phrase "Pantalla Redonda Tft 1.28 Gc9a01 240x240 Interfaz Spi". Verified with free shipping.</span></td><td>MercadoLibre</td><td class="num">$93–169</td><td class="num">3</td><td class="num">$280–507</td></tr>
+        <tr style="background:var(--accent-soft)"><td colspan="5" style="font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;padding:9px 14px">Local</td></tr>
+        <tr><td><strong>Flat mineral watch crystal</strong><span class="sub">Ø 34–36 mm × 1 mm. See section 04.</span></td><td>Local watch-repair shop<span class="sub">sets on Amazon MX start at $161; buying singles locally is far cheaper</span></td><td class="num">$30–60</td><td class="num">4</td><td class="num">~$180</td></tr>
+        <tr><td>20 mm metal split rings</td><td>Local</td><td class="num">~$10</td><td class="num">4</td><td class="num">$40</td></tr>
+        <tr><td>M2×6 self-tapping screws</td><td>Local</td><td class="num">—</td><td class="num">20</td><td class="num">$60</td></tr>
+        <tr><td>AWG30 silicone wire, 3 colours</td><td>Local / ML</td><td class="num">—</td><td class="num">1 set</td><td class="num">$80</td></tr>
+        <tr><td>Black double-sided tape 0.05–0.1 mm</td><td>Local</td><td class="num">—</td><td class="num">1</td><td class="num">$50</td></tr>
+        <tr><td>Black PLA filament</td><td>You already have it</td><td class="num">—</td><td class="num">—</td><td class="num">$0</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="4">Total with a spare of every electronic part</td><td class="num">~$2,270</td></tr>
+        <tr><td colspan="4" style="color:var(--muted);font-weight:400">Bare minimum, 2 units with no spares</td><td class="num" style="font-weight:400">~$1,560</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="note risk">
+    <span class="lbl">Two pricing traps</span>
+    <p><strong>1. The battery.</strong> On Amazon Mexico, 400 mAh LiPos run <strong>$255 to $298</strong>. The same capacity at UNIT is <strong>$67</strong>. Four times the price. Don't buy batteries on Amazon.</p>
+    <p style="margin-bottom:0"><strong>2. Why 3 and not 2?</strong> A spare of every electronic part costs $472 and covers you against destroying something with a soldering iron on day 12 — which is exactly when that happens.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">02</span>
+  <h2>Scope, locked</h2>
+  <div class="grid4">
+    <div class="scope">
+      <h3><span class="tag must">Confirmed</span></h3>
+      <ul>
+        <li>Round display with animated eyes</li>
+        <li>USB-C rechargeable battery</li>
+        <li>Black 3D-printed enclosure</li>
+        <li>Watch crystal over the display</li>
+        <li>Accelerometer and sleep mode</li>
+        <li><strong>Camera with face detection</strong> — the eyes follow you</li>
+        <li>Reacts to noise via microphone</li>
+        <li>The two units detect each other when close</li>
+        <li>They miss each other over WiFi when apart</li>
+        <li>How long since they last met</li>
+        <li>Days-together counter</li>
+        <li>Personalisation</li>
+      </ul>
+    </div>
+    <div class="scope is-cut">
+      <h3><span class="tag cut">Cut today</span></h3>
+      <ul>
+        <li>Recognising her face specifically</li>
+      </ul>
+      <p style="font-size:.87rem;color:var(--muted);margin:12px 0 0;text-decoration:none">Good call: it was the only part of the plan that needed a mandatory fallback and its own decision date. It frees up nearly a full week, and that goes straight into the animations — which is where you want it to show.</p>
+    </div>
+    <div class="scope is-cut">
+      <h3><span class="tag cut">Cut earlier</span></h3>
+      <ul>
+        <li>Tactile button</li>
+        <li>Shake to send a signal</li>
+        <li>The creature hopping between keychains</li>
+        <li>30 hand gestures</li>
+        <li>Mirror-chrome body</li>
+        <li>Phone app</li>
+      </ul>
+    </div>
+    <div class="scope">
+      <h3><span class="tag should">Free, already there</span></h3>
+      <ul>
+        <li>Microphone included on the XIAO Sense</li>
+        <li>Adaptive brightness</li>
+        <li>The board's own BOOT button, repurposed</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">03</span>
+  <h2>Wiring, no button</h2>
+  <div class="col">
+    <p>The tactile button is unnecessary: <strong>waking up</strong> is handled by the MPU6050's motion interrupt, and for any occasional adjustment there's the <strong>BOOT button already soldered onto the XIAO</strong>, reached through a 1.5 mm pinhole in the back cover.</p>
+  </div>
+  <div class="tw" style="margin-top:18px">
+    <table>
+      <thead><tr><th>Component</th><th>Signal</th><th>XIAO pin</th><th>GPIO</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="6"><strong>GC9A01</strong><br><span class="sub">display, SPI</span></td><td>SCK</td><td class="mono">D8</td><td class="mono">7</td><td></td></tr>
+        <tr><td>MOSI / SDA</td><td class="mono">D10</td><td class="mono">9</td><td></td></tr>
+        <tr><td>CS</td><td class="mono">D1</td><td class="mono">2</td><td></td></tr>
+        <tr><td>DC</td><td class="mono">D3</td><td class="mono">4</td><td></td></tr>
+        <tr><td>RST</td><td class="mono">D6</td><td class="mono">43</td><td></td></tr>
+        <tr><td>BLK</td><td class="mono">D0</td><td class="mono">1</td><td>on PWM — at 60 % it saves a lot of battery</td></tr>
+        <tr><td rowspan="3"><strong>MPU6050</strong><br><span class="sub">accelerometer, I²C</span></td><td>SDA</td><td class="mono">D4</td><td class="mono">5</td><td></td></tr>
+        <tr><td>SCL</td><td class="mono">D5</td><td class="mono">6</td><td></td></tr>
+        <tr><td>INT</td><td class="mono">D7</td><td class="mono">44</td><td>wakes the ESP32 on motion</td></tr>
+        <tr><td><strong>Battery</strong></td><td>B+ / B−</td><td class="mono">pads</td><td>—</td><td>underside of the XIAO. <strong>No TP4056 needed.</strong></td></tr>
+        <tr><td>Camera + microphone</td><td>—</td><td colspan="2" class="mono">internal connector</td><td>use none of the 11 exposed pins</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="5" style="font-weight:400;color:var(--muted)"><code>D2</code> (GPIO3) and <code>D9</code> (GPIO8) stay free.</td></tr></tfoot>
+    </table>
+  </div>
+  <div class="note risk">
+    <span class="lbl">Check before soldering</span>
+    <p style="margin-bottom:0">The XIAO Sense's microSD slot shares the SPI bus (<code>D8/D9/D10</code>): as long as you never call <code>SD.begin()</code> there's no conflict, but don't mount the card. And check this table against the official pinout for <em>your</em> board revision before you touch it with solder.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">04</span>
+  <h2>Yes, you need glass</h2>
+  <div class="col">
+    <p>The GC9A01 module comes with its own panel glass, but that isn't enough: it's thin and untreated, and <strong>this is a keychain</strong> — it will live rubbing against metal keys. It'll be scratched within a week. On top of that the module sits recessed inside the printed hole, and that step is exactly what makes an object look homemade.</p>
+    <p>What you want is a <strong>flat mineral watch crystal</strong>: Ø 34–36 mm, 1 mm thick. It's the exact part watches use, it shrugs off keys, and it costs pocket change at any watch-repair shop.</p>
+  </div>
+  <div class="grid3" style="margin-top:18px">
+    <div class="card" style="border-color:var(--accent);border-width:1.5px">
+      <p class="eyebrow" style="margin-bottom:8px;color:var(--accent)">Pick this one</p><h3>Mineral</h3>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:0">Around 5 on the Mohs scale. Ø 34–36 mm × 1 mm, flat. <strong>Buy four:</strong> one will crack and another will end up glued crooked. Guaranteed.</p>
+    </div>
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:8px">Overkill</p><h3>Sapphire</h3>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:0">Better in every way, but I found one on Amazon MX at <strong>$339</strong> a piece. You don't need it for this.</p>
+    </div>
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:8px">Avoid</p><h3>Acrylic</h3>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:0">Scratches about as easily as no cover at all. Fine for a desk prototype, wrong for something that lives with keys.</p>
+    </div>
+  </div>
+  <div class="note">
+    <span class="lbl">How to mount it</span>
+    <p>Cut a <strong>1.1 mm</strong> recess in the bezel, sized to the crystal diameter plus 0.2 mm, so it sits <strong>flush with the outer surface</strong>. That flushness is the whole difference.</p>
+    <p style="margin-bottom:0">Glue only around the <strong>perimeter</strong>, with black double-sided tape 0.05–0.1 mm thick cut into a ring. Never put adhesive over the active area: any bubble is there forever. And leave 0.3 mm of air between crystal and panel — if they touch, the pressure leaves marks on the LCD.</p>
+  </div>
+</section>
+<section>
+  <span class="secnum">05</span>
+  <h2>The camera</h2>
+  <div class="col">
+    <p>Dropping face recognition makes the camera much simpler — and you lose almost nothing of what people actually see.</p>
+    <p><code>esp-dl</code> ships a <strong>pre-trained face detector</strong> inside the ESP32-S3, running at 5–10 fps. Nothing to train, no fallback plan, no decision date. It returns a bounding box, and that box gives you four behaviours:</p>
+  </div>
+  <div class="grid4" style="margin-top:16px">
+    <div class="card"><h3>Someone's there</h3><p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Wakes up and pays attention.</p></div>
+    <div class="card"><h3>Where they are</h3><p style="font-size:.9rem;color:var(--muted);margin-bottom:0"><strong>The eyes follow you.</strong> This alone is the effect you were after.</p></div>
+    <div class="card"><h3>How close</h3><p style="font-size:.9rem;color:var(--muted);margin-bottom:0">If the box grows suddenly, it flinches back in surprise.</p></div>
+    <div class="card"><h3>How many people</h3><p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Three or more faces in a row → it gets overwhelmed.</p></div>
+  </div>
+  <div class="note ok" style="border-left-color:var(--ok);background:var(--ok-soft)">
+    <span class="lbl" style="color:var(--ok)">What you gain by cutting it</span>
+    <p style="margin-bottom:0">Face recognition was the only part of the plan with a mandatory fallback (Edge Impulse) and its own decision date (16 September). Cutting it <strong>removes the last real technical risk</strong> and frees six days. They go into the animations.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">06</span>
+  <h2>The link</h2>
+  <div class="col">
+    <p>Two transports for the same idea, and the keychain picks one on its own depending on where the other is. <strong>Close</strong>, they talk directly over ESP-NOW — no router, no cost. <strong>Far</strong>, each one over its own WiFi, through a Cloudflare Worker that just stores the last state of each.</p>
+    <p>The deliberate trigger is no longer shaking — you were right, a keychain rattles all day — but <strong>looking at it head-on</strong>. The camera sees a face, and that never happens inside a pocket. Her keychain sees a face → yours finds out. It reuses the exact same detector, without a single new line of code.</p>
+  </div>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 820 430" role="img" aria-label="The two keychains talk over two paths: directly by ESP-NOW when close, or through a Cloudflare Worker when far apart, with connection frequency driven by the accelerometer and by face detection.">
+      <defs>
+        <marker id="v1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+        <marker id="v2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/></marker>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="46" y="300" width="180" height="82" rx="10"/><rect x="594" y="300" width="180" height="82" rx="10"/>
+      </g>
+      <circle cx="86" cy="341" r="19" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".6"/>
+      <ellipse cx="79" cy="338" rx="3.4" ry="5" fill="var(--accent)"/><ellipse cx="93" cy="338" rx="3.4" ry="5" fill="var(--accent)"/>
+      <circle cx="634" cy="341" r="19" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".6"/>
+      <ellipse cx="627" cy="338" rx="3.4" ry="5" fill="var(--accent)"/><ellipse cx="641" cy="338" rx="3.4" ry="5" fill="var(--accent)"/>
+      <text x="118" y="337" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="700" fill="currentColor">Your keychain</text>
+      <text x="118" y="356" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor" opacity=".6">its own creature</text>
+      <text x="666" y="337" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="700" fill="currentColor">Hers</text>
+      <text x="666" y="356" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor" opacity=".6">its own creature</text>
+      <path d="M232 341 H588" stroke="var(--accent)" stroke-width="2.4" marker-end="url(#v2)" marker-start="url(#v2)"/>
+      <text x="410" y="330" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" font-weight="700" fill="var(--accent)">ESP-NOW · direct · no router</text>
+      <text x="410" y="404" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="12" fill="var(--accent)">CLOSE — every meeting resets the "apart" counter</text>
+      <path d="M136 296 V214 H300" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#v1)" opacity=".8"/>
+      <path d="M520 214 H684 V296" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#v1)" opacity=".8"/>
+      <rect x="300" y="186" width="220" height="56" rx="8" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <text x="410" y="209" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="700" fill="currentColor">Cloudflare Worker + KV</text>
+      <text x="410" y="227" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor" opacity=".6">~40 lines · free tier · always on</text>
+      <text x="150" y="268" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".65">your home WiFi</text>
+      <text x="670" y="268" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".65">her home WiFi</text>
+      <text x="230" y="176" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".65">POST /heartbeat</text>
+      <text x="590" y="176" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10.5" fill="currentColor" opacity=".65">GET /partner</text>
+      <rect x="46" y="40" width="728" height="106" rx="9" fill="none" stroke="currentColor" stroke-width="1.1" stroke-dasharray="5 4" opacity=".45"/>
+      <text x="66" y="66" font-family="JetBrains Mono, monospace" font-size="10.5" letter-spacing="1.4" fill="currentColor" opacity=".55">WHEN IT CONNECTS — THIS IS WHAT DECIDES BATTERY LIFE</text>
+      <g font-family="Instrument Sans, sans-serif" font-size="12" fill="currentColor">
+        <text x="66" y="92">Pocketed and still</text><text x="306" y="92">In hand (the accelerometer knows)</text><text x="612" y="92">When it sees a face</text>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">
+        <text x="66" y="118" fill="currentColor" opacity=".7">every 30 min</text><text x="306" y="118" fill="currentColor" opacity=".7">every 5 min</text><text x="612" y="118" fill="var(--accent)">tells the other now</text>
+      </g>
+      <g font-family="Instrument Sans, sans-serif" font-size="11" fill="currentColor" opacity=".55">
+        <text x="66" y="136">costs almost nothing</text><text x="306" y="136">moderate drain</text>
+      </g>
+      <text x="612" y="136" font-family="Instrument Sans, sans-serif" font-size="11" fill="var(--accent)" opacity=".9">there are no faces in a pocket</text>
+    </svg>
+    </div>
+    <figcaption>The same feeling over two paths. <b>Face detection replaces the shake</b> as the deliberate trigger: looking at the keychain head-on never happens by accident, and it costs no extra code.</figcaption>
+  </figure>
+
+  <div class="grid2" style="margin-top:20px">
+    <div class="card" style="border-color:var(--accent);border-width:1.5px">
+      <h3>How long since you last met</h3>
+      <p style="font-size:.93rem;color:var(--muted)">This comes <strong>free from ESP-NOW</strong>, with nothing to configure: the last time the two keychains saw each other up close <em>is</em> the last time the two of you were together.</p>
+      <ul class="tight" style="font-size:.9rem;color:var(--muted);margin-bottom:0">
+        <li>Under 6 h → normal</li>
+        <li>6 h to 1 day → glances at the door now and then</li>
+        <li>1 to 3 days → misses you</li>
+        <li>Over 3 days → sad, and shows the day count</li>
+        <li>Reunion → party animation, counter back to zero</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Days-together counter, and noise</h3>
+      <p style="font-size:.93rem;color:var(--muted)">A number that climbs on its own from whatever date you pick — your anniversary, or 26 September itself so it starts at zero the day she gets it. The XIAO has no real-time clock: sync over <strong>NTP</strong> whenever it connects and store it; between connections <code>millis()</code> is far more than accurate enough to count days.</p>
+      <p style="font-size:.93rem;color:var(--muted);margin-bottom:0">The PDM microphone is already on board. Read only the <strong>RMS level</strong> ten times a second — no FFT, no speech. Sudden noise → it startles. Loud sustained noise → it gets overwhelmed. Silence plus stillness → it falls asleep. Thirty lines.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">07</span>
+  <h2>The animations</h2>
+  <div class="col">
+    <p>You asked whether some skill or MCP could generate these. <strong>There isn't one</strong> — Canva and friends make graphics, not firmware sprites. So I built the tool instead, and with the six days freed by cutting face recognition, I tuned it to match the original.</p>
+  </div>
+
+  <div class="note">
+    <span class="lbl">Eye Editor</span>
+    <p style="margin-bottom:0"><a href="https://claude.ai/code/artifact/532c1a24-ca0d-444f-903d-7083c9b656f2"><strong>Open it here →</strong></a> A round display at true size, 15 moods, shape and style sliders, spring physics, and <strong>C++ export</strong> with the complete <code>drawEyes()</code> function. <strong>It needs no hardware</strong>: you can design all 15 moods today, while the boards are still in the post.</p>
+  </div>
+
+  <div class="col" style="margin-top:20px">
+    <p>I compared it frame by frame against the STARBOY video. The gap with my first version wasn't "more animations" — it was six specific things, and all of them are in the editor now:</p>
+  </div>
+
+  <div class="tw" style="margin-top:16px">
+    <table>
+      <thead><tr><th style="width:26%">What</th><th>Why it shows, and how to do it on the ESP32</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. The shape</strong></td><td>In the original the eyes are <strong>big and nearly elliptical</strong>, taking up more than half the display width, and <strong>tilted inwards</strong> by about 12°. My first version was small, upright rounded rectangles — that's why it read as a cheap toy. This change alone is half the resemblance.</td></tr>
+        <tr><td><strong>2. Gradient</strong></td><td>A flat fill reads as an LED; a vertical gradient reads as volume. On the firmware you don't need a real gradient: paint the body, then lay a lighter shape over the top 45 %. At this size the eye can't tell.</td></tr>
+        <tr><td><strong>3. Glow</strong></td><td>The halo is what makes it look like it <em>emits</em> light rather than being painted on. Three concentric rounded rectangles before the main shape, each 4 px larger and blended further toward black with <code>tft.alphaBlend()</code>. Costs microseconds.</td></tr>
+        <tr><td><strong>4. Anti-aliasing</strong></td><td>The most important item here and the easiest to skip. Without it, a curve at 240×240 looks like a staircase and the whole effect collapses. Use <code>fillSmoothRoundRect()</code> from TFT_eSPI 2.5+, <strong>never</strong> <code>fillRoundRect()</code>.</td></tr>
+        <tr><td><strong>5. Spring, not lerp</strong></td><td>A <code>lerp</code> reaches the target and stops: it reads as mechanical. A spring <strong>overshoots slightly and settles</strong>. Three lines: <code>vel += (target−cur)*0.20; vel *= 0.70; cur += vel;</code></td></tr>
+        <tr><td><strong>6. Squash and stretch</strong></td><td>Moving fast, the eye lengthens along the direction of travel and thins perpendicular to it, preserving area. It's the oldest principle in Disney animation — and the STARBOY people came from exactly there.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="lbl">And the two details nobody looks at but everybody notices</span>
+    <p style="margin-bottom:0">The <strong>blink is asymmetric</strong> — 60 ms to close, 120 ms to open, the way real eyes work — and it fires at <strong>irregular intervals</strong>, because a fixed interval is detectable within seconds. And the <strong>second eye trails the first</strong> by a couple of frames when the gaze moves. Remove either one and everyone says it "looks off" without being able to say why.</p>
+  </div>
+
+  <div class="col" style="margin-top:18px">
+    <p>On top of the eyes, hand-draw only <strong>four or five small sprites</strong>: hearts, zzz, a question mark, the "missing you" mark and the cake for the 26th. That's the entire drawing workload of the project — one afternoon in Aseprite.</p>
+    <p style="margin-bottom:0"><strong>And the number that matters:</strong> all 15 moods together take about <strong>300 bytes</strong>. As sprites they'd be several megabytes, and you couldn't interpolate between them.</p>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">08</span>
+  <h2>Black enclosure</h2>
+  <div class="col">
+    <p>Black solves the worry you started with all on its own: <strong>you're no longer competing against a chrome finish</strong>. Matte black with a round watch crystal sitting flush in the middle is exactly the language of expensive consumer electronics.</p>
+  </div>
+  <div class="tw" style="margin-top:18px">
+    <table>
+      <thead><tr><th>Topic</th><th>Rule</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Textured plate</strong></td><td>Print the outer faces against a textured PEI plate. Uniform matte that hides the layer lines — in black it's indistinguishable from an injection-moulded part. Highest return on this list, and free.</td></tr>
+        <tr><td>Fuzzy skin</td><td>0.15 mm on the side walls only. Never on the front face.</td></tr>
+        <tr><td><strong>Three pieces</strong></td><td>Front bezel (crystal recess + lens hole) · mid chassis (board posts + battery cavity) · back cover (split-ring slot + USB-C cutout + BOOT pinhole).</td></tr>
+        <tr><td>Tolerances</td><td>0.20 mm clearance for a sliding fit, 0.15 mm for a snug one. Crystal recess: diameter + 0.2 mm, 1.1 mm deep.</td></tr>
+        <tr><td>Walls</td><td>1.6 mm minimum (4 perimeters at 0.4). Below 1.2 mm it breaks in a pocket.</td></tr>
+        <tr><td><strong>The split ring</strong></td><td>Always the part that snaps. Print it lying flat in XY so the layers aren't loaded in tension, cross-section ≥3 mm. Better still: a slot with a real metal ring in it.</td></tr>
+        <tr><td><strong>Battery</strong></td><td>An 8 × 22 × 37 mm cavity for the 602035, with 1 mm of air. <strong>Never</strong> compress a LiPo with a screw or a tight wall. The only genuine safety rule here.</td></tr>
+        <tr><td>USB-C</td><td>Measure the actual connector (~9.0 × 3.2 mm) and add 0.4 mm per side.</td></tr>
+        <tr><td>Camera lens</td><td>Hole 0.3 mm larger than the barrel, with an internal shoulder so the module seats flat.</td></tr>
+        <tr><td>Quality</td><td>0.12 mm layers, 0.2 mm nozzle if you have one.</td></tr>
+        <tr><td><strong>Iterate cheaply</strong></td><td>Print <strong>only the bezel</strong> three times before the full enclosure. Bezel: 25 min. Whole enclosure: 3–4 h.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<section>
+  <span class="secnum">09</span>
+  <h2>Schedule</h2>
+  <p class="lead" style="margin-bottom:20px">Cutting face recognition freed six days. They go entirely to the animations, which now get a phase of their own and start <strong>today</strong> — the editor needs no hardware.</p>
+
+  <div class="gwrap">
+    <div class="gantt">
+      <div class="grow"><div class="glab"><span class="gn">P0</span>Order parts</div><div class="gtrack"><div class="gbar d" style="grid-column:1/span 3">TODAY</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">P1</span>Light up and blink</div><div class="gtrack"><div class="gbar" style="grid-column:3/span 6">display + eyes + battery</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">P2</span>Senses and camera</div><div class="gtrack"><div class="gbar" style="grid-column:7/span 8">IMU, mic, sleep, faces</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">P3</span>The link</div><div class="gtrack"><div class="gbar a" style="grid-column:12/span 9">ESP-NOW + Worker + counters</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">P4</span>CAD + printing</div><div class="gtrack"><div class="gbar o" style="grid-column:8/span 14">iterations, in parallel</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">P5</span>Assembly</div><div class="gtrack"><div class="gbar o" style="grid-column:21/span 4">crystal, rings, closing up</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">P6</span>Animations</div><div class="gtrack"><div class="gbar a" style="grid-column:1/span 27">design in the editor, no hardware — all month</div></div></div>
+      <div class="grow"><div class="glab"><span class="gn">—</span>Buffer · delivery</div><div class="gtrack"><div class="gbar b" style="grid-column:27/span 1">25</div><div class="gbar d" style="grid-column:28/span 1">26</div></div></div>
+      <div class="grow"><div class="glab"></div><div class="gaxis">
+        <span style="grid-column:1">30 Aug</span><span style="grid-column:6">4 Sep</span><span style="grid-column:11">9 Sep</span><span style="grid-column:16">14 Sep</span><span style="grid-column:21">19 Sep</span><span style="grid-column:26">24 Sep</span>
+      </div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px">
+    <div class="ph hot"><div class="pn">P0</div><div class="pb"><div class="pd">30 AUG — 1 SEP</div><h3>Order parts</h3>
+      <p>UNIT order today: 3× XIAO, 3× MPU6050, 3× battery. MercadoLibre this week: 3× display. The crystal and hardware store bits, any time before the 18th.</p>
+      <p class="out"><b>Output</b> — order confirmations in your inbox. Nothing else matters this week.</p></div></div>
+    <div class="ph"><div class="pn">P1</div><div class="pb"><div class="pd">1 — 6 SEP</div><h3>Light up and blink</h3>
+      <p>Solder the display and battery. Drop in the eye engine with the mood table you exported from the editor. By the end of this phase you already have a toy that makes people smile.</p>
+      <p class="out"><b>Output</b> — living eyes with spring, glow and irregular blinking, running on battery.</p></div></div>
+    <div class="ph"><div class="pn">P2</div><div class="pb"><div class="pd">5 — 12 SEP</div><h3>Senses and camera</h3>
+      <p>MPU6050 with wake-on-motion, noise level, sleep on stillness. Then the camera with face detection and eyes that follow you. <strong>Measure real power draw here</strong>, not in the final week.</p>
+      <p class="out"><b>Output</b> — reacts to being looked at, moved, shouted at and put away. Battery life known.</p></div></div>
+    <div class="ph hot"><div class="pn">P3</div><div class="pb"><div class="pd">10 — 18 SEP</div><h3>The link</h3>
+      <p>ESP-NOW up close, Cloudflare Worker at distance, the "she's looking at hers" notification, the days-apart counter and the days-together counter. Test from two genuinely different WiFi networks, not two in your own house.</p>
+      <p class="out"><b>Output</b> — the two keychains know about each other wherever they are.</p></div></div>
+    <div class="ph"><div class="pn">P4</div><div class="pb"><div class="pd">6 — 19 SEP · IN PARALLEL</div><h3>CAD and printing</h3>
+      <p>Start as soon as you have the parts in hand to measure. Bezel first — the crystal recess is the delicate bit. Three iterations minimum.</p>
+      <p class="out"><b>Output</b> — two black enclosures that close properly and don't squeeze the battery.</p></div></div>
+    <div class="ph"><div class="pn">P5</div><div class="pb"><div class="pd">19 — 22 SEP</div><h3>Assembly</h3>
+      <p>Build both units, crystal flush, metal split rings. Drop test from pocket height before calling it done.</p>
+      <p class="out"><b>Output</b> — two finished objects you can hang off a set of keys.</p></div></div>
+    <div class="ph hot"><div class="pn">P6</div><div class="pb"><div class="pd">ALL MONTH · NO HARDWARE</div><h3>Animations and personality</h3>
+      <p>This is the phase you care most about and the only one you <strong>can start today</strong>, because the editor runs in a browser. Design the 15 moods, tune the style, draw the five sprites in Aseprite. And save the last week for the personal parts: the name, the cake at 00:00 on the 26th, the days-together counter starting that day.</p>
+      <p class="out"><b>Output</b> — <strong>the only thing she'll remember a year from now.</strong> Work it slowly across the whole month instead of cramming it at the end.</p></div></div>
+    <div class="ph"><div class="pn">—</div><div class="pb"><div class="pd">25 SEP</div><h3>Buffer</h3>
+      <p style="margin-bottom:0">Write no code. Something will break and you'll be glad this day is here.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <span class="secnum">10</span>
+  <h2>Risks</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Risk</th><th style="white-space:nowrap">Odds</th><th>Mitigation · decision date</th></tr></thead>
+      <tbody>
+        <tr><td><strong>You put off placing the order</strong></td><td>High</td><td>The only risk that can kill the whole project, and it's eliminated today in twenty minutes.</td></tr>
+        <tr><td>You destroy a board while soldering</td><td>Medium</td><td>Already covered: you're ordering 3 of everything.</td></tr>
+        <tr><td>You crack or misalign a crystal</td><td>High</td><td>That's why there are 4. Practise the gluing on the worst-looking one.</td></tr>
+        <tr><td>400 mAh isn't enough</td><td>Medium</td><td>Brightness at 60 %, camera in bursts, wider polling. You'll catch it in P2. If it still isn't enough, a <code>603040</code> from MercadoLibre.</td></tr>
+        <tr><td>The enclosure won't close</td><td>Medium</td><td>Iterate the bezel only. <strong>Decision on the 19th:</strong> if it won't close, mount it in a bought box and move on.</td></tr>
+        <tr><td>You can't set up her home WiFi in time</td><td>Medium</td><td>Store several networks. Worst case the WiFi link comes online after the birthday — it doesn't block delivery.</td></tr>
+        <tr><td>You burn your evenings and arrive exhausted</td><td>High</td><td>Real and underrated. The buffer on the 25th exists for this. Buy a backup gift before the 20th: that's not giving up, it's removing the anxiety that would make you take bad technical decisions in the last week.</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3" style="font-weight:400;color:var(--muted)">Cutting face recognition removed the only purely technical risk on this list. What's left is logistics and time.</td></tr></tfoot>
+    </table>
+  </div>
+</section>
+
+<hr>
+
+<section style="margin-bottom:32px">
+  <span class="secnum">11</span>
+  <h2>Where you stand</h2>
+  <p class="kicker" style="margin-bottom:18px">Scope locked, parts priced and sourced, animation tool built and tuned. All that's left is ordering.</p>
+  <div class="col">
+    <p>Today's decisions simplified the product without removing anything visible: face recognition is out, and those six days go to the animations, which is where you wanted the effort to show. Face detection stays — eyes that follow you was the effect you were after, and that part carried no risk.</p>
+    <p style="margin-bottom:0">The only thing that can still kill this is spending three days getting around to the order. Everything else has a fallback.</p>
+  </div>
+</section>
+
+<p style="font-size:.82rem;color:var(--faint);border-top:1px solid var(--rule);padding-top:16px">
+Prices verified 30 August 2026 at
+<a href="https://uelectronics.com/?s=esp32s3+sense&post_type=product">UNIT Electronics</a>,
+<a href="https://listado.mercadolibre.com.mx/pantalla-redonda-gc9a01-1.28">MercadoLibre MX</a> and Amazon MX.
+Tool: <a href="https://claude.ai/code/artifact/532c1a24-ca0d-444f-903d-7083c9b656f2">Eye Editor</a>.
+Reference: <a href="https://lilguy.net/">lilguy.net</a> ·
+<a href="https://gizmodo.com/starboy-ai-keychain-is-pointless-extravagant-and-weirdly-lovable-2000740949">Gizmodo</a>.
+</p>
+
+</div>
+</body>
+</html>

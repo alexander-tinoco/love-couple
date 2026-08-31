@@ -1,55 +1,55 @@
 # love-couple
 
-Dos llaveros con pantalla redonda, ojos animados y cámara, que saben el uno del otro.
-Regalo de cumpleaños — **26 de septiembre de 2026**.
+Two keychains with round displays, animated eyes and cameras, that know about each other.
+A birthday gift — **26 September 2026**.
 
-Inspirado en [STARBOY](https://lilguy.net/) de CREATURE / @lilguynet, pero con su propio
-alcance, su propio lenguaje visual (negro mate en vez de cromo) y una idea que el original
-no tiene: **son dos, y se extrañan**.
+Inspired by [STARBOY](https://lilguy.net/) by CREATURE / @lilguynet, but with its own scope,
+its own visual language (matte black instead of chrome) and one idea the original doesn't
+have: **there are two of them, and they miss each other**.
 
-## Documentos
+## Documents
 
-| Archivo | Qué es |
+| File | What it is |
 |---|---|
-| [`docs/plan.html`](docs/plan.html) | Plan de construcción completo: lista de compra con precios de México, cableado pin a pin, arquitectura, calendario y riesgos. |
-| [`docs/editor-de-ojos.html`](docs/editor-de-ojos.html) | Herramienta interactiva para diseñar los ojos y exportarlos a C++. **No necesita hardware** — ábrelo en el navegador. |
-| [`referencia/starboy-referencia.jpg`](referencia/starboy-referencia.jpg) | Fotograma del video original, para comparar. |
+| [`docs/build-plan.html`](docs/build-plan.html) | The full build plan: bill of materials with Mexican prices, pin-by-pin wiring, architecture, schedule and risks. |
+| [`docs/eye-editor.html`](docs/eye-editor.html) | Interactive tool to design the eyes and export them to C++. **No hardware required** — open it in a browser. |
+| [`reference/starboy-reference.jpg`](reference/starboy-reference.jpg) | Frame from the original video, for comparison. |
 
-Los dos HTML son autónomos: se abren con doble clic, sin servidor ni dependencias.
+Both HTML files are self-contained: open them with a double click, no server, no dependencies.
 
-## Qué hace
+## What it does
 
-- Pantalla redonda de 1.28" con ojos animados procedurales (15 estados de ánimo)
-- Cámara con detección de caras — **los ojos te siguen**
-- Acelerómetro: se marea si lo agitas, se duerme si lo guardas
-- Micrófono: se sobresalta con ruido fuerte, se agobia con ruido sostenido
-- Cuando los dos llaveros están cerca, se detectan por ESP-NOW
-- Cuando están lejos, se extrañan por WiFi a través de un Worker de Cloudflare
-- Contador de **cuánto llevan sin verse** y de **días juntos**
-- Batería recargable por USB-C, carcasa negra impresa en 3D con cristal de reloj
+- 1.28" round display with procedural animated eyes (15 moods)
+- Camera with face detection — **the eyes follow you**
+- Accelerometer: gets dizzy if you shake it, falls asleep when pocketed
+- Microphone: startles at sudden noise, gets overwhelmed by sustained noise
+- When the two keychains are close, they find each other over ESP-NOW
+- When they're apart, they miss each other over WiFi via a Cloudflare Worker
+- Counters for **how long since they last met** and **days together**
+- USB-C rechargeable battery, black 3D-printed enclosure with a watch crystal
 
-## Piezas
+## Parts
 
-| Pieza | Dónde | Precio | Cant. |
+| Part | Where | Price | Qty |
 |---|---|---|---|
 | XIAO ESP32-S3 Sense | UNIT Electronics | $325 MXN | 3 |
-| IMU MPU6050 | UNIT Electronics | $80 MXN | 3 |
+| MPU6050 IMU | UNIT Electronics | $80 MXN | 3 |
 | LiPo 3.7 V 400 mAh `602035` | UNIT Electronics | $67 MXN | 3 |
-| Pantalla GC9A01 1.28" 240×240 SPI | MercadoLibre | $93–169 MXN | 3 |
-| Cristal mineral plano de reloj Ø34–36 mm | Relojería local | $30–60 MXN | 4 |
-| Argollas, tornillos M2, cable AWG30, cinta | Local | ~$230 MXN | — |
+| GC9A01 1.28" 240×240 SPI display | MercadoLibre | $93–169 MXN | 3 |
+| Flat mineral watch crystal Ø34–36 mm | Local watch-repair shop | $30–60 MXN | 4 |
+| Split rings, M2 screws, AWG30 wire, tape | Local | ~$230 MXN | — |
 
-**Total con repuestos: ~$2,270 MXN.** Sin repuestos: ~$1,560 MXN.
+**Total with spares: ~$2,270 MXN.** Without spares: ~$1,560 MXN.
 
-> UNIT **no** vende la pantalla redonda en ninguna variante — comprobado. Tampoco HeTPro,
-> Sandorobotics ni 330ohms. Sale de MercadoLibre.
+> UNIT does **not** stock the round display in any variant — verified. Neither do HeTPro,
+> Sandorobotics or 330ohms. It has to come from MercadoLibre.
 >
-> No compres baterías en Amazon México: la misma LiPo de 400 mAh cuesta $255–298 ahí
-> contra $67 en UNIT.
+> Don't buy batteries on Amazon Mexico: the same 400 mAh LiPo costs $255–298 there
+> against $67 at UNIT.
 
-## Cableado
+## Wiring
 
-| Componente | Señal | Pin | GPIO |
+| Component | Signal | Pin | GPIO |
 |---|---|---|---|
 | GC9A01 | SCK | `D8` | 7 |
 | GC9A01 | MOSI | `D10` | 9 |
@@ -60,22 +60,22 @@ Los dos HTML son autónomos: se abren con doble clic, sin servidor ni dependenci
 | MPU6050 | SDA | `D4` | 5 |
 | MPU6050 | SCL | `D5` | 6 |
 | MPU6050 | INT | `D7` | 44 |
-| Batería | B+ / B− | pads | — |
+| Battery | B+ / B− | pads | — |
 
-La cámara y el micrófono van por el conector interno del XIAO Sense y no ocupan pines.
-No hace falta un TP4056: el XIAO ya carga la LiPo por su propio USB-C.
-Libres: `D2` (GPIO3) y `D9` (GPIO8).
+The camera and microphone go through the XIAO Sense's internal connector and use no pins.
+No TP4056 needed: the XIAO already charges the LiPo over its own USB-C.
+Free: `D2` (GPIO3) and `D9` (GPIO8).
 
-## Fases
+## Phases
 
-| | Fechas | |
+| | Dates | |
 |---|---|---|
-| F0 | 30 ago – 1 sep | Comprar |
-| F1 | 1 – 6 sep | Encender y parpadear |
-| F2 | 5 – 12 sep | Sentidos y cámara |
-| F3 | 10 – 18 sep | El vínculo (ESP-NOW + WiFi) |
-| F4 | 6 – 19 sep | CAD e impresión (en paralelo) |
-| F5 | 19 – 22 sep | Ensamblaje |
-| F6 | todo el mes | Animaciones y personalidad |
-| — | 25 sep | Colchón |
-| — | **26 sep** | **Entrega** |
+| P0 | 30 Aug – 1 Sep | Order parts |
+| P1 | 1 – 6 Sep | Light up and blink |
+| P2 | 5 – 12 Sep | Senses and camera |
+| P3 | 10 – 18 Sep | The link (ESP-NOW + WiFi) |
+| P4 | 6 – 19 Sep | CAD and printing (in parallel) |
+| P5 | 19 – 22 Sep | Assembly |
+| P6 | all month | Animations and personality |
+| — | 25 Sep | Buffer |
+| — | **26 Sep** | **Delivery** |

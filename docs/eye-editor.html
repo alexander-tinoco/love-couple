@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Editor de Ojos</title>
+<title>Eye Editor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -97,9 +97,9 @@ li{margin-bottom:6px}
 </head>
 <body>
 <div class="wrap">
-  <p class="eyebrow">Herramienta de diseño · llavero ESP32-S3 · pantalla GC9A01 240×240</p>
-  <h1>Editor de ojos</h1>
-  <p class="sub">Los ojos se dibujan con diez números, no con animaciones exportadas. Ajústalos aquí, míralos en una pantalla del tamaño real, y copia el C++ al firmware. Está afinado para parecerse al STARBOY original: formas grandes y casi elípticas, inclinadas hacia dentro, con degradado, resplandor y física de muelle.</p>
+  <p class="eyebrow">Design tool · ESP32-S3 keychain · GC9A01 240×240 display</p>
+  <h1>Eye editor</h1>
+  <p class="sub">The eyes are drawn from ten numbers, not from exported animations. Tune them here, see them on a true-size display, and copy the C++ straight into the firmware. It is tuned to match the original STARBOY: big, nearly elliptical shapes tilted inwards, with a gradient, a glow and spring physics.</p>
 
   <div class="layout">
     <div class="stage">
@@ -109,30 +109,30 @@ li{margin-bottom:6px}
           <div class="devlabel">240 × 240 · GC9A01</div>
         </div>
         <div class="row">
-          <button id="bAuto" class="on">Vida propia</button>
-          <button id="bFollow">Seguir el cursor</button>
-          <button id="bBlink">Parpadear</button>
-          <button id="bSpring" class="on">Muelle</button>
+          <button id="bAuto" class="on">Idle life</button>
+          <button id="bFollow">Follow the cursor</button>
+          <button id="bBlink">Blink</button>
+          <button id="bSpring" class="on">Spring</button>
         </div>
-        <p class="hint">Mueve el cursor rápido con «Seguir el cursor» activado: los ojos se estiran en la dirección del movimiento y rebotan al frenar. Eso es lo que separa «pantalla» de «criatura».</p>
+        <p class="hint">Turn on “Follow the cursor” and move fast: the eyes stretch along the direction of travel and bounce when you stop. That is what separates “a screen” from “a creature”.</p>
       </div>
     </div>
 
     <div>
       <div class="panel">
-        <p class="divider">Estados de ánimo</p>
+        <p class="divider">Moods</p>
         <div class="moods" id="moods"></div>
 
-        <p class="divider">Forma</p>
+        <p class="divider">Shape</p>
         <div class="sliders" id="sliders"></div>
 
-        <p class="divider">Estilo · se aplica a todos los ánimos</p>
+        <p class="divider">Style · applies to every mood</p>
         <div class="sliders" id="styleSliders"></div>
         <div class="row" id="colors"></div>
       </div>
 
       <div class="panel" style="margin-top:18px">
-        <div class="codehead"><h2 style="margin:0">Tabla de ánimos para el firmware</h2><button id="bCopy">Copiar</button></div>
+        <div class="codehead"><h2 style="margin:0">Mood table for the firmware</h2><button id="bCopy">Copy</button></div>
         <pre id="code"></pre>
       </div>
     </div>
@@ -140,44 +140,44 @@ li{margin-bottom:6px}
 
   <hr>
 
-  <h2 style="font-size:1.4rem">Qué hace que se parezca al original</h2>
-  <p class="sub">Comparé cuadro a cuadro con el video. Son seis cosas, y ninguna es «más animaciones».</p>
+  <h2 style="font-size:1.4rem">What makes it look like the original</h2>
+  <p class="sub">I compared it frame by frame against the video. It comes down to six things, and none of them is “more animations”.</p>
 
   <div class="two">
     <div class="panel">
-      <h3><span class="tick">1.</span> La forma, no el dibujo</h3>
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">En el original los ojos son <strong>grandes y casi elípticos</strong>, ocupan más de la mitad del ancho de la pantalla, y están <strong>inclinados hacia dentro</strong> unos 12°. Mi primera versión eran rectángulos verticales pequeños y rectos — por eso se veía a juguete barato. Sube «Ancho» y «Redondeo» hasta que casi sean óvalos: el cambio es inmediato.</p>
+      <h3><span class="tick">1.</span> The shape, not the drawing</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">In the original the eyes are <strong>big and nearly elliptical</strong>, taking up more than half the display width, and <strong>tilted inwards</strong> by about 12°. My first version was small, upright rounded rectangles — which is why it read as a cheap toy. Push “Width” and “Roundness” until they are almost ovals: the change is instant.</p>
     </div>
     <div class="panel">
-      <h3><span class="tick">2.</span> Degradado, no color plano</h3>
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Un relleno plano se lee como un LED. Un degradado vertical — más claro arriba, más oscuro abajo — se lee como un volumen. En el firmware no hace falta un degradado real: pinta el cuerpo del color base y superpón una forma más clara en el 45 % superior. A este tamaño el ojo no distingue.</p>
+      <h3><span class="tick">2.</span> Gradient, not flat colour</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">A flat fill reads as an LED. A vertical gradient — lighter at the top, darker at the bottom — reads as volume. On the firmware you do not need a real gradient: paint the body in the base colour and lay a lighter shape over the top 45 %. At this size nobody can tell.</p>
     </div>
     <div class="panel">
-      <h3><span class="tick">3.</span> Resplandor sobre negro</h3>
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">El halo alrededor de la forma es lo que hace que parezca emitir luz en vez de estar pintada. En el ESP32 son <strong>tres rectángulos redondeados concéntricos</strong> dibujados antes de la forma principal, cada uno 4 px mayor y más mezclado con el negro. Cuesta microsegundos.</p>
+      <h3><span class="tick">3.</span> Glow against black</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">The halo around the shape is what makes it look like it emits light rather than being painted on. On the ESP32 that is <strong>three concentric rounded rectangles</strong> drawn before the main shape, each 4 px larger and blended further toward black. It costs microseconds.</p>
     </div>
     <div class="panel">
-      <h3><span class="tick">4.</span> Bordes suavizados</h3>
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Esto es lo más importante de la lista y lo más fácil de saltarse. Sin antialiasing, una curva a 240×240 se ve escalonada y todo el efecto se cae. TFT_eSPI trae <code>fillSmoothRoundRect()</code> desde la versión 2.5 — <strong>úsala siempre</strong>, nunca <code>fillRoundRect()</code>.</p>
+      <h3><span class="tick">4.</span> Anti-aliased edges</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">This is the most important item on the list and the easiest to skip. Without anti-aliasing, a curve at 240×240 looks like a staircase and the whole effect collapses. TFT_eSPI has had <code>fillSmoothRoundRect()</code> since version 2.5 — <strong>always use it</strong>, never <code>fillRoundRect()</code>.</p>
     </div>
     <div class="panel">
-      <h3><span class="tick">5.</span> Muelle, no interpolación lineal</h3>
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Un <code>lerp</code> normal llega al destino y se para: se ve mecánico. Un muelle <strong>se pasa un poco y vuelve</strong>. Son tres líneas y es la diferencia entre parecer una interfaz y parecer un bicho. Apaga y enciende el botón «Muelle» mientras cambias de ánimo y lo verás.</p>
+      <h3><span class="tick">5.</span> Spring, not linear interpolation</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">A plain <code>lerp</code> reaches the target and stops: it reads as mechanical. A spring <strong>overshoots slightly and settles</strong>. It is three lines, and it is the difference between looking like a UI and looking like a creature. Toggle the “Spring” button while switching moods and you will see it.</p>
     </div>
     <div class="panel">
-      <h3><span class="tick">6.</span> Estirar y aplastar</h3>
-      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Al moverse rápido, el ojo se alarga en la dirección del movimiento y se adelgaza en la perpendicular; al frenar, rebota. Es el principio más viejo de la animación de Disney — y los que hicieron STARBOY vienen justo de ahí. El área se conserva, así que nunca parece que crece.</p>
+      <h3><span class="tick">6.</span> Squash and stretch</h3>
+      <p style="font-size:.9rem;color:var(--muted);margin-bottom:0">Moving fast, the eye lengthens along the direction of travel and thins perpendicular to it; when it stops, it bounces. It is the oldest principle in Disney animation — and the people who made STARBOY came from exactly there. Area is preserved, so it never looks like it is growing.</p>
     </div>
   </div>
 
   <div class="note ok" style="margin-top:20px">
-    <span class="lbl">Y el detalle que nadie mira pero todos notan</span>
-    <p style="margin-bottom:0">El <strong>parpadeo es asimétrico</strong>: cierra en 60 ms y abre en 120 ms, porque así parpadean los ojos de verdad. Y el segundo ojo va <strong>un par de fotogramas por detrás</strong> del primero al mover la mirada. Ninguna de las dos cosas se percibe conscientemente, pero si las quitas todo el mundo dice que «se ve raro» sin saber por qué. Las dos están activas aquí.</p>
+    <span class="lbl">And the detail nobody looks at but everybody notices</span>
+    <p style="margin-bottom:0">The <strong>blink is asymmetric</strong>: 60 ms to close, 120 ms to open, because that is how real eyes work. And the second eye trails the first by <strong>a couple of frames</strong> when the gaze moves. Neither is consciously noticed, but remove them and everyone says it “looks off” without being able to say why. Both are active here.</p>
   </div>
 
   <hr>
   <div class="panel">
-    <h2>drawEyes() — la función completa para TFT_eSPI</h2>
+    <h2>drawEyes() — the complete function for TFT_eSPI</h2>
     <pre id="fullcode"></pre>
   </div>
 </div>
@@ -189,60 +189,60 @@ li{margin-bottom:6px}
   var DPR=2, S=240;
 
   var PARAMS=[
-    {k:'w',      label:'Ancho',       min:24,max:132,step:1},
-    {k:'h',      label:'Alto',        min:8, max:132,step:1},
-    {k:'radius', label:'Redondeo',    min:0, max:66, step:1},
-    {k:'gap',    label:'Separación',  min:8, max:74, step:1},
-    {k:'tilt',   label:'Inclinación', min:-28,max:28,step:1},
-    {k:'open',   label:'Apertura',    min:0, max:100,step:1},
-    {k:'lidTop', label:'Párpado',     min:0, max:100,step:1},
-    {k:'angle',  label:'Ceja',        min:-42,max:42,step:1},
-    {k:'curve',  label:'Curvatura',   min:0, max:100,step:1},
-    {k:'offY',   label:'Altura',      min:-40,max:40,step:1}
+    {k:'w',      label:'Width',       min:24,max:132,step:1},
+    {k:'h',      label:'Height',        min:8, max:132,step:1},
+    {k:'radius', label:'Roundness',    min:0, max:66, step:1},
+    {k:'gap',    label:'Spacing',  min:8, max:74, step:1},
+    {k:'tilt',   label:'Tilt', min:-28,max:28,step:1},
+    {k:'open',   label:'Openness',    min:0, max:100,step:1},
+    {k:'lidTop', label:'Eyelid',     min:0, max:100,step:1},
+    {k:'angle',  label:'Brow',        min:-42,max:42,step:1},
+    {k:'curve',  label:'Curve',   min:0, max:100,step:1},
+    {k:'offY',   label:'Offset Y',      min:-40,max:40,step:1}
   ];
   var STYLE=[
-    {k:'glow',   label:'Resplandor', min:0,max:100,step:1},
-    {k:'grad',   label:'Degradado',  min:0,max:100,step:1},
-    {k:'shine',  label:'Brillo',     min:0,max:100,step:1},
-    {k:'squash', label:'Estirar',    min:0,max:100,step:1}
+    {k:'glow',   label:'Glow', min:0,max:100,step:1},
+    {k:'grad',   label:'Gradient',  min:0,max:100,step:1},
+    {k:'shine',  label:'Shine',     min:0,max:100,step:1},
+    {k:'squash', label:'Stretch',    min:0,max:100,step:1}
   ];
   var style={glow:62,grad:78,shine:34,squash:70};
 
   var MOODS={
-    'Normal':      {w:78,h:88,radius:40,gap:44,tilt:12,open:100,lidTop:0, angle:0,  curve:0,  offY:-4},
-    'Feliz':       {w:84,h:80,radius:40,gap:44,tilt:10,open:100,lidTop:0, angle:0,  curve:100,offY:2},
-    'Contento':    {w:80,h:62,radius:31,gap:44,tilt:14,open:100,lidTop:0, angle:0,  curve:46, offY:0},
-    'Enojado':     {w:78,h:88,radius:34,gap:42,tilt:6, open:100,lidTop:44,angle:27, curve:0,  offY:-2},
-    'Triste':      {w:74,h:84,radius:38,gap:46,tilt:16,open:100,lidTop:34,angle:-25,curve:0,  offY:8},
-    'Te extraña':  {w:74,h:82,radius:39,gap:46,tilt:15,open:100,lidTop:26,angle:-16,curve:0,  offY:6},
-    'Sorprendido': {w:88,h:106,radius:46,gap:47,tilt:4, open:100,lidTop:0, angle:0,  curve:0,  offY:-6},
-    'Curioso':     {w:78,h:90,radius:41,gap:44,tilt:19,open:100,lidTop:14,angle:9,  curve:0,  offY:-6},
-    'Escéptico':   {w:78,h:84,radius:36,gap:44,tilt:9, open:100,lidTop:50,angle:14, curve:0,  offY:-2},
-    'Cansado':     {w:78,h:84,radius:38,gap:44,tilt:12,open:80, lidTop:54,angle:-8, curve:0,  offY:5},
-    'Dormido':     {w:84,h:62,radius:31,gap:44,tilt:10,open:100,lidTop:0, angle:0,  curve:84, offY:6},
-    'Aburrido':    {w:78,h:84,radius:38,gap:44,tilt:11,open:90, lidTop:58,angle:0,  curve:0,  offY:6},
-    'Asustado':    {w:62,h:114,radius:31,gap:40,tilt:5, open:100,lidTop:0, angle:0,  curve:0,  offY:-4},
-    'Mareado':     {w:86,h:86,radius:43,gap:46,tilt:0, open:100,lidTop:0, angle:0,  curve:0,  offY:0},
-    'Emocionado':  {w:90,h:102,radius:45,gap:46,tilt:9, open:100,lidTop:0, angle:-9, curve:0,  offY:-6}
+    'Neutral':      {w:78,h:88,radius:40,gap:44,tilt:12,open:100,lidTop:0, angle:0,  curve:0,  offY:-4},
+    'Happy':       {w:84,h:80,radius:40,gap:44,tilt:10,open:100,lidTop:0, angle:0,  curve:100,offY:2},
+    'Pleased':    {w:80,h:62,radius:31,gap:44,tilt:14,open:100,lidTop:0, angle:0,  curve:46, offY:0},
+    'Angry':     {w:78,h:88,radius:34,gap:42,tilt:6, open:100,lidTop:44,angle:27, curve:0,  offY:-2},
+    'Sad':      {w:74,h:84,radius:38,gap:46,tilt:16,open:100,lidTop:34,angle:-25,curve:0,  offY:8},
+    'Missing you':  {w:74,h:82,radius:39,gap:46,tilt:15,open:100,lidTop:26,angle:-16,curve:0,  offY:6},
+    'Surprised': {w:88,h:106,radius:46,gap:47,tilt:4, open:100,lidTop:0, angle:0,  curve:0,  offY:-6},
+    'Curious':     {w:78,h:90,radius:41,gap:44,tilt:19,open:100,lidTop:14,angle:9,  curve:0,  offY:-6},
+    'Skeptical':   {w:78,h:84,radius:36,gap:44,tilt:9, open:100,lidTop:50,angle:14, curve:0,  offY:-2},
+    'Tired':     {w:78,h:84,radius:38,gap:44,tilt:12,open:80, lidTop:54,angle:-8, curve:0,  offY:5},
+    'Asleep':     {w:84,h:62,radius:31,gap:44,tilt:10,open:100,lidTop:0, angle:0,  curve:84, offY:6},
+    'Bored':    {w:78,h:84,radius:38,gap:44,tilt:11,open:90, lidTop:58,angle:0,  curve:0,  offY:6},
+    'Scared':    {w:62,h:114,radius:31,gap:40,tilt:5, open:100,lidTop:0, angle:0,  curve:0,  offY:-4},
+    'Dizzy':     {w:86,h:86,radius:43,gap:46,tilt:0, open:100,lidTop:0, angle:0,  curve:0,  offY:0},
+    'Excited':  {w:90,h:102,radius:45,gap:46,tilt:9, open:100,lidTop:0, angle:-9, curve:0,  offY:-6}
   };
-  var COLORS=[['Rosa','#FF2E88'],['Cian','#28E0D8'],['Ámbar','#FFB020'],['Verde','#3BE08A'],['Violeta','#9B6BFF'],['Blanco','#F2F2F7']];
+  var COLORS=[['Pink','#FF2E88'],['Cyan','#28E0D8'],['Amber','#FFB020'],['Green','#3BE08A'],['Violet','#9B6BFF'],['White','#F2F2F7']];
 
-  var cur=Object.assign({},MOODS['Normal']);
-  var goal=Object.assign({},MOODS['Normal']);
+  var cur=Object.assign({},MOODS['Neutral']);
+  var goal=Object.assign({},MOODS['Neutral']);
   var vel={}; PARAMS.forEach(function(p){vel[p.k]=0;});
-  var color='#FF2E88', moodName='Normal';
+  var color='#FF2E88', moodName='Neutral';
 
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var auto=!reduced, follow=false, spring=true;
   var gx=0,gy=0,gx2=0,gy2=0,tgx=0,tgy=0,gvx=0,gvy=0,pgx=0,pgy=0;
   var sqx=1,sqy=1, blink=1, blinkStart=-1e9, nextBlink=0, dbl=false;
 
-  /* ---------- color ---------- */
+  /* ---------- colour ---------- */
   function hex2rgb(h){return [parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)];}
   function mix(a,b,k){return [Math.round(a[0]+(b[0]-a[0])*k),Math.round(a[1]+(b[1]-a[1])*k),Math.round(a[2]+(b[2]-a[2])*k)];}
   function rgbs(c){return 'rgb('+c[0]+','+c[1]+','+c[2]+')';}
 
-  /* ---------- forma ---------- */
+  /* ---------- shape ---------- */
   function rr(c,x,y,w,h,r){
     r=Math.max(0,Math.min(r,w/2,h/2));
     c.beginPath();
@@ -283,14 +283,14 @@ li{margin-bottom:6px}
       c.restore(); return;
     }
 
-    // resplandor
+    // glow
     if(style.glow>0){
       c.save();
       c.shadowColor=color; c.shadowBlur=style.glow*0.44; c.fillStyle=color;
       rr(c,-w/2,-h/2,w,h,r); c.fill(); c.fill();
       c.restore();
     }
-    // cuerpo
+    // body
     var g=c.createLinearGradient(0,-h/2,0,h/2);
     var gk=style.grad/100;
     g.addColorStop(0,   rgbs(mix(base,light,gk)));
@@ -299,12 +299,12 @@ li{margin-bottom:6px}
     c.fillStyle=g;
     rr(c,-w/2,-h/2,w,h,r); c.fill();
 
-    // brillo especular
+    // specular shine
     if(style.shine>0&&h>10){
       c.save(); c.globalAlpha=(style.shine/100)*0.45; c.fillStyle='#fff';
       c.beginPath(); c.ellipse(-w*0.16,-h*0.27,w*0.19,h*0.115,-0.35,0,Math.PI*2); c.fill(); c.restore();
     }
-    // párpado
+    // eyelid
     if(p.lidTop>0.5){
       c.save();
       c.translate(0,-h/2);
@@ -321,19 +321,19 @@ li{margin-bottom:6px}
     ctx.fillStyle='#000'; ctx.fillRect(0,0,S,S);
     ctx.save();
     ctx.beginPath(); ctx.arc(S/2,S/2,S/2,0,Math.PI*2); ctx.clip();
-    if(moodName==='Mareado'&&auto){ ctx.translate(S/2,S/2); ctx.rotate(Math.sin(t/260)*0.10); ctx.translate(-S/2,-S/2); }
+    if(moodName==='Dizzy'&&auto){ ctx.translate(S/2,S/2); ctx.rotate(Math.sin(t/260)*0.10); ctx.translate(-S/2,-S/2); }
     drawEye(ctx,cur,-1,t); drawEye(ctx,cur,1,t);
     ctx.restore();
   }
 
   function tick(t){
-    // 1. muelle o lineal hacia el ánimo objetivo
+    // 1. spring or linear toward the target mood
     for(var i=0;i<PARAMS.length;i++){
       var k=PARAMS[i].k;
       if(spring){ vel[k]+=(goal[k]-cur[k])*0.20; vel[k]*=0.70; cur[k]+=vel[k]; }
       else { cur[k]+=(goal[k]-cur[k])*0.14; vel[k]=0; }
     }
-    // 2. parpadeo asimétrico e irregular
+    // 2. asymmetric, irregular blink
     if(auto&&t>nextBlink){
       nextBlink=t+1500+Math.random()*3900; blinkStart=t;
       dbl=Math.random()<0.16;
@@ -344,15 +344,15 @@ li{margin-bottom:6px}
     else if(d<180)      blink=(d-60)/120;
     else                blink=1;
     if(blink<0.035)blink=0.035;
-    // 3. mirada
+    // 3. gaze
     if(auto&&!follow&&Math.random()<0.0065){ tgx=(Math.random()-0.5)*24; tgy=(Math.random()-0.5)*12; }
     if(spring){
       gvx+=(tgx-gx)*0.22; gvx*=0.70; gx+=gvx;
       gvy+=(tgy-gy)*0.22; gvy*=0.70; gy+=gvy;
     } else { gx+=(tgx-gx)*0.13; gy+=(tgy-gy)*0.13; }
-    // 4. el segundo ojo va detrás — nadie lo ve, todos lo notan
+    // 4. the second eye trails behind - nobody sees it, everybody notices it
     gx2+=(gx-gx2)*0.42; gy2+=(gy-gy2)*0.42;
-    // 5. estirar y aplastar segun velocidad, conservando area
+    // 5. squash and stretch from velocity, preserving area
     var vx=gx-pgx, vy=gy-pgy; pgx=gx; pgy=gy;
     var kk=style.squash/100, ax=Math.abs(vx), ay=Math.abs(vy);
     var tx=1,ty=1;
@@ -364,7 +364,7 @@ li{margin-bottom:6px}
     requestAnimationFrame(tick);
   }
 
-  /* ---------- interfaz ---------- */
+  /* ---------- interface ---------- */
   var moodsEl=document.getElementById('moods');
   Object.keys(MOODS).forEach(function(n){
     var b=document.createElement('button');
@@ -393,7 +393,7 @@ li{margin-bottom:6px}
   }
   var inputs=mkSliders(document.getElementById('sliders'),PARAMS,goal,function(){
     document.querySelectorAll('.mood').forEach(function(x){x.classList.remove('sel');});
-    moodName='Personalizado'; emit();
+    moodName='Custom'; emit();
   });
   mkSliders(document.getElementById('styleSliders'),STYLE,style,emit);
   function syncSliders(){ PARAMS.forEach(function(p){ inputs[p.k].r.value=goal[p.k]; inputs[p.k].o.textContent=goal[p.k]; }); }
@@ -428,10 +428,9 @@ li{margin-bottom:6px}
   });
   document.getElementById('bBlink').addEventListener('click',function(){blinkStart=performance.now();dbl=false;});
 
-  /* ---------- exportación ---------- */
+  /* ---------- export ---------- */
   function cname(n){
-    return 'MOOD_'+n.toUpperCase().replace(/Á/g,'A').replace(/É/g,'E').replace(/Í/g,'I')
-      .replace(/Ó/g,'O').replace(/Ú/g,'U').replace(/[^A-Z0-9]+/g,'_');
+    return 'MOOD_'+n.toUpperCase().replace(/[^A-Z0-9]+/g,'_');
   }
   function fmt(p){
     return '{ '+[p.w,p.h,p.radius,p.gap,p.tilt,p.open,p.lidTop,p.angle,p.curve,p.offY]
@@ -444,59 +443,59 @@ li{margin-bottom:6px}
   var codeEl=document.getElementById('code');
   function emit(){
     var L=[];
-    L.push('// Generado por el Editor de Ojos');
+    L.push('// Generated by the Eye Editor');
     L.push('struct EyeState {');
     L.push('  int16_t w, h, radius, gap;  // px');
-    L.push('  int16_t tilt;               // grados, hacia dentro');
+    L.push('  int16_t tilt;               // degrees, inwards');
     L.push('  int16_t open, lidTop;       // 0-100');
-    L.push('  int16_t angle;              // ceja: + enojado, - triste');
-    L.push('  int16_t curve;              // 0-100, 100 = arco feliz');
+    L.push('  int16_t angle;              // brow: + angry, - sad');
+    L.push('  int16_t curve;              // 0-100, 100 = happy arc');
     L.push('  int16_t offY;               // px');
     L.push('};');
     L.push('');
     L.push('const uint16_t EYE_COLOR = 0x'+rgb565(color).toString(16).toUpperCase().padStart(4,'0')+';   // '+color);
-    L.push('const uint8_t  GLOW   = '+Math.round(style.glow)+';   // resplandor 0-100');
-    L.push('const uint8_t  GRAD   = '+Math.round(style.grad)+';   // degradado 0-100');
-    L.push('const uint8_t  SHINE  = '+Math.round(style.shine)+';   // brillo especular 0-100');
-    L.push('const uint8_t  SQUASH = '+Math.round(style.squash)+';   // estirar/aplastar 0-100');
+    L.push('const uint8_t  GLOW   = '+Math.round(style.glow)+';   // glow 0-100');
+    L.push('const uint8_t  GRAD   = '+Math.round(style.grad)+';   // gradient 0-100');
+    L.push('const uint8_t  SHINE  = '+Math.round(style.shine)+';   // specular shine 0-100');
+    L.push('const uint8_t  SQUASH = '+Math.round(style.squash)+';   // squash/stretch 0-100');
     L.push('');
-    L.push('//                        w    h  rad  gap tilt open  lid  ceja  crv  offY');
+    L.push('//                        w    h  rad  gap tilt open  lid  brow  crv  offY');
     Object.keys(MOODS).forEach(function(n){
       L.push('const EyeState '+(cname(n)+' ').padEnd(19,' ')+' = '+fmt(MOODS[n])+';');
     });
-    if(moodName==='Personalizado'){
+    if(moodName==='Custom'){
       L.push('');
-      L.push('const EyeState MOOD_PERSONALIZADO = '+fmt(goal)+';');
+      L.push('const EyeState MOOD_CUSTOM = '+fmt(goal)+';');
     }
     codeEl.textContent=L.join('\n');
   }
   document.getElementById('bCopy').addEventListener('click',function(){
     var b=this;
     navigator.clipboard.writeText(codeEl.textContent).then(
-      function(){b.textContent='Copiado';setTimeout(function(){b.textContent='Copiar';},1400);},
-      function(){b.textContent='No se pudo';setTimeout(function(){b.textContent='Copiar';},1400);});
+      function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy';},1400);},
+      function(){b.textContent='Failed';setTimeout(function(){b.textContent='Copy';},1400);});
   });
 
   document.getElementById('fullcode').textContent=[
-    '#include <TFT_eSPI.h>       // v2.5 o superior: hace falta fillSmoothRoundRect()',
+    '#include <TFT_eSPI.h>       // v2.5 or newer: fillSmoothRoundRect() is required',
     '',
     'TFT_eSPI    tft = TFT_eSPI();',
-    'TFT_eSprite fb  = TFT_eSprite(&tft);   // buffer 240x240 en PSRAM',
+    'TFT_eSprite fb  = TFT_eSprite(&tft);   // 240x240 buffer in PSRAM',
     '',
     'EyeState cur = MOOD_NORMAL, tgt = MOOD_NORMAL;',
-    'float velP[10] = {0};                  // velocidad del muelle por parámetro',
-    'float gx=0, gy=0, gx2=0, gy2=0;        // mirada; gx2 va un poco por detrás',
+    'float velP[10] = {0};                  // spring velocity per parameter',
+    'float gx=0, gy=0, gx2=0, gy2=0;        // gaze; gx2 trails slightly behind',
     'float gvx=0, gvy=0, sqx=1, sqy=1, pgx=0, pgy=0, blink=1;',
     'uint32_t nextBlink=0, blinkStart=0;',
     '',
-    '// --- muelle: se pasa un poco y vuelve. NO uses un lerp normal aquí ---',
+    '// --- spring: overshoots slightly and settles. Do NOT use a plain lerp here ---',
     'static inline void springTo(int16_t &v, int16_t target, float &vel) {',
     '  vel += (target - v) * 0.20f;',
     '  vel *= 0.70f;',
     '  v   += (int16_t)vel;',
     '}',
     '',
-    '// --- un ojo ---',
+    '// --- one eye ---',
     'void drawEye(int8_t side) {',
     '  float myx = (side > 0) ? gx2 : gx;',
     '  float myy = (side > 0) ? gy2 : gy;',
@@ -510,8 +509,8 @@ li{margin-bottom:6px}
     '',
     '  int16_t x = cx - w/2, y = cy - h/2;',
     '',
-    '  // 1. RESPLANDOR: tres capas concéntricas mezcladas hacia el negro.',
-    '  //    Es lo que hace que parezca emitir luz en vez de estar pintado.',
+    '  // 1. GLOW: three concentric layers blended toward black.',
+    '  //    This is what makes it look like it emits light instead of being painted on.',
     '  if (GLOW > 0) {',
     '    for (int8_t i = 3; i >= 1; i--) {',
     '      uint8_t a = (GLOW * (4 - i)) / 14;             // 0-28 %',
@@ -520,25 +519,25 @@ li{margin-bottom:6px}
     '    }',
     '  }',
     '',
-    '  // 2. CUERPO con bordes suavizados. fillSmoothRoundRect, nunca fillRoundRect:',
-    '  //    sin antialiasing las curvas se escalonan y se cae todo el efecto.',
+    '  // 2. BODY with anti-aliased edges. fillSmoothRoundRect, never fillRoundRect:',
+    '  //    without anti-aliasing the curves staircase and the whole effect collapses.',
     '  fb.fillSmoothRoundRect(x, y, w, h, r, EYE_COLOR, TFT_BLACK);',
     '',
-    '  // 3. DEGRADADO barato: una forma más clara sobre el 45 % superior.',
-    '  //    A este tamaño no se distingue de un degradado real.',
+    '  // 3. CHEAP GRADIENT: a lighter shape over the top 45 %.',
+    '  //    At this size it is indistinguishable from a real gradient.',
     '  if (GRAD > 0 && h > 14) {',
     '    uint16_t lightC = tft.alphaBlend(GRAD / 3, TFT_WHITE, EYE_COLOR);',
     '    int16_t  hh = h * 0.45f;',
     '    fb.fillSmoothRoundRect(x + 2, y + 2, w - 4, hh, min((int)r, (int)(hh/2)), lightC, EYE_COLOR);',
     '  }',
     '',
-    '  // 4. BRILLO especular arriba a la izquierda.',
+    '  // 4. SPECULAR shine, upper left.',
     '  if (SHINE > 0 && h > 20) {',
     '    uint16_t s = tft.alphaBlend(SHINE * 2 / 3, TFT_WHITE, EYE_COLOR);',
     '    fb.fillSmoothCircle(cx - w/5, cy - h/4, max(2, w/9), s, EYE_COLOR);',
     '  }',
     '',
-    '  // 5. PÁRPADO: tapa con el fondo, inclinado según la "ceja".',
+    '  // 5. EYELID: covers with the background, angled by the "brow".',
     '  if (cur.lidTop > 0) {',
     '    int16_t lid = h * cur.lidTop / 100;',
     '    float   sl  = tanf(side * cur.angle * PI / 180.0f);',
@@ -552,15 +551,15 @@ li{margin-bottom:6px}
     'void loop() {',
     '  uint32_t now = millis();',
     '',
-    '  // muelle sobre cada parámetro del ánimo',
+    '  // spring on every mood parameter',
     '  springTo(cur.w, tgt.w, velP[0]);   springTo(cur.h,      tgt.h,      velP[1]);',
     '  springTo(cur.radius, tgt.radius, velP[2]); springTo(cur.gap, tgt.gap, velP[3]);',
     '  springTo(cur.tilt, tgt.tilt, velP[4]);     springTo(cur.open, tgt.open, velP[5]);',
     '  springTo(cur.lidTop, tgt.lidTop, velP[6]); springTo(cur.angle, tgt.angle, velP[7]);',
     '  springTo(cur.curve, tgt.curve, velP[8]);   springTo(cur.offY, tgt.offY, velP[9]);',
     '',
-    '  // parpadeo ASIMÉTRICO (cierra rápido, abre lento) e IRREGULAR.',
-    '  // Un intervalo fijo se detecta en segundos y mata la ilusión.',
+    '  // ASYMMETRIC blink (fast to close, slow to open) at IRREGULAR intervals.',
+    '  // A fixed interval is detectable within seconds and kills the illusion.',
     '  if (now > nextBlink) { nextBlink = now + 1500 + random(3900); blinkStart = now; }',
     '  uint32_t d = now - blinkStart;',
     '  if      (d <  60) blink = 1.0f - d / 60.0f;',
@@ -568,13 +567,13 @@ li{margin-bottom:6px}
     '  else              blink = 1.0f;',
     '  if (blink < 0.035f) blink = 0.035f;',
     '',
-    '  // mirada: la da la detección de caras. Sin cara, micro-saltos al azar.',
+    '  // gaze: comes from face detection. With no face, random micro-saccades.',
     '  // gxTarget = (faceCx - 120) * 0.35f;',
     '  gvx += (gxTarget - gx) * 0.22f; gvx *= 0.70f; gx += gvx;',
     '  gvy += (gyTarget - gy) * 0.22f; gvy *= 0.70f; gy += gvy;',
-    '  gx2 += (gx - gx2) * 0.42f;  gy2 += (gy - gy2) * 0.42f;   // el 2º ojo, detrás',
+    '  gx2 += (gx - gx2) * 0.42f;  gy2 += (gy - gy2) * 0.42f;   // 2nd eye, trailing',
     '',
-    '  // estirar y aplastar según la velocidad, conservando el área',
+    '  // squash and stretch from velocity, preserving area',
     '  float vx = gx - pgx, vy = gy - pgy; pgx = gx; pgy = gy;',
     '  float k = SQUASH / 100.0f, ax = fabsf(vx), ay = fabsf(vy), tx = 1, ty = 1;',
     '  if (ax >= ay) { float s = min(ax/7.0f, 1.0f)*k; tx = 1+s*0.30f; ty = 1-s*0.21f; }',
@@ -587,10 +586,10 @@ li{margin-bottom:6px}
     '  fb.pushSprite(0, 0);',
     '}',
     '',
-    '// NOTA sobre la inclinación (tilt): TFT_eSPI no rota primitivas.',
-    '// Dibuja cada ojo en su propio TFT_eSprite pequeño y súbelo con',
-    '// pushRotated(angulo). Rehaz ese sprite solo cuando cambie la forma,',
-    '// no en cada fotograma, o te comes el presupuesto de CPU.'
+    '// NOTE on tilt: TFT_eSPI does not rotate primitives.',
+    '// Draw each eye into its own small TFT_eSprite and push it with',
+    '// pushRotated(angle). Rebuild that sprite only when the shape changes,',
+    '// not every frame, or you will eat the whole CPU budget.'
   ].join('\n');
 
   syncSliders(); emit();
