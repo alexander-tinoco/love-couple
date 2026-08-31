@@ -218,7 +218,7 @@ tbody tr:last-child td{border-bottom:0}
     {k:'tilt',   label:'Tilt',        min:-28,max:28,step:1},
     {k:'open',   label:'Openness',    min:0, max:100,step:1},
     {k:'offY',   label:'Offset Y',    min:-40,max:40,step:1},
-    {k:'curve',  label:'Happy arc',   min:0, max:100,step:1},
+    {k:'curve',  label:'Closed arc',  min:-100,max:100,step:1},
     {k:'pupW',   label:'Pupil width', min:0, max:96, step:1},
     {k:'pupH',   label:'Pupil height',min:0, max:120,step:1},
     {k:'pupX',   label:'Pupil X',     min:-40,max:40,step:1},
@@ -277,7 +277,7 @@ tbody tr:last-child td{border-bottom:0}
     'Dizzy':     M( 88,  96,  42,   0, 100,   0,   0,  30,  30,   0,   0,   0,   0,   0,   0,   0,   1),
     'Bored':     M( 78, 102,  41,   0,  92,   5,   0,  24,  29,   8,   9,  54,   0,   0),
     'Tired':     M( 78, 102,  41,   0,  86,   5,   0,  26,  30,   7,   7,  50,  12,  -8),
-    'Asleep':    M( 84, 106,  46,   0,   7,   4, 100,  22,  28,   6,  -3,   0,   0,   0,   0,   0,   6)
+    'Asleep':    M(  84,  106,   46,    0,    7,   -2, -100,   22,   28,    6,   -3,    0,    0,    0,    0,    0,    6)
   };
   var NOTES={
     'Neutral':'Tall ellipses of different sizes, set close together.',
@@ -295,13 +295,13 @@ tbody tr:last-child td{border-bottom:0}
     'Dizzy':'Round body and pupil, centred, and the whole screen rotates slowly.',
     'Bored':'Heavy lid and zero brow angle. Boredom is the absence of expression.',
     'Tired':'Both lids closing in, pupil low, body squashed. Shares Bored\'s look on purpose.',
-    'Asleep':'Two thin slits and a drifting zzz. The eyes stop completely — no wandering, no gaze, no cursor, no breathing.'
+    'Asleep':'Two thin lids sagging shut, and a drifting zzz. Everything else stops — no wandering, no gaze, no cursor, no breathing.'
   };
   var AUDIT=[
     ['Skeptical','Heavier lid than Angry, much milder brow, pupil to one side','Shares Angry\'s <b>look</b> — same silhouette and pupil colour, different expression'],
     ['Missing you','A softer Sad: less lid, gentler brow','Shares Sad\'s <b>look</b> on purpose'],
     ['Tired','Both lids closing in, pupil low, body squashed','Shares Bored\'s <b>look</b> on purpose'],
-    ['Asleep','Openness 7, two thin slits, drifting zzz','Shares Bored\'s look; expression is its own'],
+    ['Asleep','Thin lids <b>sagging down</b>, drifting zzz','Arched UP at first, which reads as a happy squint, not sleep'],
     ['Neutral','Tall ellipses of different sizes, set close together','Look tuned; expression unchanged'],
     ['Happy','Two separate arcs with rounded caps, nothing else','No look supplied; left on the default'],
     ['Pleased','Lower lid raised, pupil pushed up over it','Look tuned; expression unchanged'],
@@ -316,7 +316,7 @@ tbody tr:last-child td{border-bottom:0}
     ['Bored','Heavy lid, zero brow angle','Look tuned; expression unchanged']
   ];
 
-  var COLORS=[['Pink','#FF2E88'],['Navy','#2542B8']];
+  var COLORS=[['Pink','#FF2E88'],['Blue','#3560E0']];
   var LOOKS={}, curLook={}, fromLook={}, toLook={};
   for(var n0 in BASE_LOOKS){ LOOKS[n0]={}; for(var k0 in BASE_LOOKS[n0]) LOOKS[n0][k0]=BASE_LOOKS[n0][k0]; }
   for(var k1 in LOOKS['Neutral']){ curLook[k1]=LOOKS['Neutral'][k1]; fromLook[k1]=curLook[k1]; toLook[k1]=curLook[k1]; }
@@ -428,16 +428,21 @@ tbody tr:last-child td{border-bottom:0}
     c.translate(cx,cy+lidDrop);
     c.rotate(side*p.tilt*Math.PI/180);
 
-    if(p.curve>3){
-      // One arc mechanism, two very different reads. Openness drives it:
-      // wide open (Happy) gives a fat, tight arc; nearly shut (Asleep) gives a
-      // thin, flat, wide one - a lid draped over the eye rather than a squint.
-      var k=p.curve/100, openF=p.open/100;
+    if(Math.abs(p.curve)>3){
+      // One arc mechanism, two very different reads.
+      //   SIGN sets the curvature: + arches up (a happy squint), - sags down
+      //     (a lid resting shut). They are opposites and must not be confused.
+      //   OPENNESS sets the weight: wide open gives a fat, tight arc; nearly
+      //     shut gives a thin, flat, wide one draped over the eye.
+      var k=Math.abs(p.curve)/100, openF=p.open/100;
       var th=Math.max(3,w*0.27*(0.28+openF*0.72));
       var rad=w*(0.46+(1-openF)*0.18);
       c.save(); c.globalAlpha=k;
       c.strokeStyle=color; c.lineWidth=th; c.lineCap='round';
-      c.beginPath(); c.arc(0,rad*0.46,rad,Math.PI*1.25,Math.PI*1.75); c.stroke(); c.stroke();
+      c.beginPath();
+      if(p.curve>0) c.arc(0, rad*0.46,rad,Math.PI*1.25,Math.PI*1.75);  // arches up
+      else          c.arc(0,-rad*0.46,rad,Math.PI*0.25,Math.PI*0.75);  // sags down
+      c.stroke(); c.stroke();
       c.restore();
       if(k<0.97){ c.save(); c.globalAlpha=1-k; c.fillStyle=color; bodyPath(c,w,h,side); c.fill(); c.restore(); }
       c.restore(); return;
@@ -845,7 +850,10 @@ tbody tr:last-child td{border-bottom:0}
     L2.push('  int16_t pupScale, pupTone, pupSplit, wander, glow;');
     L2.push('};');
     L2.push('struct EyeState {');
-    L2.push('  int16_t w, h, gap, tilt, open, offY, curve;');
+    L2.push('  int16_t w, h, gap, tilt, open, offY;');
+    L2.push('  int16_t curve;                   // +100 arches UP (happy squint)');
+    L2.push('                                   // -100 sags DOWN (lid resting shut)');
+    L2.push('                                   // open sets its weight: thin when shut');
     L2.push('  int16_t pupW, pupH, pupX, pupY;   // pupX is always INWARD');
     L2.push('  int16_t lidTop, lidBot, brow;     // brow: + angry, - sad');
     L2.push('  int16_t pupForm, anim;            // anim: 0 none 1 rot 2 trem 3 bounce 4 pulse 6 frozen');
