@@ -510,7 +510,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
 
   <div class="note">
     <span class="lbl">Eye Editor</span>
-    <p style="margin-bottom:0"><a href="https://claude.ai/code/artifact/532c1a24-ca0d-444f-903d-7083c9b656f2"><strong>Open it here →</strong></a> A round display at true size, 15 moods, shape and style sliders, spring physics, and <strong>C++ export</strong> with the complete <code>drawEyes()</code> function. <strong>It needs no hardware</strong>: you can design all 15 moods today, while the boards are still in the post.</p>
+    <p style="margin-bottom:0"><a href="https://claude.ai/code/artifact/532c1a24-ca0d-444f-903d-7083c9b656f2"><strong>Open it here →</strong></a> A round display at true size, 16 moods, shape, pupil and style sliders, spring physics, and <strong>C++ export</strong> with the complete <code>drawEyes()</code> function. <strong>It needs no hardware</strong>: you can design all 15 moods today, while the boards are still in the post.</p>
   </div>
 
   <div class="col" style="margin-top:20px">
@@ -522,7 +522,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
       <thead><tr><th style="width:26%">What</th><th>Why it shows, and how to do it on the ESP32</th></tr></thead>
       <tbody>
         <tr><td><strong>1. The shape</strong></td><td>In the original the eyes are <strong>big and nearly elliptical</strong>, taking up more than half the display width, and <strong>tilted inwards</strong> by about 12°. My first version was small, upright rounded rectangles — that's why it read as a cheap toy. This change alone is half the resemblance.</td></tr>
-        <tr><td><strong>2. Gradient</strong></td><td>A flat fill reads as an LED; a vertical gradient reads as volume. On the firmware you don't need a real gradient: paint the body, then lay a lighter shape over the top 45 %. At this size the eye can't tell.</td></tr>
+        <tr><td><strong>2. The pupil</strong></td><td>Every reference photo shows the same structure: a large coloured body with a <strong>second, clearly different shape inside it</strong>. The pupil is what gives a direction of gaze — and what makes size mean something: a tiny pupil in a wide eye reads instantly as shock. The fills themselves are <strong>flat</strong>; the soft shading in the photos is the dome glass, not the pixels.</td></tr>
         <tr><td><strong>3. Glow</strong></td><td>The halo is what makes it look like it <em>emits</em> light rather than being painted on. Three concentric rounded rectangles before the main shape, each 4 px larger and blended further toward black with <code>tft.alphaBlend()</code>. Costs microseconds.</td></tr>
         <tr><td><strong>4. Anti-aliasing</strong></td><td>The most important item here and the easiest to skip. Without it, a curve at 240×240 looks like a staircase and the whole effect collapses. Use <code>fillSmoothRoundRect()</code> from TFT_eSPI 2.5+, <strong>never</strong> <code>fillRoundRect()</code>.</td></tr>
         <tr><td><strong>5. Spring, not lerp</strong></td><td>A <code>lerp</code> reaches the target and stops: it reads as mechanical. A spring <strong>overshoots slightly and settles</strong>. Three lines: <code>vel += (target−cur)*0.20; vel *= 0.70; cur += vel;</code></td></tr>
@@ -538,7 +538,7 @@ hr{border:0;border-top:1px solid var(--rule);margin:40px 0}
 
   <div class="col" style="margin-top:18px">
     <p>On top of the eyes, hand-draw only <strong>four or five small sprites</strong>: hearts, zzz, a question mark, the "missing you" mark and the cake for the 26th. That's the entire drawing workload of the project — one afternoon in Aseprite.</p>
-    <p style="margin-bottom:0"><strong>And the number that matters:</strong> all 15 moods together take about <strong>300 bytes</strong>. As sprites they'd be several megabytes, and you couldn't interpolate between them.</p>
+    <p style="margin-bottom:0"><strong>And the number that matters:</strong> all 16 moods together take about <strong>500 bytes</strong>. As sprites they'd be several megabytes, and you couldn't interpolate between them.</p>
   </div>
 </section>
 
