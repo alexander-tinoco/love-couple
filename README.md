@@ -13,7 +13,7 @@ have: **there are two of them, and they miss each other**.
 |---|---|
 | [`docs/build-plan.html`](docs/build-plan.html) | The full build plan: bill of materials with Mexican prices, pin-by-pin wiring, architecture, schedule and risks. |
 | [`docs/eye-editor.html`](docs/eye-editor.html) | Interactive tool to design the eyes and export them to C++. **No hardware required** — open it in a browser. |
-| [`reference/starboy-reference.jpg`](reference/starboy-reference.jpg) | Frame from the original video, for comparison. |
+| [`reference/`](reference/) | Reference shots of the real device: `starboy-reference.jpg` plus `starboy-01..07.png`. |
 
 Both HTML files are self-contained: open them with a double click, no server, no dependencies.
 
