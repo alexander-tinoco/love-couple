@@ -260,23 +260,22 @@ tbody tr:last-child td{border-bottom:0}
   };
   var MOODS={
     //             w    h  gap tilt open offY curv  pw  ph  px  py  lt  lb brow
-    'Neutral':   M( 76,106, 40,  0, 100,  0,   0, 22, 28,  6, -3,  0,  0,   0),
-    'Happy':     M( 74, 98, 50,  0, 100,  0, 100, 22, 28,  6, -3,  0,  0,   0),
-    'Pleased':   M( 78,102, 41,  0, 100,  2,   0, 24, 30,  6,-13,  0, 42,   0),
-    'In love':   M( 84,114, 41,  0, 100,  0,   0, 54, 52,  3, -2,  0,  0,   0, 1, 1, 4),
-    'Excited':   M( 88,124, 42,  0, 100, -5,   0, 40, 50,  5, -9,  0,  0,  -9, 0, 0, 3),
-    'Surprised': M( 98,126, 52,  0, 100, -4,   0, 26, 32,  4, -1,  0,  0,   0),
-    'Curious':   M( 78,108, 40,  7, 100, -4,   0, 24, 30, 12,-12, 12,  0,   9),
-    'Angry':     M( 80,104, 39,  0, 100,  0,   0, 18, 23,  8,  5, 40,  0,  26),
-    'Skeptical': M( 80,104, 39,  0, 100,  0,   0, 18, 23,  8,  5, 40,  0,  26),
-    'Sad':       M( 74,102, 43,  0, 100,  6,   0, 30, 38,  5, 11, 30,  0, -24),
-    'Missing you':M(74,102, 43,  0, 100,  6,   0, 30, 38,  5, 11, 30,  0, -24),
-    'Scared':    M( 56,126, 37,  0, 100, -3,   0, 20, 26,  3,-15,  0,  0,   0, 0, 0, 2),
-    'Dizzy':     M( 88, 96, 42,  0, 100,  0,   0, 30, 30,  0,  0,  0,  0,   0, 0, 0, 1),
-    'Bored':     M( 78,102, 41,  0,  92,  5,   0, 24, 29,  8,  9, 54,  0,   0),
-    'Tired':     M( 78,102, 41,  0,  92,  5,   0, 24, 29,  8,  9, 54,  0,   0),
-    // Asleep keeps the sleeping expression on purpose - see the note below.
-    'Asleep':    M( 78,102, 41,  0,   7,  6,   0, 24, 29,  8,  9,  0,  0,   0, 0, 0, 6)
+    'Neutral':   M( 76, 106,  40,   0, 100,   0,   0,  22,  28,   6,  -3,   0,   0,   0),
+    'Happy':     M( 74,  98,  50,   0, 100,   0, 100,  22,  28,   6,  -3,   0,   0,   0),
+    'Pleased':   M( 78, 102,  41,   0, 100,   2,   0,  24,  30,   6, -13,   0,  42,   0),
+    'In love':   M( 84, 114,  41,   0, 100,   0,   0,  54,  52,   3,  -2,   0,   0,   0,   1,   1,   4),
+    'Excited':   M( 88, 124,  42,   0, 100,  -5,   0,  40,  50,   5,  -9,   0,   0,  -9,   0,   0,   3),
+    'Surprised': M( 98, 126,  52,   0, 100,  -4,   0,  26,  32,   4,  -1,   0,   0,   0),
+    'Curious':   M( 78, 108,  40,   7, 100,  -4,   0,  24,  30,  12, -12,  12,   0,   9),
+    'Angry':     M( 80, 104,  39,   0, 100,   0,   0,  18,  23,   8,   5,  40,   0,  26),
+    'Skeptical': M( 78, 102,  41,   0, 100,   0,   0,  22,  27,  14,   3,  46,   0,   6),
+    'Sad':       M( 74, 102,  43,   0, 100,   6,   0,  30,  38,   5,  11,  30,   0, -24),
+    'Missing you':M( 74, 100,  43,   0, 100,   5,   0,  28,  36,   6,   9,  22,   0, -14),
+    'Scared':    M( 56, 126,  37,   0, 100,  -3,   0,  20,  26,   3, -15,   0,   0,   0,   0,   0,   2),
+    'Dizzy':     M( 88,  96,  42,   0, 100,   0,   0,  30,  30,   0,   0,   0,   0,   0,   0,   0,   1),
+    'Bored':     M( 78, 102,  41,   0,  92,   5,   0,  24,  29,   8,   9,  54,   0,   0),
+    'Tired':     M( 78, 102,  41,   0,  86,   5,   0,  26,  30,   7,   7,  50,  12,  -8),
+    'Asleep':    M( 84, 106,  41,   0,   7,   6,   0,  22,  28,   6,  -3,   0,   0,   0,   0,   0,   6)
   };
   var NOTES={
     'Neutral':'Tall ellipses of different sizes, set close together.',
@@ -287,32 +286,32 @@ tbody tr:last-child td{border-bottom:0}
     'Surprised':'The widest and tallest body of the set, with a small but legible pupil.',
     'Curious':'A tilt, one brow up, and the pupil pushed up and inward.',
     'Angry':'Upper lid down with the INNER corners lowest, plus a shrunken pupil.',
-    'Skeptical':'⚠ Identical to Angry — your file has the same numbers for both.',
+    'Skeptical':'Heavier lid than Angry but a much milder brow, pupil well off to one side. Shares Angry\'s look on purpose.',
     'Sad':'Brow inverted from angry — inner corners UP — with a large pupil dropped low.',
-    'Missing you':'⚠ Identical to Sad — your file has the same numbers for both.',
+    'Missing you':'A softer Sad: less lid, gentler brow. Shares Sad\'s look on purpose.',
     'Scared':'The narrowest and tallest body, pupil looking up, and a constant tremble.',
     'Dizzy':'Round body and pupil, centred, and the whole screen rotates slowly.',
     'Bored':'Heavy lid and zero brow angle. Boredom is the absence of expression.',
-    'Tired':'⚠ Identical to Bored — your file has the same numbers for both.',
-    'Asleep':'Your look applied, but the expression kept asleep: openness 7 and no lid, so the slits and the zzz still work.'
+    'Tired':'Both lids closing in, pupil low, body squashed. Shares Bored\'s look on purpose.',
+    'Asleep':'Two thin slits and a drifting zzz. The eyes stop completely — no wandering, no gaze, no cursor, no breathing.'
   };
   var AUDIT=[
-    ['Skeptical','Should be a heavier lid than Angry but a much milder brow','⚠ <b>Your file repeats Angry\'s numbers exactly</b> — the two now render identically'],
-    ['Missing you','Should be a softer Sad: less lid, gentler brow','⚠ <b>Your file repeats Sad\'s numbers exactly</b>'],
-    ['Tired','Should close both lids, not just the upper one','⚠ <b>Your file repeats Bored\'s numbers exactly</b>'],
-    ['Asleep','Openness 7, two thin slits, drifting zzz','⚠ Your file gave it openness 92 and upper lid 54 — wide awake. Look applied, expression kept asleep'],
-    ['Happy','Two separate arcs with rounded caps','Not in your file; left as it was'],
-    ['Curious','Tilt, one brow up, pupil up and inward','You marked it perfect; left as it was, on the default look'],
-    ['Neutral','Tall ellipses of different sizes, close together','Applied as given'],
-    ['Pleased','Lower lid raised, pupil pushed up over it','Applied as given'],
-    ['In love','Heart pupils nearly filling the eye, face pulsing','Applied as given'],
-    ['Excited','Tall body, big pupils looking up, vertical bounce','Applied as given'],
-    ['Surprised','Widest and tallest body, small legible pupil','Applied as given'],
-    ['Angry','Upper lid down, inner corners lowest','Applied as given'],
-    ['Sad','Brow inverted from angry, big pupil low','Applied as given'],
-    ['Scared','Narrowest and tallest body, pupil up, trembling','Applied as given'],
-    ['Dizzy','Round body and pupil, screen rotates','Applied as given'],
-    ['Bored','Heavy lid, zero brow angle','Applied as given']
+    ['Skeptical','Heavier lid than Angry, much milder brow, pupil to one side','Shares Angry\'s <b>look</b> — same silhouette and pupil colour, different expression'],
+    ['Missing you','A softer Sad: less lid, gentler brow','Shares Sad\'s <b>look</b> on purpose'],
+    ['Tired','Both lids closing in, pupil low, body squashed','Shares Bored\'s <b>look</b> on purpose'],
+    ['Asleep','Openness 7, two thin slits, drifting zzz','Shares Bored\'s look; expression is its own'],
+    ['Neutral','Tall ellipses of different sizes, set close together','Look tuned; expression unchanged'],
+    ['Happy','Two separate arcs with rounded caps, nothing else','No look supplied; left on the default'],
+    ['Pleased','Lower lid raised, pupil pushed up over it','Look tuned; expression unchanged'],
+    ['In love','Heart pupils nearly filling the eye, face pulsing','Look tuned; expression unchanged'],
+    ['Excited','Tall body, big pupils looking up, vertical bounce','Dark pupils, heavy size mismatch'],
+    ['Surprised','Widest and tallest body, small legible pupil','Shares Excited\'s look'],
+    ['Curious','Tilt, one brow up, pupil up and inward','You marked it perfect; left on the default look'],
+    ['Angry','Upper lid down, inner corners lowest, shrunken pupil','Near-black pupils and a hard flat inner edge'],
+    ['Sad','Brow inverted from angry, big pupil low','Palest pupils of the set, strongly mismatched'],
+    ['Scared','Narrowest and tallest body, pupil up, trembling','Dark pupils, low wander'],
+    ['Dizzy','Round body and pupil, screen rotates','Look tuned; expression unchanged'],
+    ['Bored','Heavy lid, zero brow angle','Look tuned; expression unchanged']
   ];
 
   var COLORS=[['Pink','#FF2E88'],['Cyan','#22D3E0']];
