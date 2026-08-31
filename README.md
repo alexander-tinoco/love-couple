@@ -16,7 +16,8 @@ have: **there are two of them, and they miss each other**.
 | [`docs/hardware.html`](docs/hardware.html) | Pinouts, voltage map, every wire, battery runtime, how it fits in the star, WiFi setup once sealed, and safety. Read before ordering. |
 | [`reference/`](reference/) | Reference shots of the real device: `starboy-reference.jpg` plus `starboy-01..07.png`. |
 
-Both HTML files are self-contained: open them with a double click, no server, no dependencies.
+All three are self-contained: open them with a double click, no server, no dependencies.
+Each carries an **ES / EN** toggle in the top right; the choice is remembered across the three.
 
 ## What it does
 

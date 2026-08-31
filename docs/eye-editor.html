@@ -99,9 +99,20 @@ thead th{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:
 tbody tr:last-child td{border-bottom:0}
 .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:5px}
 .lookid{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--faint);margin-top:8px}
+
+.langbtn{position:fixed;top:14px;right:14px;z-index:99;font-family:"JetBrains Mono",monospace;
+  font-size:.68rem;letter-spacing:.1em;font-weight:700;cursor:pointer;
+  background:var(--surface);color:var(--muted);border:1px solid var(--rule);
+  border-radius:999px;padding:7px 13px;box-shadow:0 2px 10px rgba(0,0,0,.16)}
+.langbtn:hover{border-color:var(--accent);color:var(--accent)}
+.langbtn b{color:var(--accent)}
+@media print{.langbtn{display:none}}
 </style>
 </head>
 <body>
+<button id="langBtn" class="langbtn" title="Español / English">ES / <b>EN</b></button>
+
+
 <div class="wrap">
   <p class="eyebrow">Design tool · ESP32-S3 keychain · GC9A01 240×240 display</p>
   <h1>Eye editor</h1>
@@ -196,6 +207,11 @@ tbody tr:last-child td{border-bottom:0}
 <script>
 (function(){
   "use strict";
+  // Text this script writes itself is not in the DOM when the translator runs,
+  // so it goes through t() at the moment it is written, and relabel() rewrites
+  // it whenever the language changes.
+  function t(x){ return (window.__i18n && window.__i18n.t) ? window.__i18n.t(x) : x; }
+
   var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
   var DPR=2.4, S=240;
 
@@ -643,7 +659,7 @@ tbody tr:last-child td{border-bottom:0}
       moodName='Neutral'; setMood('Neutral');
       document.querySelectorAll('.mood').forEach(function(x){
         x.classList.toggle('sel', x.textContent==='Neutral'); });
-      noteEl.textContent=NOTES['Neutral']; syncMood(); syncLook(); emit();
+      noteEl.textContent=t(NOTES['Neutral']); syncMood(); syncLook(); emit();
     }
 
     if(asleep){ rawX=0; rawY=0; }
@@ -714,17 +730,17 @@ tbody tr:last-child td{border-bottom:0}
   var moodsEl=document.getElementById('moods'), noteEl=document.getElementById('moodNote');
   Object.keys(MOODS).forEach(function(n){
     var b=document.createElement('button');
-    b.textContent=n; b.className='mood'+(n===moodName?' sel':'');
+    b.textContent=t(n); b.setAttribute('data-mood',n); b.className='mood'+(n===moodName?' sel':'');
     b.addEventListener('click',function(){
       moodName=n; setMood(n);
       document.querySelectorAll('.mood').forEach(function(x){x.classList.remove('sel');});
       b.classList.add('sel');
-      noteEl.textContent=NOTES[n]||'';
+      noteEl.textContent=t(NOTES[n]||'');
       syncMood(); syncLook(); emit();
     });
     moodsEl.appendChild(b);
   });
-  noteEl.textContent=NOTES['Neutral'];
+  noteEl.textContent=t(NOTES['Neutral']);
 
   var inLook={}, inMood={}, lookProxy={}, moodProxy={};
   LOOK.forEach(function(p){ lookProxy[p.k]=curLook[p.k]; });
@@ -733,7 +749,8 @@ tbody tr:last-child td{border-bottom:0}
   function mkSliders(host,list,target,store,after){
     list.forEach(function(p){
       var d=document.createElement('div'); d.className='sl';
-      var l=document.createElement('label'); l.textContent=p.label; l.htmlFor='s_'+p.k;
+      var l=document.createElement('label'); l.textContent=t(p.label); l.htmlFor='s_'+p.k;
+      l.setAttribute('data-lbl',p.label);
       var r=document.createElement('input');
       r.type='range'; r.id='s_'+p.k; r.min=p.min; r.max=p.max; r.step=p.step; r.value=target[p.k];
       var o=document.createElement('output'); o.textContent=Math.round(target[p.k]);
@@ -771,7 +788,8 @@ tbody tr:last-child td{border-bottom:0}
   });
 
   var lookEl=document.getElementById('lookId');
-  function setLookId(v){ lookEl.textContent='look · '+v; }
+  var lookVal='tuned per mood';
+  function setLookId(v){ lookVal=v; lookEl.textContent=t('look')+' · '+t(v); }
   function rnd(a,b){ return Math.round(a+Math.random()*(b-a)); }
   function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
   document.getElementById('bShuffle').addEventListener('click',function(){
@@ -817,11 +835,15 @@ tbody tr:last-child td{border-bottom:0}
   });
 
   var ab=document.getElementById('auditBody');
-  AUDIT.forEach(function(row){
+  function fillAudit(){
+    ab.innerHTML='';
+    AUDIT.forEach(function(row){
     var tr=document.createElement('tr');
-    tr.innerHTML='<td><strong>'+row[0]+'</strong></td><td>'+row[1]+'</td><td style="color:var(--muted)">'+row[2]+'</td>';
+    tr.innerHTML='<td><strong>'+t(row[0])+'</strong></td><td>'+t(row[1])+'</td><td style="color:var(--muted)">'+t(row[2])+'</td>';
     ab.appendChild(tr);
-  });
+    });
+  }
+  fillAudit();
 
   /* ---------- export ---------- */
   function cname(n){ return 'MOOD_'+n.toUpperCase().replace(/[^A-Z0-9]+/g,'_'); }
@@ -877,8 +899,8 @@ tbody tr:last-child td{border-bottom:0}
   document.getElementById('bCopy').addEventListener('click',function(){
     var b=this;
     navigator.clipboard.writeText(codeEl.textContent).then(
-      function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy';},1400);},
-      function(){b.textContent='Failed';setTimeout(function(){b.textContent='Copy';},1400);});
+      function(){b.textContent=t('Copied');setTimeout(function(){b.textContent=t('Copy');},1400);},
+      function(){b.textContent=t('Failed');setTimeout(function(){b.textContent=t('Copy');},1400);});
   });
 
   document.getElementById('fullcode').textContent=[
@@ -1057,8 +1079,62 @@ tbody tr:last-child td{border-bottom:0}
     '//    the draw loop, and hold the frame interval even if you finish early.'
   ].join('\n');
 
+  window.__onLang=function(){
+    document.querySelectorAll('.mood').forEach(function(b){ b.textContent=t(b.getAttribute('data-mood')); });
+    document.querySelectorAll('label[data-lbl]').forEach(function(l){ l.textContent=t(l.getAttribute('data-lbl')); });
+    noteEl.textContent = MOODS[moodName] ? t(NOTES[moodName]||'') : '';
+    setLookId(lookVal);
+    fillAudit();
+  };
+
   syncMood(); syncLook(); emit();
   requestAnimationFrame(tick);
+})();
+</script>
+
+<script>var ES={"Design tool · ESP32-S3 keychain · GC9A01 240×240 display": "Herramienta de diseño · llavero ESP32-S3 · pantalla GC9A01 240×240", "Eye editor": "Editor de ojos", "Bodies are <strong>superellipses with a flattened inner edge</strong>, never rounded rectangles, and the two eyes are deliberately different sizes. <strong>Every mood now carries its own look as well as its own expression</strong>, from your tuned values — so the silhouette itself changes with the emotion, not just the lids.": "Los cuerpos son <strong>superelipses con el borde interior aplanado</strong>, nunca rectángulos redondeados, y los dos ojos son deliberadamente de distinto tamaño. <strong>Cada ánimo lleva ahora su propio look además de su propia expresión</strong>, con tus valores ajustados — así que la silueta misma cambia con la emoción, no solo los párpados.", "Roll a new look": "Generar otro look", "Idle life": "Vida propia", "Follow the cursor": "Seguir el cursor", "Blink": "Parpadear", "Blink on change": "Parpadeo al cambiar", "Mood decay": "Decaimiento del ánimo", "look · —": "look · —", "The look sliders now edit <strong>the selected mood</strong>. “Roll a new look” shifts all sixteen moods by the same random offsets, so your per-mood tuning survives and the device still has one recognisable identity. Roll one for her keychain and a different one for yours.": "Los deslizadores de look editan ahora <strong>el ánimo seleccionado</strong>. «Generar otro look» desplaza los dieciséis ánimos con los mismos offsets aleatorios, así tu ajuste por ánimo sobrevive y el dispositivo mantiene una identidad reconocible. Genera uno para el llavero de ella y otro distinto para el tuyo.", "Moods": "Ánimos", "Look · this mood's silhouette": "Look · la silueta de este ánimo", "Expression · what this mood changes": "Expresión · lo que cambia este ánimo", "Firmware export": "Exportación al firmware", "Copy": "Copiar", "Copied": "Copiado", "Failed": "No se pudo", "look": "look", "tuned per mood": "ajustado por ánimo", "custom": "personalizado", "Why it looked too perfect": "Por qué se veía demasiado perfecto", "I found CREATURE's generator at <a href=\"https://creature.company/eyes\">creature.company/eyes</a>, which draws every one of the 400 looks live. Four things were wrong, and all four were making it read as machine-drawn.": "Encontré el generador de CREATURE en <a href=\"https://creature.company/eyes\">creature.company/eyes</a>, que dibuja en vivo cada uno de los 400 looks. Había cuatro cosas mal, y las cuatro hacían que se leyera como dibujado por una máquina.", "<span class=\"tick\">1.</span> The two eyes are not the same size": "<span class=\"tick\">1.</span> Los dos ojos no son del mismo tamaño", "This is the big one. In every single look, one eye is <strong>noticeably larger than the other</strong> and sits at a slightly different height. I had been drawing a perfect mirror image, which is exactly what makes something look machine-drawn. A 10–20 % difference is enough — it reads as a face, not a diagram.": "Esta es la gorda. En absolutamente todos los looks, un ojo es <strong>bastante más grande que el otro</strong> y va a una altura ligeramente distinta. Yo dibujaba un espejo perfecto, que es exactamente lo que hace que algo parezca dibujado por una máquina. Un 10–20 % de diferencia basta — se lee como una cara, no como un diagrama.", "<span class=\"tick\">2.</span> Superellipses, not rounded rectangles": "<span class=\"tick\">2.</span> Superelipses, no rectángulos redondeados", "A rounded rectangle has straight sides between its corners, and at this size your eye finds them. The real bodies are <strong>superellipses</strong> — one exponent controls the whole silhouette, from a plump circle to a soft square, with <strong>no straight segment anywhere</strong>. It cannot accidentally look rectangular.": "Un rectángulo redondeado tiene lados rectos entre sus esquinas, y a este tamaño tu ojo los encuentra. Los cuerpos reales son <strong>superelipses</strong> — un solo exponente controla toda la silueta, de círculo rechoncho a cuadrado blando, <strong>sin ningún tramo recto</strong>. No puede parecer rectangular por accidente.", "<span class=\"tick\">3.</span> The inner edge is flattened": "<span class=\"tick\">3.</span> El borde interior está aplanado", "The two bodies nestle against each other with a flat facing edge, like two stones pressed together. It stops them reading as two separate circles floating in the dark, and it is what gives the pair a single silhouette.": "Los dos cuerpos se acomodan uno contra otro con un borde plano enfrentado, como dos piedras apretadas. Deja de leerse como dos círculos sueltos flotando en la oscuridad, y es lo que le da a la pareja una sola silueta.", "<span class=\"tick\">4.</span> The pupil is small and off-centre": "<span class=\"tick\">4.</span> La pupila es pequeña y descentrada", "In the generator most pupils are <strong>tiny dots</strong> — under a fifth of the body width — and they sit off toward the inner top, at slightly different spots in each eye. A big centred pupil looks like a target. A small offset one looks like it is thinking about something.": "En el generador la mayoría de pupilas son <strong>puntos diminutos</strong> — menos de una quinta parte del ancho del cuerpo — y se sitúan hacia arriba y hacia dentro, en puntos ligeramente distintos en cada ojo. Una pupila grande y centrada parece una diana. Una pequeña y desplazada parece que está pensando en algo.", "CREATURE's own copy says starboys “<strong>swap eyes, spread behaviours, and play with each other</strong>” when they meet. So the thing that travels between two devices is not the creature — it is <strong>the look</strong>. That is far simpler to build than the hand-off you already cut, and it is a much better fit for two keychains: after they have been together a while, each one is wearing a little of the other's face.": "La propia web de CREATURE dice que los starboys «<strong>intercambian ojos, contagian comportamientos y juegan entre ellos</strong>» cuando se encuentran. Así que lo que viaja entre dos dispositivos no es la criatura — es <strong>el look</strong>. Es mucho más simple de construir que el traspaso que ya cortaste, y encaja mucho mejor con dos llaveros: después de un rato juntos, cada uno lleva puesto un poco de la cara del otro.", "Mood audit": "Auditoría de ánimos", "Every mood, what makes it read, and what it was doing wrong before.": "Cada ánimo, qué lo hace legible, y qué hacía mal antes.", "Mood": "Ánimo", "What makes it read": "Qué lo hace legible", "Was": "Qué pasaba", "Drawing a superellipse on the ESP32": "Dibujar una superelipse en el ESP32", "Width": "Ancho", "Height": "Alto", "Spacing": "Separación", "Tilt": "Inclinación", "Openness": "Apertura", "Offset Y": "Desplazamiento Y", "Closed arc": "Arco cerrado", "Pupil width": "Ancho de pupila", "Pupil height": "Alto de pupila", "Pupil X": "Pupila X", "Pupil Y": "Pupila Y", "Upper lid": "Párpado superior", "Lower lid": "Párpado inferior", "Brow": "Ceja", "Fullness": "Redondez", "Taper": "Estrechamiento", "Inner edge": "Borde interior", "Size mismatch": "Diferencia de tamaño", "Height offset": "Desfase de altura", "Pupil size": "Tamaño de pupila", "Pupil tone": "Tono de pupila", "Pupil mismatch": "Diferencia de pupilas", "Wander": "Deambular", "Glow": "Resplandor", "Neutral": "Neutral", "Happy": "Feliz", "Pleased": "Contento", "In love": "Enamorado", "Excited": "Emocionado", "Surprised": "Sorprendido", "Curious": "Curioso", "Angry": "Enfadado", "Skeptical": "Escéptico", "Sad": "Triste", "Missing you": "Te extraña", "Scared": "Asustado", "Dizzy": "Mareado", "Bored": "Aburrido", "Tired": "Cansado", "Asleep": "Dormido", "Tall ellipses of different sizes, set close together.": "Elipses altas de distinto tamaño, muy juntas.", "Two clearly separate closed arcs with rounded caps. No pupil, no decoration.": "Dos arcos cerrados claramente separados, con extremos redondeados. Sin pupila, sin adornos.", "Lower lid pushed up, pupil nudged up over it. Smiling with your eyes.": "Párpado inferior subido, pupila empujada por encima. Sonreír con los ojos.", "Heart pupils that nearly fill the eye, and the whole face pulses.": "Pupilas de corazón que casi llenan el ojo, y toda la cara late.", "Tall eyes, big pupils looking up, and a real vertical bounce.": "Ojos altos, pupilas grandes mirando arriba, y un rebote vertical de verdad.", "The widest and tallest body of the set, with a small but legible pupil.": "El cuerpo más ancho y alto del conjunto, con una pupila pequeña pero legible.", "A tilt, one brow up, and the pupil pushed up and inward.": "Una inclinación, una ceja arriba, y la pupila empujada hacia arriba y hacia dentro.", "Upper lid down with the INNER corners lowest, plus a shrunken pupil.": "Párpado superior bajo con las esquinas INTERIORES más abajo, y la pupila encogida.", "Heavier lid than Angry but a much milder brow, pupil well off to one side. Shares Angry's look on purpose.": "Párpado más pesado que Enfadado pero con la ceja mucho más suave, y la pupila bien desplazada a un lado. Comparte el look de Enfadado a propósito.", "Brow inverted from angry — inner corners UP — with a large pupil dropped low.": "Ceja invertida respecto a enfadado — esquinas interiores ARRIBA — con una pupila grande caída.", "A softer Sad: less lid, gentler brow. Shares Sad's look on purpose.": "Un Triste más suave: menos párpado, ceja más amable. Comparte el look de Triste a propósito.", "The narrowest and tallest body, pupil looking up, and a constant tremble.": "El cuerpo más estrecho y alto, la pupila mirando arriba, y un temblor constante.", "Round body and pupil, centred, and the whole screen rotates slowly.": "Cuerpo y pupila redondos, centrados, y toda la pantalla gira despacio.", "Heavy lid and zero brow angle. Boredom is the absence of expression.": "Párpado pesado y cero ángulo de ceja. El aburrimiento es la ausencia de expresión.", "Both lids closing in, pupil low, body squashed. Shares Bored's look on purpose.": "Los dos párpados cerrándose, pupila baja, cuerpo aplastado. Comparte el look de Aburrido a propósito.", "Two thin lids sagging shut, and a drifting zzz. Everything else stops — no wandering, no gaze, no cursor, no breathing.": "Dos párpados finos caídos, y unas zzz flotando. Todo lo demás se detiene — sin deambular, sin mirada, sin cursor, sin respirar.", "Heavier lid than Angry, much milder brow, pupil to one side": "Párpado más pesado que Enfadado, ceja mucho más suave, pupila a un lado", "Shares Angry's <b>look</b> — same silhouette and pupil colour, different expression": "Comparte el <b>look</b> de Enfadado — misma silueta y color de pupila, distinta expresión", "A softer Sad: less lid, gentler brow": "Un Triste más suave: menos párpado, ceja más amable", "Shares Sad's <b>look</b> on purpose": "Comparte el <b>look</b> de Triste a propósito", "Both lids closing in, pupil low, body squashed": "Los dos párpados cerrándose, pupila baja, cuerpo aplastado", "Shares Bored's <b>look</b> on purpose": "Comparte el <b>look</b> de Aburrido a propósito", "Openness 7, two thin slits, drifting zzz": "Apertura 7, dos rendijas finas, zzz flotando", "Shares Bored's look; expression is its own": "Comparte el look de Aburrido; la expresión es suya", "Tall ellipses of different sizes, set close together": "Elipses altas de distinto tamaño, muy juntas", "Look tuned; expression unchanged": "Look ajustado; expresión sin cambios", "Two separate arcs with rounded caps, nothing else": "Dos arcos separados con extremos redondeados, nada más", "No look supplied; left on the default": "Sin look propio; se queda con el de por defecto", "Lower lid raised, pupil pushed up over it": "Párpado inferior subido, pupila empujada por encima", "Heart pupils nearly filling the eye, face pulsing": "Pupilas de corazón que casi llenan el ojo, cara latiendo", "Tall body, big pupils looking up, vertical bounce": "Cuerpo alto, pupilas grandes mirando arriba, rebote vertical", "Dark pupils, heavy size mismatch": "Pupilas oscuras, mucha diferencia de tamaño", "Widest and tallest body, small legible pupil": "El cuerpo más ancho y alto, pupila pequeña pero legible", "Shares Excited's look": "Comparte el look de Emocionado", "Tilt, one brow up, pupil up and inward": "Inclinación, una ceja arriba, pupila arriba y hacia dentro", "You marked it perfect; left on the default look": "Lo marcaste como perfecto; se queda con el look por defecto", "Upper lid down, inner corners lowest, shrunken pupil": "Párpado superior bajo, esquinas interiores abajo, pupila encogida", "Near-black pupils and a hard flat inner edge": "Pupilas casi negras y un borde interior muy plano", "Brow inverted from angry, big pupil low": "Ceja invertida respecto a enfadado, pupila grande abajo", "Palest pupils of the set, strongly mismatched": "Las pupilas más pálidas del conjunto, muy desparejas", "Narrowest and tallest body, pupil up, trembling": "El cuerpo más estrecho y alto, pupila arriba, temblando", "Dark pupils, low wander": "Pupilas oscuras, poco deambular", "Round body and pupil, screen rotates": "Cuerpo y pupila redondos, la pantalla gira", "Heavy lid, zero brow angle": "Párpado pesado, cero ángulo de ceja"};</script>
+
+<script>
+window.__i18n=(function(){
+  var SEL='h1,h2,h3,p,li,td,th,figcaption,text,label,summary,button,div.glab,div.pd,div.gbar,span.tag';
+  var SVGNS='http://www.w3.org/2000/svg';
+  function get(el){ return el.namespaceURI===SVGNS ? el.textContent.trim() : el.innerHTML.trim(); }
+  function set(el,v){ if(el.namespaceURI===SVGNS) el.textContent=v; else el.innerHTML=v; }
+  var lang;
+  try{ lang=localStorage.getItem('lang')||'en'; }catch(e){ lang='en'; }
+
+  // Tag every leaf we can translate with its English key WHILE it is still in
+  // English. After that a swap is just reading the attribute, so switching back
+  // and forth can never lose the original.
+  function tag(root){
+    (root||document).querySelectorAll(SEL).forEach(function(el){
+      if(el.hasAttribute('data-en')) return;
+      if(el.querySelector(SEL)) return;              // only leaves
+      var k=get(el);
+      if(k && ES[k]!==undefined) el.setAttribute('data-en',k);
+    });
+  }
+  function paint(root){
+    (root||document).querySelectorAll('[data-en]').forEach(function(el){
+      var k=el.getAttribute('data-en');
+      set(el, lang==='es' ? ES[k] : k);
+    });
+    document.documentElement.lang = lang;
+    var b=document.getElementById('langBtn');
+    if(b) b.innerHTML = lang==='es' ? '<b>ES</b> / EN' : 'ES / <b>EN</b>';
+    if(window.__onLang){ try{ window.__onLang(); }catch(e){} }
+  }
+  function refresh(root){ if(lang==='es'){ /* re-tag needs English */ } tag(root); paint(root); }
+  function set_(l){ lang=l; try{localStorage.setItem('lang',l);}catch(e){} paint(); }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    tag(); paint();
+    var b=document.getElementById('langBtn');
+    if(b) b.addEventListener('click',function(){ set_(lang==='es'?'en':'es'); });
+  });
+  // T() is for text a script writes itself, after the DOM is already painted.
+  return { t:function(s){ return lang==='es' && ES[s]!==undefined ? ES[s] : s; },
+           get lang(){ return lang; }, refresh:refresh, paint:paint, tag:tag };
 })();
 </script>
 </body>
