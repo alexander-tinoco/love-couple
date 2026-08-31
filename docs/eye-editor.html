@@ -119,6 +119,8 @@ tbody tr:last-child td{border-bottom:0}
           <button id="bAuto" class="on">Idle life</button>
           <button id="bFollow">Follow the cursor</button>
           <button id="bBlink">Blink</button>
+          <button id="bCover" class="on">Blink on change</button>
+          <button id="bDecay">Mood decay</button>
         </div>
         <p class="lookid" id="lookId">look · —</p>
         <p class="hint">The look sliders now edit <strong>the selected mood</strong>. “Roll a new look” shifts all sixteen moods by the same random offsets, so your per-mood tuning survives and the device still has one recognisable identity. Roll one for her keychain and a different one for yours.</p>
@@ -324,7 +326,23 @@ tbody tr:last-child td{border-bottom:0}
   var color='#FF2E88', moodName='Neutral';
 
   var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var auto=!reduced, follow=false;
+  var auto=!reduced, follow=false, coverBlink=true, decay=false;
+
+  // ONE arousal value drives every idle behaviour. Four independent random
+  // timers read as four processes; one slow-moving level that speeds them all
+  // up together reads as one creature having a quiet spell, then a busy one.
+  var arousal=0.5, arTarget=0.5, arNext=0;
+
+  // A delay line with two taps. The eyes react to the world after a beat
+  // (notice, THEN move), and the body follows the eyes rather than moving with
+  // them. Moving everything on the same frame is what reads as a machine.
+  var REACT=180, LEAD=130, delayBuf=[];
+  function pushDelay(x,y,t){ delayBuf.push({x:x,y:y,t:t}); if(delayBuf.length>90) delayBuf.shift(); }
+  function tapDelay(t,ms){
+    for(var i=delayBuf.length-1;i>=0;i--) if(t-delayBuf[i].t>=ms) return delayBuf[i];
+    return delayBuf[0]||{x:0,y:0};
+  }
+  var rawX=0, rawY=0, lastTouch=0;
   var gx=0,gy=0,gx2=0,gy2=0,tgx=0,tgy=0,gvx=0,gvy=0,pgx=0,pgy=0;
   var wx=0,wy=0,twx=0,twy=0,wvx=0,wvy=0,wNext=0;
   var sqx=1,sqy=1,blinkStart=-1e9,nextBlink=0,blinkDepth=1;
@@ -389,7 +407,7 @@ tbody tr:last-child td{border-bottom:0}
 
     var cx=S/2+side*p.gap+wx+myx*0.16;
     var cy=S/2+p.offY+dy+wy+myy*0.16+animT.bounce;   // lidDrop added below
-    var breathe=(auto&&p.anim!==6)?Math.sin(t/900+(side>0?0.9:0))*1.3:0;
+    var breathe=(auto&&p.anim!==6)?Math.sin(t/900+(side>0?0.9:0))*1.3*(0.7+arousal*0.6):0;
 
     // The second eye blinks a couple of frames after the first. Nobody sees it;
     // everybody notices when it is missing.
@@ -554,6 +572,10 @@ tbody tr:last-child td{border-bottom:0}
     for(var a in curLook) fromLook[a]=curLook[a];
     for(var b in LOOKS[n]) toLook[b]=LOOKS[n][b];
     tStart=performance.now();
+    // A blink hides the whole morph. The transition is 430 ms and the lid is
+    // shut from 140 to 220 ms, so the midpoint of the change lands behind a
+    // closed eye. Oldest trick in animation, and it costs nothing.
+    if(coverBlink&&MOODS[n].anim!==6){ blinkStart=tStart; blinkDepth=1; }
     if(MOODS[n].part!==1) hearts.length=0;
   }
 
@@ -577,35 +599,58 @@ tbody tr:last-child td{border-bottom:0}
     animT.bounce+= (((toM.anim===3)?Math.sin(t/300)*4.2:0)-animT.bounce)*0.14;
     animT.trem  += (((toM.anim===2)?Math.sin(t/41)*1.8:0)-animT.trem)*0.30;
 
-    // Blink RATE follows the mood: a drowsy face blinks often, a startled one
-    // barely blinks at all. A fixed rate is detectable within seconds.
+    // AROUSAL: one slow level that every idle behaviour reads from, so the
+    // creature has quiet spells and busy spells instead of four unrelated
+    // random timers all ticking at their own steady rate.
+    if(t>arNext){ arNext=t+3000+Math.random()*5200; arTarget=Math.random(); }
+    arousal+=(arTarget-arousal)*0.006;
+
+    // Blink RATE follows the mood AND the arousal: a drowsy, calm face blinks
+    // often; a startled, alert one barely blinks at all.
     if(auto&&!asleep&&t>nextBlink){
       blinkStart=t;
       blinkDepth=Math.random()<0.22?0.55:1;        // not every blink is a full one
       var drowsy=(100-toM.open)/100*0.5+toM.lidTop/100*0.5;
-      var base=1400+(1-drowsy)*2900;
+      var base=(1400+(1-drowsy)*2900)*(0.7+(1-arousal)*0.7);
       if(toM.anim===2) base*=2.4;                  // scared: the eyes stay wide
       nextBlink=t+base*(0.6+Math.random()*0.9);
     }
 
-    if(asleep){ twx=0; twy=0; tgx=0; tgy=0; }
-    else if(follow){ twx=tgx*0.62; twy=tgy*0.62; }
+    // MOOD DECAY: a mood that is never re-triggered drifts back to neutral.
+    // Without this the keychain stays angry forever after one shout.
+    if(decay&&!asleep&&moodName!=='Neutral'&&t-tStart>18000){
+      moodName='Neutral'; setMood('Neutral');
+      document.querySelectorAll('.mood').forEach(function(x){
+        x.classList.toggle('sel', x.textContent==='Neutral'); });
+      noteEl.textContent=NOTES['Neutral']; syncMood(); syncLook(); emit();
+    }
+
+    if(asleep){ rawX=0; rawY=0; }
+    else if(auto&&!follow&&Math.random()<(0.0030+arousal*0.0105)){
+      var ntx=(Math.random()-0.5)*30, nty=(Math.random()-0.5)*15;
+      // Real eyes blink at the END of a big saccade. Cheapest naturalness win
+      // in the whole loop: look somewhere far, then blink.
+      if(Math.abs(ntx-rawX)+Math.abs(nty-rawY)>22 && t>blinkStart+BL_TOTAL)
+        nextBlink=Math.min(nextBlink,t+120);
+      rawX=ntx; rawY=nty;
+    }
+    pushDelay(rawX,rawY,t);
+
+    // Two taps off the same line. Following the cursor is an external stimulus,
+    // so it gets the reaction latency; a self-generated glance does not.
+    var eye=tapDelay(t,follow?REACT:0);
+    tgx=eye.x; tgy=eye.y;
+    var body=tapDelay(t,(follow?REACT:0)+LEAD);
+
+    if(asleep){ twx=0; twy=0; }
+    else if(follow){ twx=body.x*0.62; twy=body.y*0.62; }
     else if(auto&&t>wNext){
-      wNext=t+1100+Math.random()*2500;
-      var amp=curLook.wander/100;
+      wNext=t+900+Math.random()*(2600-arousal*1300);
+      var amp=curLook.wander/100*(0.5+arousal*0.7);
       twx=(Math.random()-0.5)*52*amp; twy=(Math.random()-0.5)*32*amp;
     }
     wvx+=(twx-wx)*0.052; wvx*=0.87; wx+=wvx;
     wvy+=(twy-wy)*0.052; wvy*=0.87; wy+=wvy;
-
-    if(auto&&!follow&&!asleep&&Math.random()<0.0075){
-      var ntx=(Math.random()-0.5)*30, nty=(Math.random()-0.5)*15;
-      // Real eyes blink at the END of a big saccade. Cheapest naturalness win
-      // in the whole loop: look somewhere far, then blink.
-      if(Math.abs(ntx-tgx)+Math.abs(nty-tgy)>22 && t>blinkStart+BL_TOTAL)
-        nextBlink=Math.min(nextBlink,t+120);
-      tgx=ntx; tgy=nty;
-    }
     gvx+=(tgx-gx)*0.20; gvx*=0.72; gx+=gvx;
     gvy+=(tgy-gy)*0.20; gvy*=0.72; gy+=gvy;
     gx2+=(gx-gx2)*0.42; gy2+=(gy-gy2)*0.42;
@@ -725,14 +770,18 @@ tbody tr:last-child td{border-bottom:0}
   var bFollow=document.getElementById('bFollow');
   bFollow.addEventListener('click',function(){
     follow=!follow; bFollow.classList.toggle('on',follow);
-    if(!follow){tgx=0;tgy=0;twx=0;twy=0;}
+    if(!follow){rawX=0;rawY=0;tgx=0;tgy=0;twx=0;twy=0;delayBuf.length=0;}
   });
   cv.addEventListener('pointermove',function(e){
     if(!follow||toM.anim===6)return;
     var r=cv.getBoundingClientRect();
-    tgx=((e.clientX-r.left)/r.width-0.5)*62;
-    tgy=((e.clientY-r.top)/r.height-0.5)*36;
+    rawX=((e.clientX-r.left)/r.width-0.5)*62;
+    rawY=((e.clientY-r.top)/r.height-0.5)*36;
   });
+  var bCover=document.getElementById('bCover');
+  bCover.addEventListener('click',function(){coverBlink=!coverBlink;bCover.classList.toggle('on',coverBlink);});
+  var bDecay=document.getElementById('bDecay');
+  bDecay.addEventListener('click',function(){decay=!decay;bDecay.classList.toggle('on',decay);if(decay)tStart=performance.now();});
   document.getElementById('bBlink').addEventListener('click',function(){
     if(toM.anim===6)return; blinkStart=performance.now(); blinkDepth=1;
   });
@@ -903,7 +952,60 @@ tbody tr:last-child td{border-bottom:0}
     '  float flat = w * 0.5f * (1 - innerFlat / 100.0f * 0.30f) - pw * 0.5f - 1;',
     '  if (side < 0) { if (px >  flat) px =  flat; }',
     '  else          { if (px < -flat) px = -flat; }',
-    '}'
+    '}',
+    '',
+    '// ---- the five things that sell it as a creature ------------------------',
+    '',
+    '// 1. BLINK OVER THE CHANGE. Fire a blink when the mood changes. The lid is',
+    '//    shut from 140 to 220 ms and the transition midpoint is at 215 ms, so',
+    '//    the entire morph happens behind a closed eye. Free, and it makes even',
+    '//    a bad transition invisible.',
+    'void setMoodCovered(const EyeState &m, const EyeLook &l) {',
+    '  setMood(m, l);',
+    '  if (m.anim != 6) { blinkStart = millis(); blinkDepth = 1.0f; }',
+    '}',
+    '',
+    '// 2. ONE DELAY LINE, TWO TAPS. The eyes react to the world after a beat,',
+    '//    and the body follows the eyes. Moving both on the same frame is the',
+    '//    single clearest tell that something is a machine.',
+    'const uint16_t REACT = 180;   // notice, THEN move (external stimulus only)',
+    'const uint16_t LEAD  = 130;   // the body trails the eyes by this much',
+    'struct Sample { int16_t x, y; uint32_t t; };',
+    'Sample line[90]; uint8_t lineN = 0;',
+    '',
+    'Sample tapDelay(uint32_t now, uint16_t ms) {',
+    '  for (int8_t i = lineN - 1; i >= 0; i--)',
+    '    if (now - line[i].t >= ms) return line[i];',
+    '  return line[0];',
+    '}',
+    '// eye  = tapDelay(now, faceSeen ? REACT : 0);',
+    '// body = tapDelay(now, (faceSeen ? REACT : 0) + LEAD);',
+    '',
+    '// 3. AROUSAL. One slow level that every idle behaviour reads from. Four',
+    '//    independent random timers read as four processes; one level that',
+    '//    speeds them all up together reads as one creature having a quiet',
+    '//    spell and then a busy one.',
+    'float arousal = 0.5f, arTarget = 0.5f; uint32_t arNext = 0;',
+    'void stepArousal(uint32_t now) {',
+    '  if (now > arNext) { arNext = now + 3000 + random(5200); arTarget = randomf(); }',
+    '  arousal += (arTarget - arousal) * 0.006f;',
+    '}',
+    '//   blink interval *= (0.7 + (1-arousal)*0.7)     calm blinks more',
+    '//   saccade chance  = 0.0030 + arousal*0.0105',
+    '//   wander interval = 900 + random(2600 - arousal*1300)',
+    '//   wander amplitude *= (0.5 + arousal*0.7)',
+    '//   breathe amplitude *= (0.7 + arousal*0.6)',
+    '',
+    '// 4. MOODS DECAY. A mood that is never re-triggered drifts back to neutral',
+    '//    after ~18 s. Without this the keychain stays angry forever after one',
+    '//    shout, which is the fastest way to stop feeling alive.',
+    '//    if (mood != NEUTRAL && mood != ASLEEP && millis() - tStart > 18000)',
+    '//      setMoodCovered(MOOD_NEUTRAL, LOOK_NEUTRAL);',
+    '',
+    '// 5. PACE THE FRAMES, DO NOT CHASE THEM. 30 fps rock steady looks more',
+    '//    alive than 60 fps that stutters, and the camera burst WILL stall a',
+    '//    frame if you let it. Budget it: capture on a fixed slot, never inside',
+    '//    the draw loop, and hold the frame interval even if you finish early.'
   ].join('\n');
 
   syncMood(); syncLook(); emit();
